@@ -12,7 +12,7 @@
 - 控制程序为 Python 3.12 单进程本地 API/CLI，uv 管理 pyproject.toml 与 uv.lock；使用 FastAPI、Pydantic 2、Uvicorn 和 Pillow。
 - 首个生成后端是 SkyReels-V2 DF 1.3B 540P。独立 Python 3.10 / Torch 2.5.1 / CUDA 环境，经 subprocess 参数列表调用；禁止 shell=True 或拼接 shell 命令。
 - [开源选型](./docs/open-source-selection.md) 记录模型、源码提交与许可。代码开源不等于所有权重具有相同许可，升级必须重新核对接口和依赖。
-- 当前只有参考图初始化、checkpoint、控制查询和官方生成 CLI 桥接；尚无自主生成/观测/恢复闭环。不得将 CPU 测试或 dry-run 报告成 GPU 推理通过。
+- 当前已有参考图 checkpoint、统一配置/契约、单任务 Runtime、API/CLI 生成桥接、取消/超时与任务记录；尚无自主生成/观测/恢复闭环。不得将 CPU 测试或 dry-run 报告成 GPU 推理通过。
 - 控制程序可在 Windows 开发；模型推理部署基线见 [backend-setup](./docs/backend-setup.md)。不因未取得目标硬件细节而阻塞仓库初始化。
 - V0 使用 FastAPI 自带接口文档作为操作入口；尚无展示前端、数据库、迁移或生产部署，不为它们创建空模块。
 
@@ -20,10 +20,13 @@
 
 | 路径 | 职责 |
 | --- | --- |
-| src/anime_avatar_runtime/api.py | HTTP 输入、错误映射和本地控制查询 |
+| src/anime_avatar_runtime/config.py | API/CLI 共用环境配置、路径与超时校验 |
+| src/anime_avatar_runtime/contracts.py | 生成请求/结果、任务、事件、独立观测信号 |
+| src/anime_avatar_runtime/runtime.py | 单角色单任务、手动生命周期、取消与结果接收、任务记录 |
+| src/anime_avatar_runtime/api.py | HTTP 输入、错误映射、Runtime 操作与 lifespan 关停 |
 | src/anime_avatar_runtime/state.py | AvatarState、图片校验、原子持久化与哈希校验 |
-| src/anime_avatar_runtime/skyreels.py | 固定上游版本、生成/续接/首尾帧参数、模型环境检查 |
-| src/anime_avatar_runtime/cli.py | 命令入口、服务启动、实验日志与退出状态 |
+| src/anime_avatar_runtime/skyreels.py | 固定上游版本、参数、模型预检、可取消独立进程与实验日志 |
+| src/anime_avatar_runtime/cli.py | 命令入口、服务启动、有效配置、退出状态；复用生成执行函数 |
 | tests/ | 控制行为、失败路径、上游参数契约；模型不作为常规测试依赖 |
 | docs/ | 原始流程、开源选型、模型部署和初始化证据 |
 | var/、models/、vendor/ | 被忽略的私有运行数据、权重、外部代码，不提交 |
@@ -33,6 +36,7 @@
 
 - A 路线负责生成与正常状态保持，B 路线负责异常恢复，C 路线负责组织、调度和存储。
 - AvatarState 不等于当前帧。当前 schema_version=1 仅表达已知参考图和暂停状态；后续增加 pose、embedding、generation_context 时不得虚构已计算结果。
+- 实时模式以 Runtime 为准；resume 仅允许手动单段提交，不开启自主循环。生成实验不自动覆盖参考 checkpoint；具体契约和扩展入口见 [Runtime 底座](./docs/runtime-foundation.md)。
 - Observer 提供信号，由 Runtime 决定后续动作；身份、几何、运动指标先独立记录，交互和待机条件需区分。
 - Anchor 初期只使用原图或人工确认的图像，避免把生成错误加入可信参考。
 - LLM、人格和语音在核心闭环之上扩展，避免与实时视觉状态混杂。

@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from anime_avatar_runtime import cli
+from anime_avatar_runtime import cli, skyreels
 
 
 def arguments(tmp_path: Path) -> list[str]:
@@ -47,9 +47,9 @@ def test_failure_or_missing_video_is_recorded_as_failed(
     returncode: int,
 ) -> None:
     monkeypatch.setattr(sys, "argv", arguments(tmp_path))
-    monkeypatch.setattr(cli, "check_backend", lambda *_: None)
+    monkeypatch.setattr(skyreels, "check_backend", lambda *a, **kw: None)
     monkeypatch.setattr(
-        subprocess, "run", lambda *a, **kw: subprocess.CompletedProcess(a, returncode)
+        skyreels, "_run_process", lambda *a, **kw: subprocess.CompletedProcess(a, returncode)
     )
     assert cli.main() == 1
     manifest = json.loads((tmp_path / "run" / "run.json").read_text())
@@ -59,9 +59,42 @@ def test_failure_or_missing_video_is_recorded_as_failed(
 
 def test_existing_experiment_is_preserved(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(sys, "argv", arguments(tmp_path))
-    monkeypatch.setattr(cli, "check_backend", lambda *_: None)
+    monkeypatch.setattr(skyreels, "check_backend", lambda *a, **kw: None)
     output = tmp_path / "run"
     output.mkdir()
     (output / "run.json").write_text("original", encoding="utf-8")
     assert cli.main() == 1
     assert (output / "run.json").read_text() == "original"
+
+
+@pytest.mark.parametrize("timeout", ["0", "-1", "nan", "inf", "invalid"])
+def test_invalid_configuration_fails_before_launch(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str], timeout: str
+) -> None:
+    monkeypatch.setenv("AVATAR_GENERATION_TIMEOUT_SECONDS", timeout)
+    monkeypatch.setattr(sys, "argv", ["avatar-runtime", "doctor"])
+    assert cli.main() == 1
+    assert "generation_timeout_seconds" in capsys.readouterr().err
+
+
+def test_environment_config_is_resolved_and_exported(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("AVATAR_DATA_DIR", "private-avatar")
+    monkeypatch.setenv("SKYREELS_MODEL", "weights")
+    monkeypatch.setenv("AVATAR_GENERATION_TIMEOUT_SECONDS", "12.5")
+    monkeypatch.setattr(sys, "argv", ["avatar-runtime", "doctor"])
+    assert cli.main() == 0
+    config = json.loads(capsys.readouterr().out)["config"]
+    assert config["data_dir"] == str(tmp_path / "private-avatar")
+    assert config["skyreels_model"] == str(tmp_path / "weights")
+    assert config["generation_timeout_seconds"] == 12.5
+
+
+def test_blank_backend_path_is_not_resolved_to_current_directory(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("SKYREELS_PYTHON", "")
+    monkeypatch.setattr(sys, "argv", ["avatar-runtime", "doctor"])
+    assert cli.main() == 1
