@@ -9,6 +9,7 @@
 | [冷启动流程与执行记录](./冷启动.md) | 原始流程、逐项验收、已验证命令与剩余边界 |
 | [开源调研与首版选型](./open-source-selection.md) | 10 个上游项目、源码与模型 revision、接口、许可及取舍 |
 | [模型环境部署](./backend-setup.md) | 独立 SkyReels 环境、固定模型下载、生成/续接/首尾帧控制与实验验收 |
+| [Runtime 开发底座](./runtime-foundation.md) | 共享配置/契约、任务生命周期、API、存储边界与各 Issue 的接入点 |
 
 ## 原始设计方案
 
@@ -16,7 +17,7 @@
 | --- | --- | --- |
 | [01：生成与长期状态保持](../01-avatar-generation-and-state-preservation.md) | 单图初始化、待机、跨窗口延续 | 参考图状态与官方生成入口桥接；长期保持待实验 |
 | [02：状态恢复与稳定控制](../02-state-recovery-and-stability.md) | Observer、漂移判断、恢复与评估 | 完成组件选型；观测与恢复闭环尚未实现 |
-| [03：运行系统架构](../03-runtime-system-architecture.md) | 共享状态、调度、存储与交互 | API/CLI、参考状态持久化、独立模型进程入口；完整 Runtime 待推进 |
+| [03：运行系统架构](../03-runtime-system-architecture.md) | 共享状态、调度、存储与交互 | 统一契约与配置、单任务 Runtime、API/CLI 共用后端、取消/超时和任务记录；自主闭环待推进 |
 
 三份方案保持原文，设计目标不等同已验证功能。当前可执行状态以 README 和源码为准。
 
