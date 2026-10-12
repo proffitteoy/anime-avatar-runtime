@@ -3,6 +3,7 @@
 import copy
 import hashlib
 import json
+import re
 import runpy
 import sys
 from pathlib import Path
@@ -352,6 +353,47 @@ def test_review_import_preserves_data_binding_and_rejects_wrong_dataset(tmp_path
     image.write_bytes(b"changed")
     with pytest.raises(ValueError, match="Input changed"):
         cli(argv)
+
+
+def test_blind_review_page_preserves_human_fields_and_hides_provenance(tmp_path, monkeypatch):
+    image = tmp_path / "image.png"
+    Image.new("RGB", (8, 8), "blue").save(image)
+    prior = review(approve_anchor=True).model_copy(
+        update={"reviewer": 'fixture "<&', "parts": ["nose"], "pose": "left_turn"}
+    )
+    reviewed = sample(0).model_copy(
+        update={
+            "image": Path("image.png"),
+            "input_sha256": hashlib.sha256(image.read_bytes()).hexdigest(),
+            "transform": {"kind": "hidden_warp", "strength": 0.1},
+            "reviews": [prior],
+        }
+    )
+    manifest = StudyManifest(character_id="fixture", samples=[reviewed])
+    path = tmp_path / "manifest.json"
+    path.write_text(manifest.model_dump_json())
+    monkeypatch.setattr(sys, "argv", ["script", "study"])
+    script = runpy.run_path(
+        str(Path(__file__).parents[1] / "scripts/observer_geometry_experiment.py")
+    )
+    output = tmp_path / "review.html"
+    argv = ["review-page", "--manifest", str(path), "--output", str(output)]
+    script["study_main"](argv)
+    page = output.read_text(encoding="utf-8")
+    assert 'value="normal" selected>正常' in page
+    assert 'value="left_turn" selected>向画面左侧转头' in page
+    assert 'data-part="nose" checked' in page
+    assert "data-anchor checked" in page
+    assert 'value="fixture &quot;&lt;&amp;"' in page
+    assert data_hash(manifest) in page
+    assert "hidden_warp" not in page and reviewed.source_sha256 not in page
+    with pytest.raises(FileExistsError):
+        script["study_main"](argv)
+    pending = manifest.model_copy(update={"samples": [reviewed.model_copy(update={"reviews": []})]})
+    unreviewed_page = script["blind_review_page"](pending, tmp_path)
+    assert 'value="" selected>请选择分类' in unreviewed_page
+    assert not re.search(r'<option value="uncertain" selected', unreviewed_page)
+    assert "reviews.some(r=>!r.review.label)" in unreviewed_page
 
 
 def test_freeze_never_reads_calibration_or_validation_labels_for_references():

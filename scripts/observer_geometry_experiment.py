@@ -21,6 +21,7 @@ from numpy.typing import NDArray
 from PIL import Image
 
 from anime_avatar_runtime.contracts import ObservationRequest
+from anime_avatar_runtime.local_geometry import StudyManifest, data_hash, resolved_review
 from anime_avatar_runtime.observers import (
     STABLE_POINTS,
     OfflineObserver,
@@ -32,16 +33,163 @@ from anime_avatar_runtime.observers import (
 )
 
 
+def blind_review_page(manifest: StudyManifest, directory: Path) -> str:
+    """Render anonymous inputs with Chinese controls, preserving prior human entries."""
+    import io
+
+    fields = {
+        "label": (
+            "图片分类",
+            [
+                ("", "请选择分类"),
+                ("normal", "正常"),
+                ("geometry_anomaly", "几何畸变"),
+                ("uncertain", "不确定／无法判断"),
+            ],
+        ),
+        "pose": (
+            "头部姿态",
+            [
+                ("unknown", "无法判断"),
+                ("front", "正脸"),
+                ("left_turn", "向画面左侧转头"),
+                ("right_turn", "向画面右侧转头"),
+                ("down", "低头"),
+                ("up", "抬头"),
+                ("unsupported", "超出范围（如大角度侧脸）"),
+            ],
+        ),
+        "mode": (
+            "场景模式",
+            [("unknown", "无法判断"), ("idle", "待机／轻微动作"), ("interaction", "互动场景")],
+        ),
+        "occlusion": (
+            "遮挡情况",
+            [
+                ("unknown", "无法判断"),
+                ("none", "无遮挡"),
+                ("mild", "少量遮挡"),
+                ("severe", "严重遮挡"),
+            ],
+        ),
+        "severity": (
+            "畸变程度",
+            [
+                ("unknown", "无法判断"),
+                ("none", "无畸变"),
+                ("mild", "轻微"),
+                ("moderate", "中等"),
+                ("severe", "严重"),
+            ],
+        ),
+    }
+    regions = {
+        "left_eye": "画面左眼",
+        "right_eye": "画面右眼",
+        "eye_spacing": "双眼关系／眼距",
+        "nose": "鼻",
+        "mouth": "嘴",
+        "contour": "脸部轮廓／下巴",
+    }
+    cards = []
+    ordered = list(manifest.samples)
+    np.random.default_rng(42).shuffle(ordered)
+    for sample in ordered:
+        prior = resolved_review(sample)
+        image_path = sample.image if sample.image.is_absolute() else directory / sample.image
+        image = read_image(image_path.read_bytes())
+        image.thumbnail((360, 420))
+        buffer = io.BytesIO()
+        image.save(buffer, format="JPEG")
+        encoded = base64.b64encode(buffer.getvalue()).decode()
+        controls = ""
+        for key, (label, options) in fields.items():
+            selected = prior.get(key, "" if key == "label" else "unknown")
+            if key == "label" and prior["review_status"] == "pending_human":
+                selected = ""
+            controls += f'<label>{label}<select data-field="{key}">'
+            controls += "".join(
+                f'<option value="{value}"'
+                + (" selected" if value == selected else "")
+                + f">{label}</option>"
+                for value, label in options
+            )
+            controls += "</select></label>"
+        controls += "<fieldset><legend>异常部位（仅畸变时勾选）</legend>"
+        for region, label in regions.items():
+            checked = " checked" if region in prior.get("parts", []) else ""
+            controls += (
+                f'<label><input type="checkbox" data-part="{region}"{checked}>{label}</label>'
+            )
+        controls += "</fieldset>"
+        checked = " checked" if prior.get("approve_anchor") else ""
+        controls += f'<label><input type="checkbox" data-anchor{checked}>确认作为正常参考</label>'
+        cards.append(
+            f'<section data-id="{sample.sample_id}"><h2>{sample.sample_id}</h2>'
+            f'<img src="data:image/jpeg;base64,{encoded}">{controls}</section>'
+        )
+    reviewers = {
+        r.reviewer for sample in manifest.samples for r in sample.reviews if r.kind == "human"
+    }
+    reviewer = html.escape(next(iter(reviewers)) if len(reviewers) == 1 else "", quote=True)
+    return (
+        '<!doctype html><html lang="zh-CN"><meta charset="utf-8">'
+        '<meta name="viewport" content="width=device-width,initial-scale=1">'
+        "<title>局部几何盲审</title>"
+        "<style>body{font:16px/1.6 sans-serif;background:#edf1f3;margin:25px}"
+        "main{display:flex;flex-wrap:wrap;gap:20px}"
+        "section{background:white;padding:18px;width:360px}"
+        "img{max-width:100%}label{display:block;margin:8px}"
+        "select{display:block;width:100%;padding:6px}button{padding:12px}"
+        "#summary{position:sticky;top:0;background:#fff3cd;padding:12px;z-index:1}</style>"
+        "<h1>单角色局部几何盲审</h1>"
+        "<p>每张图先选择分类：正常表情、眨眼、张嘴、轻微转头本身不算畸变；"
+        "五官错位、比例或脸形不自然才选几何畸变。看不清时可明确选不确定。</p>"
+        "<p>左右按画面方向。请独立填写姿态、场景、遮挡和畸变程度；"
+        "正常图选择无畸变，并取消异常部位勾选。未知是有效记录，但不能用于正式拟合。</p>"
+        "<p>参考勾选不能代替分类。只有人工确认正常的原图才可能进入可信参考；"
+        "派生图由程序排除。此页面不显示分数、变形参数或关键点。</p>"
+        f'<label>人工复核者标识<input id="reviewer" value="{reviewer}"></label>'
+        '<label><input type="checkbox" id="human">我已人工查看并确认这些标注</label>'
+        '<button onclick="download()">导出 annotations.json</button>'
+        '<p id="summary" role="status" aria-live="polite"></p><main>'
+        + "".join(cards)
+        + "</main><script>"
+        'function entries(){return Array.from(document.querySelectorAll("section")).map(s=>{'
+        'const review={reviewer:document.getElementById("reviewer").value.trim(),kind:"human",'
+        'parts:Array.from(s.querySelectorAll("[data-part]:checked")).map(p=>p.dataset.part),'
+        'approve_anchor:s.querySelector("[data-anchor]").checked};'
+        's.querySelectorAll("select").forEach(e=>review[e.dataset.field]=e.value);'
+        "return {sample_id:s.dataset.id,review};});}"
+        "function summary(){const rows=entries(),"
+        "count=v=>rows.filter(r=>r.review.label===v).length;"
+        'const unknown=rows.filter(r=>["pose","mode","occlusion"]'
+        '.some(k=>r.review[k]==="unknown")).length;'
+        'const anchors=rows.filter(r=>r.review.approve_anchor&&r.review.label!=="normal").length;'
+        'document.getElementById("summary").textContent='
+        '`共 ${rows.length} 张：未选 ${count("")}，正常 ${count("normal")}，'
+        '畸变 ${count("geometry_anomaly")}，不确定 ${count("uncertain")}；'
+        "姿态／场景／遮挡含未知 ${unknown} 张；勾参考但分类非正常 ${anchors} 张。`;}"
+        'document.addEventListener("change",summary);summary();'
+        "function download(){const reviews=entries();"
+        'if(!document.getElementById("reviewer").value.trim()||'
+        '!document.getElementById("human").checked){alert("请填写标识并确认人工复核");return;}'
+        'if(reviews.some(r=>!r.review.label)){alert("请逐张选择分类；无法判断时可选不确定。");return;}'
+        "const payload={schema_version:1,data_hash:"
+        + json.dumps(data_hash(manifest))
+        + ',reviews};const a=document.createElement("a");'
+        "a.href=URL.createObjectURL(new Blob([JSON.stringify(payload,null,2)],"
+        '{type:"application/json"}));a.download="annotations.json";a.click();'
+        "URL.revokeObjectURL(a.href);}</script></html>"
+    )
+
+
 def study_main(argv: list[str]) -> None:
     """Manifest-driven stages; legacy image comparison remains available below."""
     from anime_avatar_runtime.local_geometry import (
-        POSES,
-        REGIONS,
         Review,
-        StudyManifest,
         StudySample,
         calibrate_study,
-        data_hash,
         evaluate_study,
         feature_variants,
         freeze_study,
@@ -65,6 +213,9 @@ def study_main(argv: list[str]) -> None:
     review.add_argument("--manifest", type=Path, required=True)
     review.add_argument("--annotations", type=Path, required=True)
     review.add_argument("--output", type=Path, required=True)
+    review_page = commands.add_parser("review-page")
+    review_page.add_argument("--manifest", type=Path, required=True)
+    review_page.add_argument("--output", type=Path, required=True)
     for stage in ("extract", "explore", "freeze", "calibrate", "evaluate"):
         cmd = commands.add_parser(stage)
         cmd.add_argument("--manifest", type=Path, required=True)
@@ -174,67 +325,7 @@ def study_main(argv: list[str]) -> None:
         )
         save(args.output / "manifest.json", manifest.model_dump(mode="json"))
         save(args.output / "splits.json", split_sources(manifest))
-        # Blind page contains neither scores, transform names nor landmark overlays.
-        cards = []
-        ordered = list(samples)
-        np.random.default_rng(42).shuffle(ordered)
-        for s in ordered:
-            image = read_image((args.output / s.image).read_bytes())
-            image.thumbnail((360, 420))
-            import io
-
-            buffer = io.BytesIO()
-            image.save(buffer, format="JPEG")
-            encoded = base64.b64encode(buffer.getvalue()).decode()
-            fields = {
-                "label": ["uncertain", "normal", "geometry_anomaly"],
-                "pose": ["unknown", *POSES, "unsupported"],
-                "mode": ["unknown", "idle", "interaction"],
-                "occlusion": ["unknown", "none", "mild", "severe"],
-                "severity": ["unknown", "none", "mild", "moderate", "severe"],
-            }
-            controls = "".join(
-                f'<label>{key}<select data-field="{key}">'
-                + "".join(f"<option>{v}</option>" for v in values)
-                + "</select></label>"
-                for key, values in fields.items()
-            )
-            controls += "".join(
-                f'<label><input type="checkbox" data-part="{r}">{r}</label>' for r in REGIONS
-            )
-            controls += '<label><input type="checkbox" data-anchor>确认作为正常参考</label>'
-            cards.append(
-                f'<section data-id="{s.sample_id}"><h2>{s.sample_id}</h2>'
-                f'<img src="data:image/jpeg;base64,{encoded}">{controls}</section>'
-            )
-        page = (
-            '<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>局部几何盲审</title>'
-            "<style>body{font:16px sans-serif;background:#edf1f3;margin:25px}"
-            "main{display:flex;flex-wrap:wrap;gap:20px}"
-            "section{background:white;padding:18px;width:360px}"
-            "img{max-width:100%}label{display:block;margin:8px}button{padding:12px}</style>"
-            "<h1>单角色局部几何盲审</h1><p>请选择正常、畸变或不确定；不确定是有效标签。参考确认仅适用于正常原图。</p>"
-            '<label>人工复核者标识<input id="reviewer"></label>'
-            '<label><input type="checkbox" id="human">我已人工查看并确认这些标注</label>'
-            '<button onclick="download()">导出 annotations.json</button><main>'
-            + "".join(cards)
-            + "</main><script>function download(){"
-            'const reviewer=document.getElementById("reviewer").value.trim();'
-            'if(!reviewer||!document.getElementById("human").checked){'
-            'alert("请填写标识并确认人工复核");return;}'
-            'const reviews=Array.from(document.querySelectorAll("section")).map(s=>{'
-            'const review={reviewer,kind:"human",'
-            'parts:Array.from(s.querySelectorAll("[data-part]:checked")).map(p=>p.dataset.part),'
-            'approve_anchor:s.querySelector("[data-anchor]").checked};'
-            's.querySelectorAll("select").forEach(e=>review[e.dataset.field]=e.value);'
-            "return {sample_id:s.dataset.id,review};});"
-            "const payload={schema_version:1,data_hash:"
-            + json.dumps(data_hash(manifest))
-            + ',reviews};const a=document.createElement("a");'
-            "a.href=URL.createObjectURL(new Blob([JSON.stringify(payload,null,2)],"
-            '{type:"application/json"}));a.download="annotations.json";a.click();'
-            "URL.revokeObjectURL(a.href);}</script></html>"
-        )
+        page = blind_review_page(manifest, args.output)
         (args.output / "review.html").write_text(page, encoding="utf-8")
         print(f"Prepared {len(samples)} samples, {len(skipped)} warp skips; labels pending human")
         return
@@ -244,6 +335,12 @@ def study_main(argv: list[str]) -> None:
         location = s.image if s.image.is_absolute() else args.manifest.parent / s.image
         if sha256(location) != s.input_sha256:
             raise ValueError(f"Input changed: {s.sample_id}")
+    if args.stage == "review-page":
+        if args.output.exists():
+            raise FileExistsError(f"Do not overwrite a blind review page: {args.output}")
+        page = blind_review_page(manifest, args.manifest.parent)
+        args.output.write_text(page, encoding="utf-8")
+        return
     if args.stage == "review":
         if args.output.parent.resolve() != args.manifest.parent.resolve():
             raise ValueError(
