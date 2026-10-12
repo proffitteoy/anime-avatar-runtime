@@ -1,0 +1,115 @@
+{
+  "schema_version": 1,
+  "record_type": "Rebuilt frontal pilot awaiting human labels; no formal acceptance",
+  "character_id": "public-frontal-01",
+  "data_hash": "0295b9676709b19cdd659576e2261de52573788ff15f276f5e8102da6206befc",
+  "source_sha256": "61a1ba5b1c37b8cc650af140aa7df276a9aad97e59ce1e6051092daf3fc7dce6",
+  "prepare_code_sha256": "435a0d29afd6cf1cf553c4c679094aceddb8b0fc3ad2ea073c78ec3279217688",
+  "models": {
+    "schema_version": 1,
+    "ccip_code": "46df848dc4d20ac93f4919a40e2636d5f7c19766",
+    "face_code": "98a9fb480fa04bdd96acbe4d98da191a898267f3",
+    "files": {
+      "ccip_feature.onnx": {
+        "repo": "deepghs/ccip_onnx",
+        "revision": "eb2acdd29af1703388d3d0c04221add322bc9110",
+        "filename": "ccip-caformer-24-randaug-pruned/model_feat.onnx",
+        "sha256": "4ea118d16496274f4f6e08d3afc768cc592389e8f7f32f8732ce2215c228ac5f"
+      },
+      "ccip_metric.onnx": {
+        "repo": "deepghs/ccip_onnx",
+        "revision": "eb2acdd29af1703388d3d0c04221add322bc9110",
+        "filename": "ccip-caformer-24-randaug-pruned/model_metrics.onnx",
+        "sha256": "7e4646fdfbe369ad485b227ec47ac4092c98b8deef3af44e19fdbd8ba7bc25c1"
+      },
+      "yolov3.safetensors": {
+        "repo": "hysts/anime-face-detector-yolov3",
+        "revision": "afdd4226a79ae8bb81f334dbcffd34f8cc000c38",
+        "filename": "model.safetensors",
+        "sha256": "23bbc708146bcbc1c910f00fe152adbc70d7658d875a0121eaf4ee61d978b2c4"
+      },
+      "hrnetv2.safetensors": {
+        "repo": "hysts/anime-face-detector-hrnetv2",
+        "revision": "9b3435248b26aeb82e2a8578fe9d86d5d57158af",
+        "filename": "model.safetensors",
+        "sha256": "e71271376406a743c01528a0460637fcc06e72aeeea583f85007cc72dc8b7a4a"
+      }
+    },
+    "licenses": {
+      "ccip_code": "MIT",
+      "ccip_weights": "OpenRAIL",
+      "face_code": "MIT and Apache-2.0 vendored code",
+      "face_weights": "MIT (model cards)"
+    },
+    "components": {
+      "identity": "ready",
+      "geometry": "ready"
+    }
+  },
+  "environment": {
+    "python": "3.12.13",
+    "platform": "Windows-11-10.0.26100-SP0",
+    "processor": "Intel64 Family 6 Model 170 Stepping 4, GenuineIntel",
+    "device": "cpu",
+    "threads": 2
+  },
+  "counts": {
+    "samples": 13,
+    "originals": 1,
+    "similarity_controls": 3,
+    "local_warps": 9,
+    "independent_sources": 1,
+    "pending_human": 13,
+    "single_face": 13,
+    "ccip_features": 13
+  },
+  "target_point_availability_at_0_3": {
+    "left_eye": 13,
+    "right_eye": 13,
+    "eye_spacing": 13,
+    "nose": 13,
+    "mouth": 13,
+    "contour": 13
+  },
+  "primary_sample_id": "s0000",
+  "splits": {
+    "still_image_source": "development"
+  },
+  "load_seconds": 4.953000000001339,
+  "extraction_seconds": 25.264999999999418,
+  "quality_check": {
+    "data_hash": "0295b9676709b19cdd659576e2261de52573788ff15f276f5e8102da6206befc",
+    "review_kind": "assistant_visual_and_pixel_integrity",
+    "sample_count": 13,
+    "all_samples_visually_inspected": true,
+    "original_pixels_preserved": true,
+    "input_dimensions": [
+      512,
+      512
+    ],
+    "zero_displacement_identical": true,
+    "human_ground_truth": false,
+    "scope": "single-source frontal local-geometry pilot; similarity controls are not new head poses",
+    "warp_sample_count": 9,
+    "total_outside_support_changed_pixels": 0
+  },
+  "candidate_variants": [
+    "wls",
+    "single_local",
+    "pose_local",
+    "oracle"
+  ],
+  "formal_calibration_status": "pending_human_labels_and_insufficient_independent_sources",
+  "limitations": [
+    "One original image; derived samples are not independent",
+    "Similarity transforms do not supply real head poses or normal expression data",
+    "Local support may still change nearby skin or fringe; labels remain human judgments",
+    "No training, GPU inference, or statistical adoption claimed"
+  ],
+  "private_record_sha256": {
+    "dataset-front-v1\\manifest.json": "7a5dff960461de49fc9a8f9c3db5f07813f0f2253bb4f447f61084af4b1e9972",
+    "dataset-front-v1\\splits.json": "c677628d380d8e96eaba1b11b9bd015d0985b29fa28a3c90f7d2feaf296f063f",
+    "dataset-front-v1\\quality-check.json": "a412027352035ae6c66ff2bffb6254288f8652dc61e05bbfdba26c4a79346faa",
+    "extraction-front-v1\\extraction.json": "61d7c001e04db1a683adfc86c8c7313746474b729ea86ec3b3d15eb418727c2d"
+  }
+}

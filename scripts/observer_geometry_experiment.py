@@ -98,9 +98,8 @@ def blind_review_page(manifest: StudyManifest, directory: Path) -> str:
         prior = resolved_review(sample)
         image_path = sample.image if sample.image.is_absolute() else directory / sample.image
         image = read_image(image_path.read_bytes())
-        image.thumbnail((360, 420))
         buffer = io.BytesIO()
-        image.save(buffer, format="JPEG")
+        image.save(buffer, format="PNG")
         encoded = base64.b64encode(buffer.getvalue()).decode()
         controls = ""
         for key, (label, options) in fields.items():
@@ -126,12 +125,24 @@ def blind_review_page(manifest: StudyManifest, directory: Path) -> str:
         controls += f'<label><input type="checkbox" data-anchor{checked}>确认作为正常参考</label>'
         cards.append(
             f'<section data-id="{sample.sample_id}"><h2>{sample.sample_id}</h2>'
-            f'<img src="data:image/jpeg;base64,{encoded}">{controls}</section>'
+            f'<img alt="匿名样本 {sample.sample_id}" src="data:image/png;base64,{encoded}" '
+            "onclick=\"document.getElementById('fullimage').src=this.src;"
+            "document.getElementById('zoom').showModal()\">"
+            f"{controls}</section>"
         )
     reviewers = {
         r.reviewer for sample in manifest.samples for r in sample.reviews if r.kind == "human"
     }
     reviewer = html.escape(next(iter(reviewers)) if len(reviewers) == 1 else "", quote=True)
+    bulk_controls = ""
+    for key in ("pose", "mode", "occlusion"):
+        label, options = fields[key]
+        bulk_controls += (
+            f'<label>{label}<select data-bulk="{key}" onchange="bulk(\'{key}\',this.value)">'
+            '<option value="">不批量设置</option>'
+            + "".join(f'<option value="{value}">{text}</option>' for value, text in options)
+            + "</select></label>"
+        )
     return (
         '<!doctype html><html lang="zh-CN"><meta charset="utf-8">'
         '<meta name="viewport" content="width=device-width,initial-scale=1">'
@@ -139,8 +150,9 @@ def blind_review_page(manifest: StudyManifest, directory: Path) -> str:
         "<style>body{font:16px/1.6 sans-serif;background:#edf1f3;margin:25px}"
         "main{display:flex;flex-wrap:wrap;gap:20px}"
         "section{background:white;padding:18px;width:360px}"
-        "img{max-width:100%}label{display:block;margin:8px}"
+        "img{max-width:100%;cursor:zoom-in}label{display:block;margin:8px}"
         "select{display:block;width:100%;padding:6px}button{padding:12px}"
+        "dialog{max-width:95vw;max-height:95vh}dialog img{display:block;cursor:default}"
         "#summary{position:sticky;top:0;background:#fff3cd;padding:12px;z-index:1}</style>"
         "<h1>单角色局部几何盲审</h1>"
         "<p>每张图先选择分类：正常表情、眨眼、张嘴、轻微转头本身不算畸变；"
@@ -149,12 +161,24 @@ def blind_review_page(manifest: StudyManifest, directory: Path) -> str:
         "正常图选择无畸变，并取消异常部位勾选。未知是有效记录，但不能用于正式拟合。</p>"
         "<p>参考勾选不能代替分类。只有人工确认正常的原图才可能进入可信参考；"
         "派生图由程序排除。此页面不显示分数、变形参数或关键点。</p>"
+        "<p>点击图片查看完整尺寸。若所有图的姿态、场景或遮挡一致，可明确选择下方批量设置；"
+        "有例外的图片再单独修改。分类和畸变程度仍须逐张填写。</p>"
+        "<fieldset><legend>人工批量设置（选择后应用到所有样本）</legend>"
+        + bulk_controls
+        + "</fieldset>"
         f'<label>人工复核者标识<input id="reviewer" value="{reviewer}"></label>'
         '<label><input type="checkbox" id="human">我已人工查看并确认这些标注</label>'
         '<button onclick="download()">导出 annotations.json</button>'
+        '<p id="saved" role="status">填写后请导出文件；浏览器暂存不能代替导出。</p>'
+        '<dialog id="zoom">'
+        "<button onclick=\"document.getElementById('zoom').close()\">关闭</button>"
+        '<img id="fullimage" alt="完整尺寸匿名样本"></dialog>'
         '<p id="summary" role="status" aria-live="polite"></p><main>'
         + "".join(cards)
         + "</main><script>"
+        + "const dataHash="
+        + json.dumps(data_hash(manifest))
+        + ";"
         'function entries(){return Array.from(document.querySelectorAll("section")).map(s=>{'
         'const review={reviewer:document.getElementById("reviewer").value.trim(),kind:"human",'
         'parts:Array.from(s.querySelectorAll("[data-part]:checked")).map(p=>p.dataset.part),'
@@ -170,14 +194,30 @@ def blind_review_page(manifest: StudyManifest, directory: Path) -> str:
         '`共 ${rows.length} 张：未选 ${count("")}，正常 ${count("normal")}，'
         '畸变 ${count("geometry_anomaly")}，不确定 ${count("uncertain")}；'
         "姿态／场景／遮挡含未知 ${unknown} 张；勾参考但分类非正常 ${anchors} 张。`;}"
-        'document.addEventListener("change",summary);summary();'
+        "function bulk(key,value){if(!value)return;"
+        'document.querySelectorAll("section select").forEach(e=>{'
+        "if(e.dataset.field===key)e.value=value;});summary();saveReview();}"
+        'function saveReview(){try{localStorage.setItem("geometry-review:"+dataHash,'
+        'JSON.stringify({reviews:entries()}));document.getElementById("saved").textContent='
+        '"已在当前浏览器暂存；完成后仍须导出 annotations.json。";'
+        '}catch{document.getElementById("saved").textContent='
+        '"浏览器无法暂存，请导出文件保存；刷新可能丢失填写。";}}'
+        'try{const saved=JSON.parse(localStorage.getItem("geometry-review:"+dataHash)||"null");'
+        "if(saved){const byId=new Map(saved.reviews.map(r=>[r.sample_id,r.review]));"
+        'document.querySelectorAll("section").forEach(s=>{const r=byId.get(s.dataset.id);'
+        'if(!r)return;document.getElementById("reviewer").value=r.reviewer||"";'
+        's.querySelectorAll("select").forEach(e=>{'
+        "if(Array.from(e.options).some(o=>o.value===r[e.dataset.field]))e.value=r[e.dataset.field];});"
+        's.querySelectorAll("[data-part]").forEach(e=>e.checked=(r.parts||[]).includes(e.dataset.part));'
+        's.querySelector("[data-anchor]").checked=r.approve_anchor===true;});}}catch{}'
+        'document.addEventListener("change",()=>{summary();saveReview();});'
+        'document.getElementById("reviewer").addEventListener("input",saveReview);summary();'
         "function download(){const reviews=entries();"
         'if(!document.getElementById("reviewer").value.trim()||'
         '!document.getElementById("human").checked){alert("请填写标识并确认人工复核");return;}'
         'if(reviews.some(r=>!r.review.label)){alert("请逐张选择分类；无法判断时可选不确定。");return;}'
-        "const payload={schema_version:1,data_hash:"
-        + json.dumps(data_hash(manifest))
-        + ',reviews};const a=document.createElement("a");'
+        "const payload={schema_version:1,data_hash:dataHash,reviews};"
+        'const a=document.createElement("a");'
         "a.href=URL.createObjectURL(new Blob([JSON.stringify(payload,null,2)],"
         '{type:"application/json"}));a.download="annotations.json";a.click();'
         "URL.revokeObjectURL(a.href);}</script></html>"
@@ -202,10 +242,14 @@ def study_main(argv: list[str]) -> None:
     parser = argparse.ArgumentParser(description="Offline, human-reviewed geometry study")
     commands = parser.add_subparsers(dest="stage", required=True)
     prepare = commands.add_parser("prepare")
-    prepare.add_argument("--gif", type=Path, required=True)
-    prepare.add_argument("--crop", nargs=4, type=int, required=True)
-    prepare.add_argument("--frames", nargs="+", type=int, default=[0, 5, 10, 15, 25, 36, 51, 56])
+    source = prepare.add_mutually_exclusive_group(required=True)
+    source.add_argument("--gif", type=Path)
+    source.add_argument("--image", type=Path)
+    prepare.add_argument("--crop", nargs=4, type=int)
+    prepare.add_argument("--frames", nargs="+", type=int)
     prepare.add_argument("--primary-frame", type=int, default=0)
+    prepare.add_argument("--similarity-controls", action="store_true")
+    prepare.add_argument("--compact-warps", action="store_true")
     prepare.add_argument("--character", required=True)
     prepare.add_argument("--models", type=Path, required=True)
     prepare.add_argument("--output", type=Path, required=True)
@@ -245,8 +289,24 @@ def study_main(argv: list[str]) -> None:
         )
 
     if args.stage == "prepare":
+        if args.frames is None:
+            args.frames = [0] if args.image else [0, 5, 10, 15, 25, 36, 51, 56]
+        if args.image and (args.frames != [0] or args.primary_frame != 0):
+            raise ValueError("A still image has only frame 0")
+        if args.gif and args.crop is None:
+            raise ValueError("GIF preparation requires an explicit crop")
         if args.primary_frame not in args.frames or len(set(args.frames)) != len(args.frames):
             raise ValueError("Select unique frames including the preselected primary")
+        source_path = args.image or args.gif
+        with Image.open(source_path) as source_image:
+            if args.image and getattr(source_image, "n_frames", 1) != 1:
+                raise ValueError("Use --gif with explicit frames for an animated input")
+            crop = args.crop or [0, 0, source_image.width, source_image.height]
+            if not (
+                0 <= crop[0] < crop[2] <= source_image.width
+                and 0 <= crop[1] < crop[3] <= source_image.height
+            ):
+                raise ValueError("Crop must be nonempty and inside the input")
         args.output.mkdir(parents=True, exist_ok=False)
         (args.output / "images").mkdir()
         started = time.monotonic()
@@ -254,19 +314,19 @@ def study_main(argv: list[str]) -> None:
         request = ObservationRequest()
         samples = []
         skipped = []
-        source_hash = sha256(args.gif)
-        with Image.open(args.gif) as gif:
+        source_hash = sha256(source_path)
+        with Image.open(source_path) as gif:
             duration = 0.0
-            for index in range(gif.n_frames):
+            for index in range(getattr(gif, "n_frames", 1)):
                 gif.seek(index)
                 if index in args.frames:
-                    image = gif.convert("RGB").crop(tuple(args.crop))
+                    image = gif.convert("RGB").crop(tuple(crop))
                     sample_id = f"s{len(samples):04d}"
                     location = args.output / "images" / f"{sample_id}.png"
                     image.save(location)
                     parent = StudySample(
                         sample_id=sample_id,
-                        source_id="anisora_portrait_source",
+                        source_id="still_image_source" if args.image else "anisora_portrait_source",
                         source_sha256=source_hash,
                         image=Path("images") / location.name,
                         input_sha256=sha256(location),
@@ -275,6 +335,40 @@ def study_main(argv: list[str]) -> None:
                         timestamp_seconds=duration,
                     )
                     samples.append(parent)
+                    if args.similarity_controls:
+                        fill = image.getpixel((0, 0))
+                        controls = [
+                            (
+                                image.rotate(
+                                    angle, resample=Image.Resampling.BICUBIC, fillcolor=fill
+                                ),
+                                {"kind": "similarity_rotation", "degrees": angle},
+                            )
+                            for angle in (-8, 8)
+                        ]
+                        size = (round(image.width * 0.9), round(image.height * 0.9))
+                        scaled = Image.new("RGB", image.size, fill)
+                        scaled.paste(
+                            image.resize(size, Image.Resampling.BICUBIC),
+                            ((image.width - size[0]) // 2, (image.height - size[1]) // 2),
+                        )
+                        controls.append((scaled, {"kind": "similarity_scale", "scale": 0.9}))
+                        for transformed, transform in controls:
+                            child_id = f"s{len(samples):04d}"
+                            location = args.output / "images" / f"{child_id}.png"
+                            transformed.save(location)
+                            samples.append(
+                                parent.model_copy(
+                                    update={
+                                        "sample_id": child_id,
+                                        "image": Path("images") / location.name,
+                                        "input_sha256": sha256(location),
+                                        "parent_id": sample_id,
+                                        "primary": False,
+                                        "transform": transform,
+                                    }
+                                )
+                            )
                     try:
                         detected = observer.detect(image, request)
                         p = points({"faces": detected})
@@ -286,7 +380,7 @@ def study_main(argv: list[str]) -> None:
                         continue
                     for kind in ("eye_spacing", "nose_mouth", "chin"):
                         for strength in (0.05, 0.1, 0.2):
-                            warped = warp(image, p, kind, strength)
+                            warped = warp(image, p, kind, strength, compact=args.compact_warps)
                             child_id = f"s{len(samples):04d}"
                             location = args.output / "images" / f"{child_id}.png"
                             warped.save(location)
@@ -303,7 +397,11 @@ def study_main(argv: list[str]) -> None:
                                     transform={
                                         "kind": kind,
                                         "strength": strength,
-                                        "method": "inverse_gaussian_interocular_displacement",
+                                        "method": (
+                                            "inverse_compact_elliptic_displacement"
+                                            if args.compact_warps
+                                            else "inverse_gaussian_interocular_displacement"
+                                        ),
                                     },
                                 )
                             )
@@ -314,9 +412,12 @@ def study_main(argv: list[str]) -> None:
             character_id=args.character,
             samples=samples,
             provenance={
-                "source_kind": "public_gif",
-                "crop": args.crop,
+                "source_kind": "still_image" if args.image else "public_gif",
+                "crop": crop,
                 "source_sha256": source_hash,
+                "prepare_code_sha256": sha256(Path(__file__)),
+                "compact_warps": args.compact_warps,
+                "similarity_controls": args.similarity_controls,
                 "warp_skips": skipped,
                 "prepare_seconds": time.monotonic() - started,
                 "models": observer.model_manifest,
@@ -551,26 +652,42 @@ def fit_residuals(
 
 
 def warp(
-    image: Image.Image, points: NDArray[np.float64], kind: str, strength: float
+    image: Image.Image,
+    points: NDArray[np.float64],
+    kind: str,
+    strength: float,
+    *,
+    compact: bool = False,
 ) -> Image.Image:
-    """Smooth inverse Gaussian displacements, scaled by detected interocular span."""
+    """Inverse displacements; compact supports preserve all pixels outside each ellipse."""
     import cv2
 
     left, right = points[[11, 13], :2].mean(0), points[[17, 19], :2].mean(0)
     span = np.linalg.norm(right - left)
+    if not np.isfinite(span) or span <= 1e-5:
+        raise ValueError("Invalid interocular span")
     yy, xx = np.mgrid[: image.height, : image.width].astype(np.float32)
     map_x, map_y = xx.copy(), yy.copy()
     if kind == "eye_spacing":
         controls = [(left, (-strength * span, 0)), (right, (strength * span, 0))]
         sigma = span * 0.24
+        radii = (span * 0.55, span * 0.16)
     elif kind == "nose_mouth":
         controls = [(points[23:28, :2].mean(0), (strength * span, 0))]
         sigma = span * 0.3
-    else:
+        radii = (span * 0.5, span * 0.42)
+    elif kind == "chin":
         controls = [(points[2, :2], (0, strength * span))]
         sigma = span * 0.35
+        radii = (span * 0.65, span * 0.35)
+    else:
+        raise ValueError(f"Unknown local warp: {kind}")
     for (cx, cy), (dx, dy) in controls:
-        influence = np.exp(-((xx - cx) ** 2 + (yy - cy) ** 2) / (2 * sigma**2))
+        if compact:
+            radius_squared = ((xx - cx) / radii[0]) ** 2 + ((yy - cy) / radii[1]) ** 2
+            influence = np.clip(1 - radius_squared, 0, 1) ** 2
+        else:
+            influence = np.exp(-((xx - cx) ** 2 + (yy - cy) ** 2) / (2 * sigma**2))
         map_x -= dx * influence
         map_y -= dy * influence
     return Image.fromarray(

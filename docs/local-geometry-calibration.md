@@ -6,13 +6,21 @@
 
 ## 数据与盲审
 
-复用 [实验脚本](../scripts/observer_geometry_experiment.py) 的 `study` 子命令。生成器读取本地 GIF，固定裁剪、帧号与统计主样本；从可检测的原始帧派生眼距、鼻口、下巴的 5%／10%／20% 位移场。生成标签只说明发生了变换，不代表视觉异常；源片段及图片不提交。
+复用 [实验脚本](../scripts/observer_geometry_experiment.py) 的 `study` 子命令。新一轮已用清晰正脸原图重做为 dataset-front-v1：1 张原图、±8° 旋转和0.9倍缩放三个相似变换对照、眼距／鼻口／下巴各三档变形，共13张，全部等待新人工标签。旧标签不迁移。原图与全部派生图仍只有一个独立来源，旋转／缩放也不冒充真实头部姿态或正常表情动作。
+
+```powershell
+.tools/observer-env/Scripts/python.exe scripts/observer_geometry_experiment.py study prepare --image var/observer-assets/public-anchor.png --character public-frontal-01 --models models/observers --similarity-controls --compact-warps --output var/local-geometry-study/dataset-front-v1
+```
+
+`--image` 与 `--gif` 二选一；静态图默认使用整张图和预选第0帧，可用 `--crop` 指定图内裁剪。`--compact-warps` 使用有限椭圆范围的逆向位移，范围外映射为原坐标；范围内仍可能改变邻近发梢／皮肤，需人工判断。三个部位的椭圆半径按双眼中心距离计，依次为眼部 `(0.55,0.16)`、鼻口 `(0.5,0.42)`、下巴 `(0.65,0.35)`；位移权重为 `max(1-r²,0)²`。5%／10%／20% 是机械位移幅度，不能直接当作视觉异常程度。
+
+旧 GIF 的历史复现入口如下。生成器固定裁剪、帧号与统计主样本，从可检测的原始帧派生变形；源片段及图片不提交。
 
 ```powershell
 .tools/observer-env/Scripts/python.exe scripts/observer_geometry_experiment.py study prepare --gif var/observer-assets/anisora-portrait.gif --crop 700 320 1250 1000 --character anisora-portrait-01 --models models/observers --output var/local-geometry-study/dataset-v1
 ```
 
-产物包括 manifest.json、splits.json、images/ 和自包含 review.html。盲审只显示匿名样本与中文标注控件，隐藏分数、变形参数和关键点叠图；新样本分类初始为“请选择分类”，逐张明确选择后才能导出，无法判断时可选 uncertain。页面顶部汇总分类、未知字段及与分类冲突的参考勾选。填写人工复核者标识并声明实际复核后导出 annotations.json。未复核、助手标签或仍有分歧的标签不能进入正式拟合。人工声明是一份可审计记录，程序不能证明声明人确实完成了复核。
+产物包括 manifest.json、splits.json、images/ 和自包含 review.html。盲审使用完整尺寸无损PNG，点击可放大，只显示匿名样本与中文控件，隐藏分数、变形参数和关键点叠图；新样本分类初始为“请选择分类”，逐张明确选择后才能导出，无法判断时可选 uncertain。页面顶部汇总分类、未知字段及与分类冲突的参考勾选。共同姿态／模式／遮挡可由复核者明确批量选择，分类、程度和异常部位仍逐张填写。填写人工复核者标识并声明实际复核后导出 annotations.json。未复核、助手标签或仍有分歧的标签不能进入正式拟合。人工声明是一份可审计记录，程序不能证明声明人确实完成了复核。
 
 | 字段 | 页面含义与填写规则 |
 | --- | --- |
@@ -38,7 +46,7 @@ uv run --locked python scripts/observer_geometry_experiment.py study review --ma
 uv run --locked python scripts/observer_geometry_experiment.py study review-page --manifest var/local-geometry-study/dataset-v1/reviewed.json --output var/local-geometry-study/dataset-v1/review-cn.html
 ```
 
-页面没有自动保存，填写后仍须导出。同一复核者更正未完成的首版标注时，保留原导出文件，将完整修订导出导入原 manifest.json 并保存为新的 reviewed 文件；不要把同一人的草稿与修订当成两个独立意见叠加，否则原本的 unknown 字段会形成分歧。不同复核者的独立意见仍使用追加／裁决流程。
+页面尝试在当前浏览器按数据哈希暂存字段，并只恢复同一批数据的进度；恢复时仍须重新勾选人工声明。浏览器禁用存储时显示提示，不阻止导出。完成后必须导出文件，浏览器暂存不能代替版本化记录。同一复核者更正未完成的首版标注时，保留原导出文件，将完整修订导出导入原 manifest.json 并保存为新的 reviewed 文件；不要把同一人的草稿与修订当成两个独立意见叠加，否则原本的 unknown 字段会形成分歧。不同复核者的独立意见仍使用追加／裁决流程。
 
 通用输入采用 `StudyManifest`，一个清单只能包含一个 character_id。多来源数据应使用相同结构：每条样本有 sample_id、image、input_sha256、source_id、原始来源 source_sha256、parent_id、预先选定的 primary、帧号/时刻、transform 和 reviews。image 可相对清单或为绝对路径。相同作品集数／原片段／生成运行归为同一个 source_id；同一源哈希不得伪装多个独立来源。派生样本必须继承来源，每个来源最多一个原始统计主样本。
 

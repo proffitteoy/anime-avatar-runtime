@@ -7,6 +7,7 @@ import re
 import runpy
 import sys
 from pathlib import Path
+from types import SimpleNamespace
 
 import numpy as np
 import pytest
@@ -394,6 +395,108 @@ def test_blind_review_page_preserves_human_fields_and_hides_provenance(tmp_path,
     assert 'value="" selected>请选择分类' in unreviewed_page
     assert not re.search(r'<option value="uncertain" selected', unreviewed_page)
     assert "reviews.some(r=>!r.review.label)" in unreviewed_page
+    assert "data:image/png;base64," in unreviewed_page
+    assert "geometry-review:" in unreviewed_page
+    assert 'data-bulk="pose"' in unreviewed_page
+    assert "showModal()" in unreviewed_page
+
+
+def test_prepare_still_image_keeps_source_and_primary_without_auto_labels(tmp_path, monkeypatch):
+    image = tmp_path / "image.png"
+    Image.new("RGB", (80, 80), "blue").save(image)
+    monkeypatch.setattr(sys, "argv", ["script", "study"])
+    script = runpy.run_path(
+        str(Path(__file__).parents[1] / "scripts/observer_geometry_experiment.py")
+    )
+    cli = script["study_main"]
+
+    class SyntheticObserver:
+        model_manifest = {"synthetic_test_fixture": True}
+
+        def __init__(self, *_args):
+            pass
+
+        def detect(self, *_args):
+            return [{"keypoints": landmarks().tolist()}]
+
+    monkeypatch.setitem(cli.__globals__, "OfflineObserver", SyntheticObserver)
+    monkeypatch.setitem(cli.__globals__, "warp", lambda image, *_args, **_kwargs: image.copy())
+    output = tmp_path / "prepared"
+    args = [
+        "prepare",
+        "--image",
+        str(image),
+        "--character",
+        "synthetic_test_fixture",
+        "--models",
+        str(tmp_path),
+        "--output",
+        str(output),
+        "--similarity-controls",
+        "--compact-warps",
+    ]
+    cli(args)
+    manifest = StudyManifest.model_validate_json((output / "manifest.json").read_bytes())
+    assert len(manifest.samples) == 13
+    assert sum(s.primary for s in manifest.samples) == 1
+    assert manifest.samples[0].input_sha256 == hashlib.sha256(image.read_bytes()).hexdigest()
+    assert all(s.parent_id == "s0000" and not s.primary for s in manifest.samples[1:])
+    assert len({s.source_id for s in manifest.samples}) == 1
+    assert all(not s.reviews for s in manifest.samples)
+    assert manifest.provenance["crop"] == [0, 0, 80, 80]
+    assert manifest.provenance["source_kind"] == "still_image"
+    assert all(
+        s.transform["method"] == "inverse_compact_elliptic_displacement"
+        for s in manifest.samples[4:]
+    )
+    assert set(split_sources(manifest).values()) == {"development"}
+    with pytest.raises(FileExistsError):
+        cli(args)
+    invalid_output = tmp_path / "invalid"
+    bad_args = [*args]
+    bad_args[bad_args.index(str(output))] = str(invalid_output)
+    with pytest.raises(ValueError, match="inside the input"):
+        cli([*bad_args, "--crop", "-1", "0", "80", "80"])
+    assert not invalid_output.exists()
+    with pytest.raises(ValueError, match="only frame 0"):
+        cli([*bad_args, "--frames", "0", "5"])
+    assert not invalid_output.exists()
+
+
+@pytest.mark.parametrize("kind", ["eye_spacing", "nose_mouth", "chin"])
+def test_compact_warp_preserves_distant_pixels_and_has_no_foldovers(kind, monkeypatch):
+    monkeypatch.setattr(sys, "argv", ["script", "study"])
+    script = runpy.run_path(
+        str(Path(__file__).parents[1] / "scripts/observer_geometry_experiment.py")
+    )
+    maps = []
+
+    def capture_maps(image, map_x, map_y, *_args, **_kwargs):
+        maps.append((map_x, map_y))
+        return image  # Tests the mapping, not interpolation or model accuracy.
+
+    monkeypatch.setitem(
+        sys.modules,
+        "cv2",
+        SimpleNamespace(remap=capture_maps, INTER_LINEAR=1, BORDER_REFLECT=2),
+    )
+    p = landmarks()
+    p[:, :2] = p[:, :2] * 20 + 40
+    image = Image.new("RGB", (80, 80), "blue")
+    yy, xx = np.mgrid[:80, :80]
+    warp = script["warp"]
+    warp(image, p, kind, 0, compact=True)
+    assert np.array_equal(maps[-1][0], xx) and np.array_equal(maps[-1][1], yy)
+    for strength in (0.05, 0.1, 0.2):
+        warp(image, p, kind, strength, compact=True)
+        mx, my = maps[-1]
+        assert np.array_equal(mx[:10], xx[:10]) and np.array_equal(my[:10], yy[:10])
+        assert np.any(mx != xx) or np.any(my != yy)
+        dx_dy, dx_dx = np.gradient(mx)
+        dy_dy, dy_dx = np.gradient(my)
+        assert np.min(dx_dx * dy_dy - dx_dy * dy_dx) > 0
+    warp(image, p, kind, 0.2)
+    assert np.any(maps[-1][0][:10] != xx[:10]) or np.any(maps[-1][1][:10] != yy[:10])
 
 
 def test_freeze_never_reads_calibration_or_validation_labels_for_references():
