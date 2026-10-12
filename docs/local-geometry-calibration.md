@@ -6,7 +6,7 @@
 
 ## 数据与盲审
 
-复用 [实验脚本](../scripts/observer_geometry_experiment.py) 的 `study` 子命令。新一轮已用清晰正脸原图重做为 dataset-front-v1：1 张原图、±8° 旋转和0.9倍缩放三个相似变换对照、眼距／鼻口／下巴各三档变形，共13张，全部等待新人工标签。旧标签不迁移。原图与全部派生图仍只有一个独立来源，旋转／缩放也不冒充真实头部姿态或正常表情动作。
+复用 [实验脚本](../scripts/observer_geometry_experiment.py) 的 `study` 子命令。新一轮已用清晰正脸原图重做为 dataset-front-v1：1 张原图、±8° 旋转和0.9倍缩放三个相似变换对照、眼距／鼻口／下巴各三档变形，共13张。该批人工盲测已完成（正常9、畸变4、不确定0），正常原图获准作为参考；最新对照见 [报告第八节](./reports/2026-10-12-local-geometry/README.md#8-完成人工盲测后的局部几何对照)。旧标签没有迁移。原图与全部派生图仍只有一个独立来源，旋转／缩放也不冒充真实头部姿态或正常表情动作。
 
 ```powershell
 .tools/observer-env/Scripts/python.exe scripts/observer_geometry_experiment.py study prepare --image var/observer-assets/public-anchor.png --character public-frontal-01 --models models/observers --similarity-controls --compact-warps --output var/local-geometry-study/dataset-front-v1
