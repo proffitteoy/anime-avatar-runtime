@@ -1,0 +1,176 @@
+{
+  "schema_version": 1,
+  "stage": "calibration",
+  "frozen_hash": "0923785de9a7fc4800997c7482715c964ad796b8b9ffe6382e8a86fb8f546de9",
+  "profiles": {
+    "wls": {
+      "front": {
+        "threshold": null,
+        "rank": 1,
+        "n_sources": 0,
+        "missing_to_minimum": 39,
+        "masks": [],
+        "status": "insufficient_data"
+      },
+      "left_turn": {
+        "threshold": null,
+        "rank": 1,
+        "n_sources": 0,
+        "missing_to_minimum": 39,
+        "masks": [],
+        "status": "insufficient_data"
+      },
+      "right_turn": {
+        "threshold": null,
+        "rank": 1,
+        "n_sources": 0,
+        "missing_to_minimum": 39,
+        "masks": [],
+        "status": "insufficient_data"
+      },
+      "down": {
+        "threshold": null,
+        "rank": 1,
+        "n_sources": 0,
+        "missing_to_minimum": 39,
+        "masks": [],
+        "status": "insufficient_data"
+      },
+      "up": {
+        "threshold": null,
+        "rank": 1,
+        "n_sources": 0,
+        "missing_to_minimum": 39,
+        "masks": [],
+        "status": "insufficient_data"
+      }
+    },
+    "single_local": {
+      "front": {
+        "threshold": null,
+        "rank": 1,
+        "n_sources": 0,
+        "missing_to_minimum": 39,
+        "masks": [],
+        "status": "insufficient_data"
+      },
+      "left_turn": {
+        "threshold": null,
+        "rank": 1,
+        "n_sources": 0,
+        "missing_to_minimum": 39,
+        "masks": [],
+        "status": "insufficient_data"
+      },
+      "right_turn": {
+        "threshold": null,
+        "rank": 1,
+        "n_sources": 0,
+        "missing_to_minimum": 39,
+        "masks": [],
+        "status": "insufficient_data"
+      },
+      "down": {
+        "threshold": null,
+        "rank": 1,
+        "n_sources": 0,
+        "missing_to_minimum": 39,
+        "masks": [],
+        "status": "insufficient_data"
+      },
+      "up": {
+        "threshold": null,
+        "rank": 1,
+        "n_sources": 0,
+        "missing_to_minimum": 39,
+        "masks": [],
+        "status": "insufficient_data"
+      }
+    },
+    "pose_local": {
+      "front": {
+        "threshold": null,
+        "rank": 1,
+        "n_sources": 0,
+        "missing_to_minimum": 39,
+        "masks": [],
+        "status": "insufficient_data"
+      },
+      "left_turn": {
+        "threshold": null,
+        "rank": 1,
+        "n_sources": 0,
+        "missing_to_minimum": 39,
+        "masks": [],
+        "status": "insufficient_data"
+      },
+      "right_turn": {
+        "threshold": null,
+        "rank": 1,
+        "n_sources": 0,
+        "missing_to_minimum": 39,
+        "masks": [],
+        "status": "insufficient_data"
+      },
+      "down": {
+        "threshold": null,
+        "rank": 1,
+        "n_sources": 0,
+        "missing_to_minimum": 39,
+        "masks": [],
+        "status": "insufficient_data"
+      },
+      "up": {
+        "threshold": null,
+        "rank": 1,
+        "n_sources": 0,
+        "missing_to_minimum": 39,
+        "masks": [],
+        "status": "insufficient_data"
+      }
+    },
+    "oracle": {
+      "front": {
+        "threshold": null,
+        "rank": 1,
+        "n_sources": 0,
+        "missing_to_minimum": 39,
+        "masks": [],
+        "status": "insufficient_data"
+      },
+      "left_turn": {
+        "threshold": null,
+        "rank": 1,
+        "n_sources": 0,
+        "missing_to_minimum": 39,
+        "masks": [],
+        "status": "insufficient_data"
+      },
+      "right_turn": {
+        "threshold": null,
+        "rank": 1,
+        "n_sources": 0,
+        "missing_to_minimum": 39,
+        "masks": [],
+        "status": "insufficient_data"
+      },
+      "down": {
+        "threshold": null,
+        "rank": 1,
+        "n_sources": 0,
+        "missing_to_minimum": 39,
+        "masks": [],
+        "status": "insufficient_data"
+      },
+      "up": {
+        "threshold": null,
+        "rank": 1,
+        "n_sources": 0,
+        "missing_to_minimum": 39,
+        "masks": [],
+        "status": "insufficient_data"
+      }
+    }
+  },
+  "artifact_hash": "ee90703ef6c5ba718d0012f23c1861832d21c27607e7d4dbe6a5227482e31aa8"
+}

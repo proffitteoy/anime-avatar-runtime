@@ -5,9 +5,12 @@ not change Runtime scoring. Local warps are controlled inputs, not generated fai
 """
 
 import argparse
+import base64
+import html
 import importlib.metadata
 import json
 import platform
+import sys
 import time
 from pathlib import Path
 from typing import Any
@@ -27,6 +30,367 @@ from anime_avatar_runtime.observers import (
     read_image,
     sha256,
 )
+
+
+def study_main(argv: list[str]) -> None:
+    """Manifest-driven stages; legacy image comparison remains available below."""
+    from anime_avatar_runtime.local_geometry import (
+        POSES,
+        REGIONS,
+        Review,
+        StudyManifest,
+        StudySample,
+        calibrate_study,
+        data_hash,
+        evaluate_study,
+        feature_variants,
+        freeze_study,
+        implementation_hash,
+        points,
+        split_sources,
+        verify_extraction,
+    )
+
+    parser = argparse.ArgumentParser(description="Offline, human-reviewed geometry study")
+    commands = parser.add_subparsers(dest="stage", required=True)
+    prepare = commands.add_parser("prepare")
+    prepare.add_argument("--gif", type=Path, required=True)
+    prepare.add_argument("--crop", nargs=4, type=int, required=True)
+    prepare.add_argument("--frames", nargs="+", type=int, default=[0, 5, 10, 15, 25, 36, 51, 56])
+    prepare.add_argument("--primary-frame", type=int, default=0)
+    prepare.add_argument("--character", required=True)
+    prepare.add_argument("--models", type=Path, required=True)
+    prepare.add_argument("--output", type=Path, required=True)
+    review = commands.add_parser("review")
+    review.add_argument("--manifest", type=Path, required=True)
+    review.add_argument("--annotations", type=Path, required=True)
+    review.add_argument("--output", type=Path, required=True)
+    for stage in ("extract", "explore", "freeze", "calibrate", "evaluate"):
+        cmd = commands.add_parser(stage)
+        cmd.add_argument("--manifest", type=Path, required=True)
+        cmd.add_argument("--output", type=Path, required=True)
+        if stage == "extract":
+            cmd.add_argument("--models", type=Path, required=True)
+        else:
+            cmd.add_argument("--extraction", type=Path, required=True)
+        if stage == "explore":
+            cmd.add_argument("--reference", required=True)
+        if stage in {"calibrate", "evaluate"}:
+            cmd.add_argument("--frozen", type=Path, required=True)
+        if stage == "evaluate":
+            cmd.add_argument("--calibration", type=Path, required=True)
+        if stage == "freeze":
+            cmd.add_argument(
+                "--candidate", choices=["single_local", "pose_local"], default="pose_local"
+            )
+    args = parser.parse_args(argv)
+
+    def save(path: Path, value: Any) -> None:
+        if path.exists():
+            raise FileExistsError(f"Do not overwrite a study artifact: {path}")
+        path.write_text(
+            json.dumps(value, ensure_ascii=False, allow_nan=False, indent=2) + "\n",
+            encoding="utf-8",
+        )
+
+    if args.stage == "prepare":
+        if args.primary_frame not in args.frames or len(set(args.frames)) != len(args.frames):
+            raise ValueError("Select unique frames including the preselected primary")
+        args.output.mkdir(parents=True, exist_ok=False)
+        (args.output / "images").mkdir()
+        started = time.monotonic()
+        observer = OfflineObserver(args.models, args.output / "cache")
+        request = ObservationRequest()
+        samples = []
+        skipped = []
+        source_hash = sha256(args.gif)
+        with Image.open(args.gif) as gif:
+            duration = 0.0
+            for index in range(gif.n_frames):
+                gif.seek(index)
+                if index in args.frames:
+                    image = gif.convert("RGB").crop(tuple(args.crop))
+                    sample_id = f"s{len(samples):04d}"
+                    location = args.output / "images" / f"{sample_id}.png"
+                    image.save(location)
+                    parent = StudySample(
+                        sample_id=sample_id,
+                        source_id="anisora_portrait_source",
+                        source_sha256=source_hash,
+                        image=Path("images") / location.name,
+                        input_sha256=sha256(location),
+                        primary=index == args.primary_frame,
+                        frame_index=index,
+                        timestamp_seconds=duration,
+                    )
+                    samples.append(parent)
+                    try:
+                        detected = observer.detect(image, request)
+                        p = points({"faces": detected})
+                        if p is None or np.any(p[[11, 13, 17, 19], 2] < 0.3):
+                            raise ValueError("Unavailable eyes for deterministic local warp")
+                    except Exception as exc:
+                        skipped.append({"sample_id": sample_id, "reason": str(exc)})
+                        duration += gif.info.get("duration", 0) / 1000
+                        continue
+                    for kind in ("eye_spacing", "nose_mouth", "chin"):
+                        for strength in (0.05, 0.1, 0.2):
+                            warped = warp(image, p, kind, strength)
+                            child_id = f"s{len(samples):04d}"
+                            location = args.output / "images" / f"{child_id}.png"
+                            warped.save(location)
+                            samples.append(
+                                StudySample(
+                                    sample_id=child_id,
+                                    source_id=parent.source_id,
+                                    source_sha256=source_hash,
+                                    image=Path("images") / location.name,
+                                    input_sha256=sha256(location),
+                                    parent_id=sample_id,
+                                    frame_index=index,
+                                    timestamp_seconds=duration,
+                                    transform={
+                                        "kind": kind,
+                                        "strength": strength,
+                                        "method": "inverse_gaussian_interocular_displacement",
+                                    },
+                                )
+                            )
+                duration += gif.info.get("duration", 0) / 1000
+        if not samples or not any(s.primary for s in samples):
+            raise ValueError("Selected frame/primary does not exist in input")
+        manifest = StudyManifest(
+            character_id=args.character,
+            samples=samples,
+            provenance={
+                "source_kind": "public_gif",
+                "crop": args.crop,
+                "source_sha256": source_hash,
+                "warp_skips": skipped,
+                "prepare_seconds": time.monotonic() - started,
+                "models": observer.model_manifest,
+                "seed": 42,
+            },
+        )
+        save(args.output / "manifest.json", manifest.model_dump(mode="json"))
+        save(args.output / "splits.json", split_sources(manifest))
+        # Blind page contains neither scores, transform names nor landmark overlays.
+        cards = []
+        ordered = list(samples)
+        np.random.default_rng(42).shuffle(ordered)
+        for s in ordered:
+            image = read_image((args.output / s.image).read_bytes())
+            image.thumbnail((360, 420))
+            import io
+
+            buffer = io.BytesIO()
+            image.save(buffer, format="JPEG")
+            encoded = base64.b64encode(buffer.getvalue()).decode()
+            fields = {
+                "label": ["uncertain", "normal", "geometry_anomaly"],
+                "pose": ["unknown", *POSES, "unsupported"],
+                "mode": ["unknown", "idle", "interaction"],
+                "occlusion": ["unknown", "none", "mild", "severe"],
+                "severity": ["unknown", "none", "mild", "moderate", "severe"],
+            }
+            controls = "".join(
+                f'<label>{key}<select data-field="{key}">'
+                + "".join(f"<option>{v}</option>" for v in values)
+                + "</select></label>"
+                for key, values in fields.items()
+            )
+            controls += "".join(
+                f'<label><input type="checkbox" data-part="{r}">{r}</label>' for r in REGIONS
+            )
+            controls += '<label><input type="checkbox" data-anchor>确认作为正常参考</label>'
+            cards.append(
+                f'<section data-id="{s.sample_id}"><h2>{s.sample_id}</h2>'
+                f'<img src="data:image/jpeg;base64,{encoded}">{controls}</section>'
+            )
+        page = (
+            '<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>局部几何盲审</title>'
+            "<style>body{font:16px sans-serif;background:#edf1f3;margin:25px}"
+            "main{display:flex;flex-wrap:wrap;gap:20px}"
+            "section{background:white;padding:18px;width:360px}"
+            "img{max-width:100%}label{display:block;margin:8px}button{padding:12px}</style>"
+            "<h1>单角色局部几何盲审</h1><p>请选择正常、畸变或不确定；不确定是有效标签。参考确认仅适用于正常原图。</p>"
+            '<label>人工复核者标识<input id="reviewer"></label>'
+            '<label><input type="checkbox" id="human">我已人工查看并确认这些标注</label>'
+            '<button onclick="download()">导出 annotations.json</button><main>'
+            + "".join(cards)
+            + "</main><script>function download(){"
+            'const reviewer=document.getElementById("reviewer").value.trim();'
+            'if(!reviewer||!document.getElementById("human").checked){'
+            'alert("请填写标识并确认人工复核");return;}'
+            'const reviews=Array.from(document.querySelectorAll("section")).map(s=>{'
+            'const review={reviewer,kind:"human",'
+            'parts:Array.from(s.querySelectorAll("[data-part]:checked")).map(p=>p.dataset.part),'
+            'approve_anchor:s.querySelector("[data-anchor]").checked};'
+            's.querySelectorAll("select").forEach(e=>review[e.dataset.field]=e.value);'
+            "return {sample_id:s.dataset.id,review};});"
+            "const payload={schema_version:1,data_hash:"
+            + json.dumps(data_hash(manifest))
+            + ',reviews};const a=document.createElement("a");'
+            "a.href=URL.createObjectURL(new Blob([JSON.stringify(payload,null,2)],"
+            '{type:"application/json"}));a.download="annotations.json";a.click();'
+            "URL.revokeObjectURL(a.href);}</script></html>"
+        )
+        (args.output / "review.html").write_text(page, encoding="utf-8")
+        print(f"Prepared {len(samples)} samples, {len(skipped)} warp skips; labels pending human")
+        return
+
+    manifest = StudyManifest.model_validate_json(args.manifest.read_bytes())
+    for s in manifest.samples:
+        location = s.image if s.image.is_absolute() else args.manifest.parent / s.image
+        if sha256(location) != s.input_sha256:
+            raise ValueError(f"Input changed: {s.sample_id}")
+    if args.stage == "review":
+        if args.output.parent.resolve() != args.manifest.parent.resolve():
+            raise ValueError(
+                "Save reviewed manifests beside the original to preserve relative paths"
+            )
+        annotations = json.loads(args.annotations.read_bytes())
+        if annotations["data_hash"] != data_hash(manifest):
+            raise ValueError("Annotations belong to another dataset")
+        updates = {item["sample_id"]: item for item in annotations["reviews"]}
+        if len(updates) != len(annotations["reviews"]) or not set(updates) <= {
+            s.sample_id for s in manifest.samples
+        }:
+            raise ValueError("Duplicate or unknown annotation IDs")
+        value = manifest.model_dump(mode="json")
+        for sample in value["samples"]:
+            if sample["sample_id"] in updates:
+                item = updates[sample["sample_id"]]
+                verified = Review.model_validate(item["review"])
+                if verified.kind != "human":
+                    raise ValueError("Blind review import requires an explicit human declaration")
+                if item.get("adjudication"):
+                    sample["adjudication"] = verified.model_dump()
+                else:
+                    sample["reviews"].append(verified.model_dump())
+        reviewed = StudyManifest.model_validate(value)
+        save(args.output, reviewed.model_dump(mode="json"))
+        return
+    args.output.mkdir(parents=True, exist_ok=False)
+    if args.stage == "extract":
+        started = time.monotonic()
+        observer = OfflineObserver(args.models, args.output / "cache")
+        load_seconds = time.monotonic() - started
+        records = []
+        (args.output / "features").mkdir()
+        for s in manifest.samples:
+            image = read_image(
+                (s.image if s.image.is_absolute() else args.manifest.parent / s.image).read_bytes()
+            )
+            record: dict[str, Any] = {
+                "sample_id": s.sample_id,
+                "input_sha256": s.input_sha256,
+                "faces": [],
+                "errors": {},
+            }
+            begin = time.monotonic()
+            try:
+                record["faces"] = observer.detect(image, ObservationRequest())
+            except Exception as exc:
+                record["errors"]["geometry"] = str(exc)
+            record["geometry_seconds"] = time.monotonic() - begin
+            begin = time.monotonic()
+            try:
+                feature = observer.extract(image)
+                location = args.output / "features" / f"{s.sample_id}.npy"
+                np.save(location, feature, allow_pickle=False)
+                record["identity_feature_sha256"] = sha256(location)
+            except Exception as exc:
+                record["errors"]["identity"] = str(exc)
+            record["identity_seconds"] = time.monotonic() - begin
+            records.append(record)
+            print(s.sample_id, "faces", len(record["faces"]), flush=True)
+        save(
+            args.output / "extraction.json",
+            {
+                "schema_version": 1,
+                "data_hash": data_hash(manifest),
+                "models": observer.model_manifest,
+                "implementation_hash": implementation_hash(),
+                "records": records,
+                "load_seconds": load_seconds,
+                "total_seconds": time.monotonic() - started,
+                "environment": {
+                    "python": platform.python_version(),
+                    "platform": platform.platform(),
+                    "processor": platform.processor(),
+                    "device": "cpu",
+                    "threads": 2,
+                },
+            },
+        )
+        return
+    extracted = json.loads(args.extraction.read_bytes())
+    verify_extraction(manifest, extracted)
+    if args.stage == "explore":
+        reference = next(s for s in manifest.samples if s.sample_id == args.reference)
+        records = {r["sample_id"]: r for r in extracted["records"]}
+        p = points(records[reference.sample_id])
+        if p is None or reference.transform is not None:
+            raise ValueError("Exploratory reference must be a detectable original")
+        diagnostic = {
+            "references": {"front": {"sample_id": reference.sample_id, "points": p.tolist()}},
+            "pose_gates": {},
+        }
+        rows = [
+            {
+                "sample_id": s.sample_id,
+                "parent_id": s.parent_id,
+                "frame_index": s.frame_index,
+                "transform": s.transform,
+                "input_sha256": s.input_sha256,
+                "metrics": feature_variants(points(records[s.sample_id]), diagnostic, "front"),
+            }
+            for s in manifest.samples
+        ]
+        save(
+            args.output / "diagnostics.json",
+            {
+                "diagnostic_only": True,
+                "not_human_ground_truth": True,
+                "reference_id": reference.sample_id,
+                "data_hash": data_hash(manifest),
+                "models": extracted["models"],
+                "rows": rows,
+            },
+        )
+        return
+    if args.stage == "freeze":
+        save(args.output / "frozen.json", freeze_study(manifest, extracted, args.candidate))
+        return
+    frozen = json.loads(args.frozen.read_bytes())
+    if args.stage == "calibrate":
+        save(args.output / "calibration.json", calibrate_study(manifest, extracted, frozen))
+        return
+    calibrated = json.loads(args.calibration.read_bytes())
+    report = evaluate_study(manifest, extracted, frozen, calibrated)
+    save(args.output / "evaluation.json", report)
+    table = "\n".join(
+        f"| {v} | {row['valid_normal_sources']} | {row['fpr_upper95']} | "
+        f"{row['normal_coverage']} | {row['recall']} |"
+        for v, row in report["summary"].items()
+    )
+    text = (
+        "# 单角色局部几何独立评估\n\n"
+        f"角色：{manifest.character_id}；来源分组：{report['source_counts']}。\n\n"
+        f"人工标注状态：{report['human_review_counts']}。\n\n"
+        "| 方法 | 有效正常独立来源 | 误报上界95% | 完整判定覆盖率 | 畸变检出率 |\n"
+        "| --- | --- | --- | --- | --- |\n" + table + "\n\n"
+        "null 表示没有可估计分母。异常 unknown 计为未检出；不确定标签不充当正常标签。\n\n"
+        "采用条件与分层数值见 evaluation.json。数据不足时不授予 5% 验收，不接 Runtime/恢复。\n"
+    )
+    (args.output / "report.md").write_text(text, encoding="utf-8")
+    (args.output / "report.html").write_text(
+        '<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>独立评估</title><pre>'
+        + html.escape(text)
+        + "</pre></html>",
+        encoding="utf-8",
+    )
 
 
 def fit_residuals(
@@ -118,6 +482,9 @@ def warp(
 
 
 def main() -> None:
+    if len(sys.argv) > 1 and sys.argv[1] == "study":
+        study_main(sys.argv[2:])
+        return
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--models", type=Path, required=True)
     parser.add_argument("--anchor", type=Path, required=True)

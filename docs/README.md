@@ -12,6 +12,7 @@
 | [Runtime 开发底座](./runtime-foundation.md) | 共享配置/契约、任务生命周期、API、存储边界与各 Issue 的接入点 |
 | [身份与几何观测](./observers.md) | #13/#14 独立 CPU 环境、模型与许可、特征/对齐、HTTP/CLI、曲线叠图与真实实验 |
 | [#13/#14 研究报告](./reports/2026-10-12-observers/README.md) | 实测结果、关键点示意、缺测曲线、逐项验收与公开数值证据 |
+| [局部几何与统计校准](./local-geometry-calibration.md) | 单角色盲审、姿态参考、来源分组、冻结／校准／评估与未验收边界 |
 
 ## 原始设计方案
 

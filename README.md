@@ -118,6 +118,7 @@ uv build
 - [Runtime 底座与后续开发入口](./docs/runtime-foundation.md)
 - [身份与几何观测、安装和实测](./docs/observers.md)
 - [#13/#14 研究报告与数值证据](./docs/reports/2026-10-12-observers/README.md)
+- [单角色局部几何、盲审与统计校准](./docs/local-geometry-calibration.md)
 - [冷启动流程与逐项执行记录](./docs/冷启动.md)
 - [文档索引](./docs/README.md)
 - [01：生成与长期状态保持](./01-avatar-generation-and-state-preservation.md)

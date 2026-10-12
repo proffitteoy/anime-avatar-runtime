@@ -123,6 +123,8 @@ pause/close 主动发出独立的观测取消信号，锁外等待拥有的进�
 
 真实最小推理测试为显式 opt-in；给定配置后缺少模型或检测失败会 fail，不会悄悄 skip。参考图片须是已知近正脸且可输出 28 点的输入：
 
+后续离线研究提供 [单角色局部几何、姿态参考与统计校准](./local-geometry-calibration.md)，采用人工盲审、来源分组和独立验证；它不修改本页的 HTTP 判定与 Runtime 几何计算。
+
 ```powershell
 $env:OBSERVER_TEST_PYTHON = Join-Path $PWD '.tools/observer-env/Scripts/python.exe'
 $env:OBSERVER_TEST_MODELS = Join-Path $PWD 'models/observers'
