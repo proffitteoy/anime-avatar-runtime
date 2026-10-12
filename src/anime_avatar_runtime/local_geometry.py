@@ -145,10 +145,16 @@ def resolved_review(sample: StudySample) -> Json:
         return sample.adjudication.model_dump() | {"review_status": "adjudicated"}
     if not human:
         return {"label": "uncertain", "review_status": "pending_human"}
-    comparable = [{k: v for k, v in r.model_dump().items() if k != "reviewer"} for r in human]
+    comparable = [
+        {k: v for k, v in r.model_dump().items() if k not in {"reviewer", "approve_anchor"}}
+        for r in human
+    ]
     if any(r != comparable[0] for r in comparable[1:]):
         return {"label": "uncertain", "review_status": "disagreement"}
-    return human[0].model_dump() | {"review_status": "confirmed"}
+    return human[0].model_dump() | {
+        "review_status": "confirmed",
+        "approve_anchor": all(r.approve_anchor for r in human),
+    }
 
 
 def in_scope(review: Json) -> bool:
@@ -800,8 +806,8 @@ def evaluate_study(
             and summary["normal_coverage"] >= 0.8
             and baseline["fpr_upper95"] is not None
             and baseline["fpr_upper95"] <= 0.05
-            and real_bootstrap["interval95"] is not None
-            and real_bootstrap["interval95"][0] > 0
+            and bootstrap["interval95"] is not None
+            and bootstrap["interval95"][0] > 0
         )
         selected = variant == frozen["candidate_variant"]
         adoption[variant] = {
@@ -812,7 +818,8 @@ def evaluate_study(
             "bootstrap_real_anomalies": real_bootstrap,
             "requirements": (
                 "FPR upper95 <=5%; coverage>=80%; calibrated WLS comparator; "
-                "positive paired source interval on human-reviewed real anomalies"
+                "positive paired source interval on human-reviewed anomalies; "
+                "synthetic and real evidence reported separately"
             ),
         }
     strata: Json = {}

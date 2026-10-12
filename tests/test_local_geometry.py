@@ -143,6 +143,9 @@ def test_human_disagreement_and_assistant_labels_cannot_train():
     assert resolved_review(s)["review_status"] == "disagreement"
     s = s.model_copy(update={"adjudication": review()})
     assert resolved_review(s)["review_status"] == "adjudicated"
+    s = sample(1, reviews=[review(approve_anchor=True), review(approve_anchor=False)])
+    assert resolved_review(s)["review_status"] == "confirmed"
+    assert resolved_review(s)["approve_anchor"] is False
 
 
 def test_source_splits_are_deterministic_and_derived_samples_inherit():
@@ -369,3 +372,50 @@ def test_freeze_never_reads_calibration_or_validation_labels_for_references():
     assert before["normalizers"] == after["normalizers"]
     assert before["labels_hash"] != after["labels_hash"]
     assert digest(before) != digest(after)
+
+
+def test_adoption_uses_reviewed_anomalies_and_separately_reports_real_evidence():
+    # Controlled fixture, not an actual human dataset or accuracy result.
+    manifest, extracted = corpus()
+    splits = split_sources(manifest)
+    originals = [s for s in manifest.samples if splits[s.source_id] == "validation"][:10]
+    children = []
+    for i, parent in enumerate(originals):
+        child = parent.model_copy(
+            update={
+                "sample_id": f"synthetic_child{i}",
+                "parent_id": parent.sample_id,
+                "primary": False,
+                "input_sha256": hash_id(f"synthetic_child{i}"),
+                "transform": {"kind": "nose_mouth", "strength": 0.2},
+                "reviews": [
+                    review().model_copy(
+                        update={
+                            "label": "geometry_anomaly",
+                            "parts": ["nose"],
+                            "severity": "severe",
+                        }
+                    )
+                ],
+            }
+        )
+        children.append(child)
+        p = landmarks()
+        p[23, 0] += 0.8
+        extracted["records"].append(
+            {
+                "sample_id": child.sample_id,
+                "input_sha256": child.input_sha256,
+                "faces": [{"keypoints": p.tolist()}],
+            }
+        )
+    manifest = StudyManifest(
+        character_id=manifest.character_id, samples=[*manifest.samples, *children]
+    )
+    extracted["data_hash"] = data_hash(manifest)
+    frozen = freeze_study(manifest, extracted, candidate_variant="single_local")
+    calibrated = calibrate_study(manifest, extracted, frozen)
+    report = evaluate_study(manifest, extracted, frozen, calibrated)
+    assert report["adoption"]["single_local"]["adopt"] is True
+    assert report["adoption"]["single_local"]["bootstrap_real_anomalies"]["interval95"] is None
+    assert report["strata"]["synthetic"]["True"]["single_local"]["recall"] == 1

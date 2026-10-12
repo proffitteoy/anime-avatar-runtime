@@ -6,7 +6,7 @@
   "labels_hash": "7dc395210a2afe3fc6836dd96d7586f9b9392d3dd313e47af79b4084c7bff277",
   "extraction_hash": "44b2400be6965e65e2eeb46372ca00b0e7b403002826c2d7864542d8e5f479ff",
   "model_hash": "062cb4e53ecb0686109cbbd7f884414f0376fbada659fe10c09e5be02e677f88",
-  "implementation_hash": "f81691154b360bab6027323a60bbbf5487e6c61870a71658ba022bdccfb49afd",
+  "implementation_hash": "6be7e1755eba8b7b1a67128cc15c4c1bb8250d21c10e3855bdd4a3dc9cc1dc12",
   "policy": {
     "min_confidence": 0.3,
     "mad_floor": 1e-06,
@@ -53,5 +53,5 @@
       "up": {}
     }
   },
-  "artifact_hash": "0923785de9a7fc4800997c7482715c964ad796b8b9ffe6382e8a86fb8f546de9"
+  "artifact_hash": "4cc1a17a4665935a57d97a2b67b512c65cdeac07e96ae83ec6afe6b261f159fb"
 }
