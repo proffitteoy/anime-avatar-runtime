@@ -110,7 +110,7 @@ uv build
 
 源码在 src/anime_avatar_runtime：config.py 统一配置，contracts.py 定义共享类型，runtime.py 编排单任务与生命周期，api.py 处理 HTTP，state.py 负责参考状态持久化，skyreels.py 执行独立生成后端，observers.py 执行独立 CPU 观测和几何计算，cli.py 提供命令入口。tests/ 覆盖输入与状态损坏、并发互斥、失败、取消、重启、产物保护和观测算法。[check 工作流](./.github/workflows/check.yml) 在 push 和 pull_request 时执行 Windows/Linux 检查；对应提交的实际结果见 [GitHub Actions](https://github.com/proffitteoy/anime-avatar-runtime/actions/workflows/check.yml)。
 
-本次本地验收：55 项测试通过，Ruff、mypy、wheel/sdist 构建及实际 CPU 观测 HTTP 调用通过；细节与初始冷启动记录见 [执行记录](./docs/冷启动.md)，模型与公开视频实测见 [观测说明](./docs/observers.md)。契约、控制和算法自动测试不运行 GPU 模型；真实 CPU 模型验证单独记录。官方参数对照测试使用已核对 blob SHA 的源码缓存；全新 checkout 没有上游源码时该项明确 skip。其余常规测试不需要模型或联网。
+本次修订本地验收：69 项测试通过、1 项真实模型测试默认跳过，Ruff、mypy 和 wheel/sdist 构建通过；显式配置后，真实 CPU 最小推理测试另行通过，并完成真实观测子进程的暂停取消检查。身份候选与主体有效性分开记录，观测锁外执行、按状态修订验收；详见 [PR #38 优化与局部几何对照报告](./docs/reports/2026-10-12-observers/revision-p0.md)。初始记录见 [执行记录](./docs/冷启动.md)，模型与公开视频实测见 [观测说明](./docs/observers.md)。契约、控制和算法自动测试不运行 GPU 模型；真实 CPU 模型验证单独记录。官方参数对照测试使用已核对 blob SHA 的源码缓存；全新 checkout 没有上游源码时该项明确 skip。其余常规测试不需要模型或联网。
 
 ## 文档
 

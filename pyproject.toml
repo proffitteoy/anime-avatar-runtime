@@ -23,9 +23,12 @@ observers = [
   "onnxruntime>=1.20,<2",
   "torch==2.5.1",
   "torchvision==0.20.1",
-  "opencv-contrib-python>=4.10,<4.12",
-  "opencv-python-headless>=4.10,<4.12",
+  "opencv-contrib-python-headless==4.11.0.86",
 ]
+
+[tool.uv]
+# Both upstream projects request another cv2 provider; install one contrib/headless wheel.
+exclude-dependencies = ["opencv-python", "opencv-python-headless", "opencv-contrib-python"]
 
 [[tool.uv.index]]
 name = "pytorch-cpu"

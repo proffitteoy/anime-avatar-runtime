@@ -30,9 +30,9 @@ Runtime → state.py（参考 checkpoint）/ job.json（任务记录）
 - `GenerationResult`：run_id、avatar_id、output、videos、elapsed_seconds；成功必须有产物。当前适配器验证进程成功退出与非空 MP4，尚不验证解码或视觉质量。
 - `GenerationJob`：schema_version、run_id、avatar_id、state_schema_version、request、status、创建/完成时间、result/error。状态为 queued/running/completed/failed/cancelled；结果只允许属于同一角色和同一任务。
 - `RuntimeEvent`：event_id、timestamp、kind、avatar_id、run_id、state_schema_version、mode、reason。初始化、提交、开始、完成、失败、取消、暂停、继续、关停使用同一时间轴。最近 200 条保留在内存，重启不保留；不是持久事件总线。
-- `Observation`：identity_distance、geometry_distance、motion_distance 独立可空。测量值须带 avatar_id/run_id/measured_at；完全缺测须有 unavailable_reason，不能把未加载 Observer 显示为三个零值。手动 CPU 观测可返回身份/几何实测；运动和无效样本仍为 null，并注明原因。`ObservationSample/Result` 保留采样时刻、Anchor、特征、检测、耗时和显式阈值标志。
+- `Observation`：identity_candidate_distance、identity_distance、geometry_distance、motion_distance 独立可空。候选 CCIP 距离独立计算，subject_status / subject_face_count / subject_reason 记录单脸代理、未验证或歧义；只有主体代理通过的 identity_distance 进入异常判定。测量值须带 avatar_id/run_id/measured_at；完全缺测须有 unavailable_reason，不能把未加载 Observer 显示为零值。Runtime 接收的测量另带 state_revision。`ObservationSample/Result` 保留采样时刻、Anchor、特征、检测、耗时和显式阈值标志。
 
-此处 `state_schema_version` 是格式版本，不是状态修订计数。当前一次 API 任务等于一个参考图生成实验，因此使用 run_id 即可关联；#8/#9 引入连续窗口和动态状态时再增加 window_id 与状态修订、提交校验，不预造 latent、pose 或 embedding。
+此处 `state_schema_version` 是格式版本；`state_revision` 是当前进程的控制修订计数，重启从零开始，不是持久视觉状态版本。初始化和实际 resume、pause/close 转换递增修订；观测提交必须仍对应原修订和参考。当前一次 API 任务等于一个参考图实验，使用 run_id 关联；#8/#9 引入连续窗口和动态状态时再增加 window_id 与持久状态版本，不预造 latent、pose 或 embedding。
 
 ## 生命周期与并发
 
@@ -48,6 +48,8 @@ generating --pause--> pausing --子进程释放--> paused
 `resume` 只打开手动提交入口，不启动自主循环，也不检查 CUDA。生成能力是否配置见 backend_configured / backend_unavailable_reason；路径存在不代表模型健康。生成提交时检查后端路径，执行时检查源码 HEAD、CUDA 和 MoviePy。API 导入、启动、doctor 均不加载模型。
 
 Runtime 串行处理控制操作，同一实例只能有一个活动任务；重复生成返回 409。pause 会设置取消信号，并等待模型进程清理后返回。失败进入 error，必须显式 resume 才能再次提交；没有自动重试或后台投递。迟到的取消结果不会被接受为成功，任务 ID 不匹配的结果记为失败。
+
+生成与手动观测互斥。观测仅在注册与验收时持控制锁，模型执行和图片准备在锁外；pause/close 能直接取消观测并锁外等待清理。暂停中为 pausing，关闭中为 stopping，均拒绝新任务。候选身份不会因几何失败消失，但缺少主体证据时不用于异常判定。长期 Observer Worker、追踪、自动采样与 #16/#17 时序决策不在本版范围。
 
 阻塞模型调用在线程中等待独立子进程；API 仍能查询状态。预检最多 60 秒，且与生成共享总超时。Windows 通过 taskkill /T /F 清理所拥有的进程树，POSIX 通过独立进程组清理。进程清理若被权限拒绝会报告失败；控制进程被强杀、断电等情况下不能保证执行优雅清理。当前一个数据目录只能运行一个服务实例，CLI 独立实验不经过 Runtime 的单任务锁，勿与 API 同时争用同一 GPU。
 

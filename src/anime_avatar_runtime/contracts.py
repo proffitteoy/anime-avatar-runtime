@@ -110,16 +110,26 @@ class Observation(BaseModel):
     avatar_id: UUID | None = None
     run_id: UUID | None = None
     measured_at: AwareDatetime | None = None
+    state_revision: int | None = Field(default=None, ge=0)
+    identity_candidate_distance: float | None = Field(default=None, ge=0)
     identity_distance: float | None = Field(default=None, ge=0)
     geometry_distance: float | None = Field(default=None, ge=0)
     motion_distance: float | None = Field(default=None, ge=0)
     unavailable_reason: str | None = None
+    subject_status: Literal["single_face_proxy", "unverified", "ambiguous"] = "unverified"
+    subject_face_count: int | None = Field(default=None, ge=0)
+    subject_reason: str = "No subject or tracking evidence supplied"
 
     @model_validator(mode="after")
     def validate_measurement(self) -> Self:
         measured = any(
             value is not None
-            for value in (self.identity_distance, self.geometry_distance, self.motion_distance)
+            for value in (
+                self.identity_candidate_distance,
+                self.identity_distance,
+                self.geometry_distance,
+                self.motion_distance,
+            )
         )
         if measured and (self.measured_at is None or self.run_id is None or self.avatar_id is None):
             raise ValueError("Measured distances require avatar_id, run_id and measured_at")

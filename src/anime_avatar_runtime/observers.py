@@ -33,7 +33,7 @@ from .contracts import (
     ObservationResult,
     ObservationSample,
 )
-from .skyreels import _run_process
+from .skyreels import GenerationCancelled, _run_process
 from .state import MAX_IMAGE_BYTES, MAX_IMAGE_PIXELS, atomic_write
 
 CCIP_CODE = "46df848dc4d20ac93f4919a40e2636d5f7c19766"
@@ -243,13 +243,37 @@ class OfflineObserver:
     def __init__(self, models: Path, cache: Path) -> None:
         manifest_path = models / "manifest.json"
         manifest = json.loads(manifest_path.read_bytes())
-        if (
-            manifest.get("schema_version") != 1
-            or manifest.get("ccip_code") != CCIP_CODE
-            or manifest.get("face_code") != FACE_CODE
-        ):
+        if manifest.get("schema_version") != 1:
             raise ValueError("Observer model/source manifest mismatch; prepare pinned models")
-        for name, (repo, revision, filename) in MODEL_FILES.items():
+        self.model_key = sha256(manifest_path)
+        self.model_manifest = manifest | {"components": {}}
+        self.cache = cache
+        self.ccip: Any = None
+        self.detector: Any = None
+        self.errors: dict[str, str] = {}
+        for name, loader in (("identity", self._load_identity), ("geometry", self._load_geometry)):
+            try:
+                loader(models, manifest)
+                self.model_manifest["components"][name] = "ready"
+            except Exception as exc:
+                self.errors[name] = f"{type(exc).__name__}: {exc}"
+                self.model_manifest["components"][name] = self.errors[name]
+        if self.ccip is None and self.detector is None:
+            raise RuntimeError(f"Both observers unavailable: {self.errors}")
+
+    @staticmethod
+    def _verify_component(
+        models: Path,
+        manifest: dict[str, Any],
+        names: tuple[str, ...],
+        package: str,
+        code_key: str,
+        commit: str,
+    ) -> None:
+        if manifest.get(code_key) != commit:
+            raise ValueError(f"Unpinned source: {package}")
+        for name in names:
+            repo, revision, filename = MODEL_FILES[name]
             expected = manifest["files"][name]
             if (expected["repo"], expected["revision"], expected["filename"]) != (
                 repo,
@@ -263,13 +287,19 @@ class OfflineObserver:
             ):
                 raise ValueError(f"Observer weight hash mismatch: {name}")
         # uv installs exact source archives; check the installed direct URL as well.
-        for package, commit in (("dghs-imgutils", CCIP_CODE), ("anime-face-detector", FACE_CODE)):
-            direct = importlib.metadata.distribution(package).read_text("direct_url.json")
-            if direct is None or commit not in json.loads(direct).get("url", ""):
-                raise ValueError(f"Install {package} from the pinned source archive")
-        self.model_key = sha256(manifest_path)
-        self.model_manifest = manifest
-        self.cache = cache
+        direct = importlib.metadata.distribution(package).read_text("direct_url.json")
+        if direct is None or commit not in json.loads(direct).get("url", ""):
+            raise ValueError(f"Install {package} from the pinned source archive")
+
+    def _load_identity(self, models: Path, manifest: dict[str, Any]) -> None:
+        self._verify_component(
+            models,
+            manifest,
+            ("ccip_feature.onnx", "ccip_metric.onnx"),
+            "dghs-imgutils",
+            "ccip_code",
+            CCIP_CODE,
+        )
         ort = importlib.import_module("onnxruntime")
         options = ort.SessionOptions()
         options.intra_op_num_threads = 2
@@ -280,10 +310,21 @@ class OfflineObserver:
         metric = ort.InferenceSession(
             str(models / "ccip_metric.onnx"), options, providers=["CPUExecutionProvider"]
         )
-        self.ccip: Any = importlib.import_module("imgutils.metrics.ccip")
+        ccip = importlib.import_module("imgutils.metrics.ccip")
         # This process owns these loaders; no unpinned Hub request is reachable.
-        self.ccip.__dict__["_open_feat_model"] = lambda model: feature
-        self.ccip.__dict__["_open_metric_model"] = lambda model: metric
+        ccip.__dict__["_open_feat_model"] = lambda model: feature
+        ccip.__dict__["_open_metric_model"] = lambda model: metric
+        self.ccip = ccip
+
+    def _load_geometry(self, models: Path, manifest: dict[str, Any]) -> None:
+        self._verify_component(
+            models,
+            manifest,
+            ("yolov3.safetensors", "hrnetv2.safetensors"),
+            "anime-face-detector",
+            "face_code",
+            FACE_CODE,
+        )
         torch = importlib.import_module("torch")
         torch.set_num_threads(2)
         detector = importlib.import_module("anime_face_detector")
@@ -295,6 +336,8 @@ class OfflineObserver:
         )
 
     def extract(self, image: Image.Image) -> NDArray[np.float32]:
+        if self.ccip is None:
+            raise RuntimeError(f"Identity observer unavailable: {self.errors.get('identity')}")
         feature = np.asarray(
             self.ccip.ccip_extract_feature(image, model=CCIP_MODEL), dtype=np.float32
         )
@@ -303,6 +346,8 @@ class OfflineObserver:
         return feature
 
     def detect(self, image: Image.Image, request: ObservationRequest) -> list[dict[str, Any]]:
+        if self.detector is None:
+            raise RuntimeError(f"Geometry observer unavailable: {self.errors.get('geometry')}")
         # Upstream expects BGR, whereas Pillow and CCIP use RGB.
         predictions = self.detector(np.asarray(image)[:, :, ::-1].copy())
         return [
@@ -340,13 +385,25 @@ class OfflineObserver:
             except (KeyError, ValueError, TypeError):
                 pass
         image = read_image(path.read_bytes())
-        result = {
+        result: dict[str, Any] = {
             "input_sha256": digest,
             "model_key": self.model_key,
-            "feature": self.extract(image).tolist(),
-            "faces": self.detect(image, request),
+            "feature": None,
+            "faces": [],
         }
-        atomic_write(location, json.dumps(result, allow_nan=False).encode() + b"\n")
+        errors = {}
+        try:
+            result["feature"] = self.extract(image).tolist()
+        except Exception as exc:
+            errors["identity"] = str(exc)
+        try:
+            result["faces"] = self.detect(image, request)
+        except Exception as exc:
+            errors["geometry"] = str(exc)
+        if errors:
+            result["errors"] = errors
+        else:
+            atomic_write(location, json.dumps(result, allow_nan=False).encode() + b"\n")
         return result
 
 
@@ -363,7 +420,7 @@ def observe_frame(
     overlay: Path,
 ) -> ObservationSample:
     faces: list[dict[str, Any]] = []
-    identity_distance = geometry_score = expression_score = None
+    identity_candidate = identity_distance = geometry_score = expression_score = None
     identity_anchor = geometry_anchor = None
     feature_path = None
     reasons = ["motion: observer not implemented"]
@@ -396,10 +453,20 @@ def observe_frame(
     geometry_elapsed = time.monotonic() - started
     if geometry_score is None:
         reasons.append(f"geometry: {geometry_status}")
+    subject_status: Literal["single_face_proxy", "unverified", "ambiguous"] = "unverified"
+    subject_reason = "No face evidence for target assignment; tracking is unavailable"
+    face_count: int | None = len(faces)
+    if geometry_status.startswith("inference_failed") or geometry_status == "invalid_detection":
+        face_count = None
+        subject_reason = "Face evidence unavailable; target tracking is unavailable"
+    elif len(faces) > 1:
+        subject_status = "ambiguous"
+        subject_reason = "Multiple faces without target assignment or tracking"
+    elif len(faces) == 1:
+        subject_status = "single_face_proxy"
+        subject_reason = "Single detected face is a count proxy, not verified target tracking"
     started = time.monotonic()
     try:
-        if geometry_status in {"multiple_faces", "no_face"}:
-            raise ValueError(f"Single character cannot be confirmed: {geometry_status}")
         feature = observer.extract(image)
         feature_path = overlay.parent.parent / "features" / f"{overlay.stem}.npy"
         encoded_feature = io.BytesIO()
@@ -417,13 +484,23 @@ def observe_frame(
                 name,
             )
             for name, anchor in anchors
+            if anchor.get("feature") is not None
         ]
-        if not identity_scores or any(
-            not np.isfinite(score) or score < 0 for score, _ in identity_scores
-        ):
+        if not identity_scores:
+            raise ValueError("No available identity anchor")
+        if any(not np.isfinite(score) or score < 0 for score, _ in identity_scores):
             raise ValueError("Invalid CCIP metric output")
-        identity_distance, identity_anchor = min(identity_scores)
-        identity_status = "valid"
+        identity_candidate, identity_anchor = min(identity_scores)
+        matched = next(anchor for name, anchor in anchors if name == identity_anchor)
+        if len(matched["faces"]) > 1:
+            subject_status = "ambiguous"
+            subject_reason = "Nearest reference has multiple faces without target assignment"
+        if subject_status == "single_face_proxy":
+            identity_distance = identity_candidate
+            identity_status = "valid"
+        else:
+            identity_status = "candidate_only"
+            reasons.append(f"identity: candidate requires subject validation ({subject_status})")
     except Exception as exc:
         identity_status = f"unavailable: {type(exc).__name__}: {exc}"
         reasons.append(f"identity: {identity_status}")
@@ -450,9 +527,13 @@ def observe_frame(
         avatar_id=avatar_id,
         run_id=run_id,
         measured_at=datetime.now(UTC),
+        identity_candidate_distance=identity_candidate,
         identity_distance=identity_distance,
         geometry_distance=geometry_score,
         unavailable_reason="; ".join(reasons),
+        subject_status=subject_status,
+        subject_face_count=face_count,
+        subject_reason=subject_reason,
     )
     return ObservationSample(
         frame_index=frame_index,
@@ -482,7 +563,7 @@ def observe_frame(
 
 def write_curves(samples: list[ObservationSample], output: Path) -> None:
     """Standalone SVG curves with gaps for unavailable samples; no plotting dependency."""
-    for name in ("identity", "geometry"):
+    for name in ("identity", "identity_candidate", "geometry"):
         values = [getattr(s.observation, f"{name}_distance") for s in samples]
         ymax = max([v for v in values if v is not None] + [0.01]) * 1.1
         xmax = max(samples[-1].timestamp_seconds, 1)
@@ -518,8 +599,6 @@ def analyze_media(spec: dict[str, Any], output: Path) -> ObservationResult:
     observer = OfflineObserver(Path(spec["models"]), Path(spec["cache"]))
     atomic_write(output / "models.json", json.dumps(observer.model_manifest, indent=2).encode())
     anchors = [(str(Path(p).resolve()), observer.anchor(Path(p), request)) for p in spec["anchors"]]
-    if any(len(a["faces"]) > 1 for _, a in anchors):
-        raise ValueError("Trusted anchors must contain a single character; multiple faces detected")
     samples: list[ObservationSample] = []
     started = time.monotonic()
     truncated = False
@@ -698,7 +777,7 @@ def run_observation(
         ):
             raise ValueError("Observation result identity/path mismatch")
         if cancel_event is not None and cancel_event.is_set():
-            raise RuntimeError("Observation cancelled before accepting result")
+            raise GenerationCancelled("Observation cancelled before accepting result")
         manifest.update(
             status="completed", sample_count=result.sample_count, truncated=result.truncated
         )
@@ -730,25 +809,29 @@ def main() -> int:
         if args.command == "prepare":
             prepare_models(args.models)
         else:
+            packages: dict[str, str | None] = {}
+            for name in (
+                "dghs-imgutils",
+                "anime-face-detector",
+                "numpy",
+                "torch",
+                "torchvision",
+                "onnxruntime",
+                "pillow",
+                "opencv-contrib-python-headless",
+            ):
+                try:
+                    packages[name] = importlib.metadata.version(name)
+                except importlib.metadata.PackageNotFoundError:
+                    # Missing one optional component must not disable the other observer.
+                    packages[name] = None
             environment = {
                 "python": platform.python_version(),
                 "platform": platform.platform(),
                 "processor": platform.processor(),
                 "device": "cpu",
                 "threads": 2,
-                "packages": {
-                    name: importlib.metadata.version(name)
-                    for name in (
-                        "dghs-imgutils",
-                        "anime-face-detector",
-                        "numpy",
-                        "torch",
-                        "torchvision",
-                        "onnxruntime",
-                        "pillow",
-                        "opencv-python-headless",
-                    )
-                },
+                "packages": packages,
             }
             atomic_write(
                 args.output / "environment.json", json.dumps(environment, indent=2).encode()

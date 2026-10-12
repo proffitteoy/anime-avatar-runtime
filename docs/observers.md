@@ -28,6 +28,8 @@ $env:HF_HOME = Join-Path $PWD '.cache/huggingface'
 
 `prepare` 保存上述模型卡。公开图片/视频的可访问性不代表其许可与模型代码相同；实验素材、裁剪、权重和结果仅存在忽略目录，不随源码分发。完整选型背景见 [开源选型](./open-source-selection.md)。
 
+OpenCV 仅安装 `opencv-contrib-python-headless==4.11.0.86`，同时提供 contrib 和无 GUI 的 `cv2`。根目录 `[tool.uv].exclude-dependencies` 排除上游请求的 `opencv-python`、`opencv-python-headless` 与 `opencv-contrib-python`，避免它们重装同名文件。须使用仓库固定的 uv 0.11.5 和锁文件安装；普通 pip 不解释该配置。上游包的 metadata 仍要求原发行包名称，因此 `uv pip check` 会报告两个名称缺失；这不是已修改上游依赖的声明。此替代已用真实 CCIP/HRNet 推理验证，后续升级需重新核对。已有环境升级时可加 `--reinstall-package opencv-contrib-python-headless`，避免卸载旧 provider 后残缺的共享文件。
+
 ## 离线图片与视频
 
 ```powershell
@@ -35,7 +37,7 @@ uv run --locked avatar-runtime observe --python .tools/observer-env/Scripts/pyth
 uv run --locked avatar-runtime observe --python .tools/observer-env/Scripts/python.exe --anchor reference.png --anchor manually-approved.png --video clip.mp4 --sample-seconds 0.3 --max-samples 120 --output var/observations/video-01
 ```
 
-每次使用新目录，失败目录也不能覆盖。Anchor 必须由调用者选定为原始/人工确认的参考图，程序不会提升采样帧为 Anchor。`--anchor` 可重复，每个信号分别取可信参考中的最小距离及匹配路径。多脸 Anchor 拒绝执行；缺少可对齐几何 Anchor 时身份仍可独立记录。Anchor embedding 和 detections 缓存在 `AVATAR_DATA_DIR/anchor-cache`，key 包含图片哈希、模型/源码 manifest 哈希、预处理版本和检测置信度；图片、模型变化时不复用旧缓存，损坏缓存重新提取。
+每次使用新目录，失败目录也不能覆盖。Anchor 必须由调用者选定为原始/人工确认的参考图，程序不会提升采样帧为 Anchor。`--anchor` 可重复，每个信号分别取参考中的最小距离及匹配路径。多脸 Anchor 可记录身份候选，但最近身份参考为多脸时标记 ambiguous，不进入异常判定；缺少可对齐几何 Anchor 时身份候选仍可独立记录。Anchor embedding 和 detections 缓存在 `AVATAR_DATA_DIR/anchor-cache`，key 包含图片哈希、模型/源码 manifest 哈希、预处理版本和检测置信度；图片、模型变化时不复用旧缓存，损坏缓存重新提取。两套模型独立校验与加载，一套失败不阻止另一套输出；部分失败的 Anchor 不写入缓存，以免将缺测永久缓存。两套模型均不可用时运行失败。
 
 视频按解码器报告的 FPS / frame count 抽样，时间为 `frame_index / FPS`，适用于可索引的恒定帧率视频。变帧率素材需先转为保留时间轴的恒定帧率版本；本版不宣称任意 VFR/流媒体的精确 PTS 支持。`max_samples` 限制采样时刻数，超过范围在结果中标记 `truncated`。无法解码的采样记录为 `frame_decode_failed`，哈希为源视频哈希；成功帧的哈希为传入模型的规范 RGB PNG 哈希。
 
@@ -47,7 +49,7 @@ uv run --locked avatar-runtime observe --python .tools/observer-env/Scripts/pyth
 | models.json / environment.json | 实际已核验源码/权重、许可、Python/平台/CPU 设备与依赖版本 |
 | samples.jsonl | 帧序号、时间、测量时间、独立距离/状态、匹配 Anchor、耗时、bbox、28 点及原始置信度 |
 | features/*.npy | 成功提取的 768 维 float32 CCIP 向量，不使用 pickle |
-| identity.svg / geometry.svg | 独立曲线；缺测用红色 x 标记，不连线或填零 |
+| identity.svg / identity_candidate.svg / geometry.svg | 身份可信距离、候选距离及几何独立曲线；缺测用红色 x 标记，不连线或填零 |
 | overlays/*.png | bbox 与点编号；青色结构点、橙色表情点、红色低置信点 |
 | result.json / backend.log | 最后样本、样本数、截断状态、进程日志 |
 
@@ -61,7 +63,9 @@ uv run --locked avatar-runtime observe --python .tools/observer-env/Scripts/pyth
 
 结构计算以两组点最小置信度为权重，要求至少 8/10 个可靠结构点；进行加权平移、正尺度和旋转 Procrustes 对齐，禁止镜像反射。结构距离为稳定点加权 RMS 残差除以参考脸加权 RMS 半径，是无量纲值。表情残差使用相同变换单独计算，不参与结构拟合，可靠表情点不足则为 null。
 
-无脸、多脸、低置信/遮挡、缺少姿态点、侧脸代理检查失败、退化点集和没有可对齐 Anchor 均有明确状态。无脸或多脸时 CCIP 也标不可用；其他几何限制不强行抹除可提取的身份信号。近正脸检查仅使用鼻点沿双眼连线的偏移和眼宽比例，是保守的启发式代理，不能保证检出所有侧脸、遮挡或多人全身图，也可能拒绝有效画面。本版没有稳定的人脸跟踪或多人身份分配。
+无脸、多脸、低置信/遮挡、缺少姿态点、侧脸代理检查失败、退化点集和没有可对齐 Anchor 均有明确状态。CCIP 始终独立尝试计算 `identity_candidate_distance`，不会因人脸失败而停止提取。`subject_status` 为 single_face_proxy / unverified / ambiguous，另有 face_count 与原因；只有单脸代理允许候选进入既有 `identity_distance` 和阈值判定。无脸/检测失败/多脸仍可有候选特征，但可信身份值为 null、身份判定为 unknown。单脸只能说明检出一张脸，不保证画面只有一个角色或已追踪到目标。
+
+近正脸检查仅使用鼻点沿双眼连线的偏移和眼宽比例，是保守的启发式代理，不能保证检出所有侧脸、遮挡或多人全身图，也可能拒绝有效画面。本版没有稳定的人脸跟踪或多人身份分配。鲁棒 IRLS 与局部残差只在 [对照实验脚本](../scripts/observer_geometry_experiment.py) 中比较，Runtime 仍使用原有置信度加权最小二乘。
 
 ## HTTP 与异常接口
 
@@ -74,7 +78,9 @@ Invoke-RestMethod -Method Post -Uri 'http://127.0.0.1:8000/observer/observe' -Co
 Invoke-RestMethod -Uri 'http://127.0.0.1:8000/observer/status'
 ```
 
-`POST /observer/observe` 接收 10 MiB / 1600 万像素以内的原始单帧图片，返回 `ObservationResult`；未初始化 404、与活动生成冲突 409、超限 413、非法图/阈值 422、独立环境或模型不可用 503。运行在线程中等待独立进程，GET 状态/health 可继续访问；任务有 `AVATAR_OBSERVATION_TIMEOUT_SECONDS` 上限（默认 600）。控制操作串行等待观测释放，不提供后台观测任务或进度流。
+`POST /observer/observe` 接收 10 MiB / 1600 万像素以内的原始单帧图片，返回 `ObservationResult`；未初始化 404、与活动生成/观测冲突或结果已取消/过期 409、超限 413、非法图/阈值 422、独立环境或模型不可用 503。运行在线程中等待独立进程，GET 状态/health 可继续访问；任务有 `AVATAR_OBSERVATION_TIMEOUT_SECONDS` 上限（默认 600）。Runtime 短时间持锁注册任务，锁外准备图片及执行模型，重新持锁校验 run/avatar、参考哈希、取消信号与 `state_revision` 后接收。
+
+pause/close 主动发出独立的观测取消信号，锁外等待拥有的进程清理后才返回。进入停止阶段即拒绝新提交；resume 实际改变模式时递增修订并取消旧观测。请求调用方断开/取消也等待清理，迟到结果不会更新 observer/status。`runtime/status` 新增 observation_active 与 state_revision；已接收测量标注 state_revision，离线结果无 Runtime 修订号。磁盘后端产物是执行记录，不等于 Runtime 已接收，仍不提供后台观测任务或进度流。
 
 `GET /observer/status` 返回本进程最后一次已接收的测量；重启后为未知，磁盘实验仍保留。`GET /runtime/status` 的 `offline_observers_configured` 只说明配置了路径，`observers_enabled=[]` 仍表示自主循环中没有启用 Observer，不等于模型已健康加载。
 
@@ -89,6 +95,8 @@ Invoke-RestMethod -Uri 'http://127.0.0.1:8000/observer/status'
 没有实现 #17 的滞回、持续时间约束和恢复状态机。Observer 不暂停/重启生成器；Runtime 仅接收手动观测，记录 `observation_recorded` 事件，后续 #16/#17 再聚合并决策。运动指标继续为 null；不把当前范围写成自主闭环或长期稳定性验收。
 
 ## 本次实际验证
+
+下面保留 `e181817` 的初始实测；后续身份解耦、单 OpenCV 环境、真实取消和局部几何/表情对照见 [PR #38 修订报告](./reports/2026-10-12-observers/revision-p0.md)。旧记录的空白/多脸身份 null 指可信身份；修订后这些输入仍可提取候选距离。
 
 2026-10-12，在 Windows / Python 3.12.13、固定 CPU 模型上使用现有动漫图片及公开 AniSora 演示素材运行。实验参考是离线显式选定的输入，不自动加入 Runtime 的可信 Anchor Bank。原始素材、派生图、日志、特征和叠图保留于 `var/observer-assets`、`var/observer-experiments`，不提交到仓库。
 
@@ -112,3 +120,12 @@ Invoke-RestMethod -Uri 'http://127.0.0.1:8000/observer/status'
 两次视频运行启动/加载/分析总耗时分别约 76.64 和 83.91 秒，包含同期其他验证负载，不能作为串行性能基准。CPU 与线程配置见各自 environment.json。首次近景约 39.36 秒但所有几何样本缺测，也保留为失败范围，不以更快耗时评价模型质量。
 
 自动测试覆盖相似变换、结构畸变、反射、表情、置信度、退化点、独立缺测、缓存失效、HTTP 和失败产物；控制测试使用明确替身，真实模型证据来自上述独立实验。GPU 生成、真实 SkyReels 长序列、阈值误报/漏报率、跨镜头/侧脸质量、VFR PTS 和自主恢复未验收；#13/#14 的真实生成端集成验收仍需目标环境输入。远端 CI 与 Issue 状态没有因本地实现自动变更。
+
+真实最小推理测试为显式 opt-in；给定配置后缺少模型或检测失败会 fail，不会悄悄 skip。参考图片须是已知近正脸且可输出 28 点的输入：
+
+```powershell
+$env:OBSERVER_TEST_PYTHON = Join-Path $PWD '.tools/observer-env/Scripts/python.exe'
+$env:OBSERVER_TEST_MODELS = Join-Path $PWD 'models/observers'
+$env:OBSERVER_TEST_IMAGE = Join-Path $PWD 'reference.png'
+uv run --locked pytest tests/test_observers.py -k real_observer
+```
