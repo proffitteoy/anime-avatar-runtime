@@ -1,13 +1,23 @@
 """Single-process manual generation lifecycle, independent of HTTP and GPU imports."""
 
 import asyncio
+import io
 from collections import deque
 from datetime import UTC, datetime
 from threading import Event
 from uuid import UUID, uuid4
 
 from .config import RuntimeConfig
-from .contracts import EventKind, GenerationJob, GenerationRequest, Observation, RuntimeEvent
+from .contracts import (
+    EventKind,
+    GenerationJob,
+    GenerationRequest,
+    Observation,
+    ObservationRequest,
+    ObservationResult,
+    RuntimeEvent,
+)
+from .observers import read_image, run_observation
 from .skyreels import GenerationCancelled, backend_unavailable_reason, run_generation
 from .state import AvatarState, atomic_write, initialize, load_state
 
@@ -39,6 +49,8 @@ class Runtime:
         self._active_job: GenerationJob | None = None
         self._last_error: str | None = None
         self._events: deque[RuntimeEvent] = deque(maxlen=200)
+        self._latest_observation: Observation | None = None
+        self._observing = False
         self._emit("runtime_started", "Reference checkpoint loaded; manual runtime starts paused")
 
     @property
@@ -72,6 +84,8 @@ class Runtime:
             "generation": "managed_subprocess",
             "autonomous_loop": False,
             "observers_enabled": [],
+            "offline_observers_configured": self.config.observer_python is not None,
+            "observation_active": self._observing,
             "recovery_available": False,
             "backend_configured": reason is None,
             "backend_unavailable_reason": reason,
@@ -84,10 +98,69 @@ class Runtime:
         return list(self._events)[-limit:]
 
     def observation(self) -> Observation:
+        if self._latest_observation is not None:
+            return self._latest_observation
         return Observation(
             avatar_id=self.state.avatar_id if self.state else None,
-            unavailable_reason="Identity, geometry and motion observers are not implemented",
+            unavailable_reason=(
+                "No frame observed; offline identity/geometry require configuration; "
+                "motion is unavailable"
+            ),
         )
+
+    async def observe(self, payload: bytes, request: ObservationRequest) -> ObservationResult:
+        """Manually observe one uploaded frame against the trusted checkpoint."""
+        async with self._control_lock:
+            self._require_open()
+            state = self.avatar_state()
+            if self._task is not None:
+                raise RuntimeConflict("Wait for generation to finish before observing")
+            if self.config.observer_python is None or not self.config.observer_python.is_file():
+                raise CapabilityUnavailable(
+                    "Configure AVATAR_OBSERVER_PYTHON; see docs/observers.md"
+                )
+            if not (self.config.observer_models / "manifest.json").is_file():
+                raise CapabilityUnavailable("Prepare the pinned observer models first")
+            image = read_image(payload)
+            run_id = uuid4()
+            root = self.config.data_dir / "observations" / str(run_id)
+            buffer = io.BytesIO()
+            image.save(buffer, format="PNG")
+            input_path = root / "input.png"
+            atomic_write(input_path, buffer.getvalue())
+            self._observing = True
+            cancel = Event()
+            worker = asyncio.create_task(
+                asyncio.to_thread(
+                    run_observation,
+                    self.config,
+                    request,
+                    root / "output",
+                    anchors=[self.config.data_dir / "references" / f"{state.reference_sha256}.png"],
+                    image=input_path,
+                    run_id=run_id,
+                    avatar_id=state.avatar_id,
+                    cancel_event=cancel,
+                )
+            )
+            try:
+                try:
+                    result = await asyncio.shield(worker)
+                except asyncio.CancelledError:
+                    # Keep the control lock until the bounded owned process releases resources.
+                    cancel.set()
+                    try:
+                        await worker
+                    except Exception:
+                        pass
+                    raise
+                self._latest_observation = result.latest.observation
+                self._emit("observation_recorded", result.latest.anomaly.status, run_id)
+                return result
+            except (OSError, RuntimeError) as exc:
+                raise CapabilityUnavailable(str(exc)) from exc
+            finally:
+                self._observing = False
 
     def _require_open(self) -> None:
         if self._closed:

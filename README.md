@@ -10,8 +10,9 @@
 - 单进程 Runtime：异步提交单段生成、任务互斥、状态查询、暂停取消、关停清理、中断任务识别；API 与 CLI 共用真实生成执行函数。
 - CLI 可桥接固定版本的 SkyReels-V2 官方入口，支持单图生成、视频续接和首尾帧条件；保存输入哈希、有效配置、命令、耗时、日志和成功/失败/取消状态，支持超时。
 - pytest、Ruff、mypy、wheel/sdist 构建入口和 Windows/Linux CI 配置。
+- 独立 CPU 身份/几何观测：固定 CCIP 与动漫人脸 28 点、可信参考特征缓存、加权对齐、图片/视频采样、关键点叠图与独立曲线；手动观测和显式阈值异常接口。
 
-当前没有自主待机循环、已加载的 Observer、自动 Recovery、LLM/语音或展示前端。初始化后的 AvatarState 为 paused；API 会明确报告 autonomous_loop=false。模型推理与长期稳定性尚未验证。
+当前没有自主待机循环、自动 Recovery、LLM/语音或展示前端。初始化后的 AvatarState 为 paused；API 会明确报告 autonomous_loop=false。身份/几何已用真实模型完成离线 CPU 样例验证；SkyReels GPU 推理、观测闭环与长期稳定性尚未验证。
 
 后续开发从 [Runtime 底座与接入说明](./docs/runtime-foundation.md) 开始，其中列出了模块职责、共享契约、控制状态、各条路线的接入点和对应 Issue。[现有 Project](https://github.com/users/proffitteoy/projects/2) 保留完整路线图；底座落地不代表所有功能 Issue 已完成。
 
@@ -20,8 +21,8 @@
 | 能力 | 首版选择 | 接入状态 |
 | --- | --- | --- |
 | 图生视频与续接 | SkyReels-V2 DF 1.3B 540P | 官方 CLI 桥接已实现；目标 CUDA 环境待执行 |
-| 身份观测 | CCIP，ccip-caformer-24-randaug-pruned，经 dghs-imgutils / ONNX | 已完成源码、模型与许可选型，待接入 |
-| 几何观测 | anime-face-detector 0.1.0，28 点 landmarks | 已完成选型，待接入 |
+| 身份观测 | CCIP，ccip-caformer-24-randaug-pruned，经 dghs-imgutils / ONNX | 已接入固定版本、768 维特征与上游差异函数；CPU 图片/公开视频样例已执行 |
+| 几何观测 | anime-face-detector 0.1.0，28 点 landmarks | 已接入固定版本和置信度加权对齐、独立表情残差；适用范围与失败例已记录 |
 | 运动观测 | GMFlow | 已完成选型，待接入 |
 | 恢复对照 | 基础 Reset → DRBA → ToonCrafter / AniSora | 后续实现顺序，尚未进入闭环 |
 
@@ -80,7 +81,7 @@ Invoke-RestMethod -Method Post -Uri http://127.0.0.1:8000/runtime/pause
 
 生成返回 202 和任务 ID；查询直至 completed/failed/cancelled。resume 仅开放手动提交，pause 取消并等待当前任务释放。重复提交返回 409，后端路径未配置返回 503；实际环境预检失败写入任务错误。参考 checkpoint 不会因生成实验被覆盖，实时模式以 runtime/status 为准。
 
-GET /observer/status 返回独立的未知指标及原因；POST /recovery/trigger 返回 503。没有模型或观测能力时不会伪装成功。当前限单进程、单服务实例；独立 CLI 实验不经过 API 的互斥锁，不要同时争用同一 GPU。
+GET /observer/status 返回本进程最后一次手动观测；未观测或重启后指标为未知并有原因。POST /observer/observe 接收图片，POST /observer/anomalies 对独立距离和显式阈值作判定；准备方式、产物、失败状态和 CPU 实测见 [身份与几何观测](./docs/observers.md)。POST /recovery/trigger 仍返回 503。当前限单进程、单服务实例；独立 CLI 实验不经过 API 的互斥锁，不要同时争用同一 GPU。
 
 ## 模型准备与生成
 
@@ -107,14 +108,16 @@ uv build
 
 格式化修改使用 uv run --locked ruff format src tests。当前使用本地 JSON 状态，无数据库迁移和种子数据命令；不提供尚不存在的生产部署命令。
 
-源码在 src/anime_avatar_runtime：config.py 统一配置，contracts.py 定义共享类型，runtime.py 编排单任务与生命周期，api.py 处理 HTTP，state.py 负责参考状态持久化，skyreels.py 执行独立后端并记录实验，cli.py 提供命令入口。tests/ 覆盖输入与状态损坏、并发互斥、失败、取消、重启和产物保护。[check 工作流](./.github/workflows/check.yml) 在 push 和 pull_request 时执行 Windows/Linux 检查；对应提交的实际结果见 [GitHub Actions](https://github.com/proffitteoy/anime-avatar-runtime/actions/workflows/check.yml)。
+源码在 src/anime_avatar_runtime：config.py 统一配置，contracts.py 定义共享类型，runtime.py 编排单任务与生命周期，api.py 处理 HTTP，state.py 负责参考状态持久化，skyreels.py 执行独立生成后端，observers.py 执行独立 CPU 观测和几何计算，cli.py 提供命令入口。tests/ 覆盖输入与状态损坏、并发互斥、失败、取消、重启、产物保护和观测算法。[check 工作流](./.github/workflows/check.yml) 在 push 和 pull_request 时执行 Windows/Linux 检查；对应提交的实际结果见 [GitHub Actions](https://github.com/proffitteoy/anime-avatar-runtime/actions/workflows/check.yml)。
 
-本次本地验收：43 项测试通过，Ruff、mypy、wheel/sdist 构建及实际 HTTP 控制流程通过；细节与初始冷启动记录见 [执行记录](./docs/冷启动.md)。新增契约、Runtime/API 控制及真实轻量子进程测试均不运行 GPU 模型。官方参数对照测试使用已核对 blob SHA 的源码缓存；全新 checkout 没有上游源码时该项明确 skip。其余测试不需要模型或联网。
+本次本地验收：55 项测试通过，Ruff、mypy、wheel/sdist 构建及实际 CPU 观测 HTTP 调用通过；细节与初始冷启动记录见 [执行记录](./docs/冷启动.md)，模型与公开视频实测见 [观测说明](./docs/observers.md)。契约、控制和算法自动测试不运行 GPU 模型；真实 CPU 模型验证单独记录。官方参数对照测试使用已核对 blob SHA 的源码缓存；全新 checkout 没有上游源码时该项明确 skip。其余常规测试不需要模型或联网。
 
 ## 文档
 
 - [项目协作规则](./AGENTS.md)
 - [Runtime 底座与后续开发入口](./docs/runtime-foundation.md)
+- [身份与几何观测、安装和实测](./docs/observers.md)
+- [#13/#14 研究报告与数值证据](./docs/reports/2026-10-12-observers/README.md)
 - [冷启动流程与逐项执行记录](./docs/冷启动.md)
 - [文档索引](./docs/README.md)
 - [01：生成与长期状态保持](./01-avatar-generation-and-state-preservation.md)

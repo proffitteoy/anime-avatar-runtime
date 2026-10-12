@@ -9,7 +9,17 @@ from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.responses import JSONResponse
 
 from .config import RuntimeConfig
-from .contracts import GenerationJob, GenerationRequest, Observation, RuntimeEvent
+from .contracts import (
+    AnomalyRequest,
+    AnomalyResult,
+    GenerationJob,
+    GenerationRequest,
+    Observation,
+    ObservationRequest,
+    ObservationResult,
+    RuntimeEvent,
+)
+from .observers import evaluate_anomaly
 from .runtime import CapabilityUnavailable, Runtime, RuntimeConflict
 from .state import MAX_IMAGE_BYTES, AvatarState
 
@@ -91,6 +101,33 @@ def create_app(data_dir: Path | None = None, *, config: RuntimeConfig | None = N
     @app.get("/observer/status", response_model=Observation)
     async def observer_status() -> Observation:
         return runtime.observation()
+
+    @app.post("/observer/observe", response_model=ObservationResult)
+    async def observe_frame(
+        request: Request,
+        identity_threshold: float | None = Query(default=None, gt=0, allow_inf_nan=False),
+        geometry_threshold: float | None = Query(default=None, gt=0, allow_inf_nan=False),
+    ) -> ObservationResult:
+        payload = bytearray()
+        async for chunk in request.stream():
+            if len(payload) + len(chunk) > MAX_IMAGE_BYTES:
+                raise HTTPException(413, "Frame exceeds 10 MiB")
+            payload.extend(chunk)
+        try:
+            return await runtime.observe(
+                bytes(payload),
+                ObservationRequest(
+                    max_samples=1,
+                    identity_threshold=identity_threshold,
+                    geometry_threshold=geometry_threshold,
+                ),
+            )
+        except ValueError as exc:
+            raise HTTPException(422, str(exc)) from exc
+
+    @app.post("/observer/anomalies", response_model=AnomalyResult)
+    async def anomalies(request: AnomalyRequest) -> AnomalyResult:
+        return evaluate_anomaly(request)
 
     @app.post("/recovery/trigger", status_code=503)
     async def trigger_recovery() -> None:

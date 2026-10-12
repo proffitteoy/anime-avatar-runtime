@@ -17,11 +17,12 @@ Runtime → state.py（参考 checkpoint）/ job.json（任务记录）
 | [contracts.py](../src/anime_avatar_runtime/contracts.py) | 生成请求/结果、任务、事件与独立观测信号；三条路线复用同一份类型 |
 | [runtime.py](../src/anime_avatar_runtime/runtime.py) | 单角色、单任务、手动生命周期与结果接收；不翻译模型私有参数 |
 | [skyreels.py](../src/anime_avatar_runtime/skyreels.py) | 现有后端边界：参数翻译、环境预检、可取消子进程与实验产物 |
+| [observers.py](../src/anime_avatar_runtime/observers.py) | 独立 CPU 身份/几何模型、参考缓存、加权对齐、离线产物与异常标志；详见 [观测说明](./observers.md) |
 | [state.py](../src/anime_avatar_runtime/state.py) | 可信原图、schema v1 checkpoint、原子替换、重读哈希校验 |
 | [api.py](../src/anime_avatar_runtime/api.py) | HTTP 输入、错误码与 lifespan 关停；不另写一套生成逻辑 |
 | [cli.py](../src/anime_avatar_runtime/cli.py) | serve/doctor/generate 参数及退出状态；生成复用相同后端函数 |
 
-保留平铺模块结构。当前只有一个后端，不增加插件注册表、消息中间件、抽象存储层或空的 LLM/Observer/Recovery 目录。切换后端时，在调用边界实现相同请求/结果及取消契约；加入第二个后端后再决定是否需要统一选择器。
+保留平铺模块结构。当前只有一个生成后端，另有独立 CPU 观测进程，不增加插件注册表、消息中间件、抽象存储层或空的 LLM/Observer/Recovery 目录。切换生成后端时，在调用边界实现相同请求/结果及取消契约；加入第二个生成后端后再决定是否需要统一选择器。
 
 ## 共享契约
 
@@ -29,7 +30,7 @@ Runtime → state.py（参考 checkpoint）/ job.json（任务记录）
 - `GenerationResult`：run_id、avatar_id、output、videos、elapsed_seconds；成功必须有产物。当前适配器验证进程成功退出与非空 MP4，尚不验证解码或视觉质量。
 - `GenerationJob`：schema_version、run_id、avatar_id、state_schema_version、request、status、创建/完成时间、result/error。状态为 queued/running/completed/failed/cancelled；结果只允许属于同一角色和同一任务。
 - `RuntimeEvent`：event_id、timestamp、kind、avatar_id、run_id、state_schema_version、mode、reason。初始化、提交、开始、完成、失败、取消、暂停、继续、关停使用同一时间轴。最近 200 条保留在内存，重启不保留；不是持久事件总线。
-- `Observation`：identity_distance、geometry_distance、motion_distance 独立可空。测量值须带 avatar_id/run_id/measured_at；完全缺测须有 unavailable_reason，不能把未加载 Observer 显示为三个零值。当前 API 全部返回 null，后续部分模型接入时应说明其余缺测原因。
+- `Observation`：identity_distance、geometry_distance、motion_distance 独立可空。测量值须带 avatar_id/run_id/measured_at；完全缺测须有 unavailable_reason，不能把未加载 Observer 显示为三个零值。手动 CPU 观测可返回身份/几何实测；运动和无效样本仍为 null，并注明原因。`ObservationSample/Result` 保留采样时刻、Anchor、特征、检测、耗时和显式阈值标志。
 
 此处 `state_schema_version` 是格式版本，不是状态修订计数。当前一次 API 任务等于一个参考图生成实验，因此使用 run_id 即可关联；#8/#9 引入连续窗口和动态状态时再增加 window_id 与状态修订、提交校验，不预造 latent、pose 或 embedding。
 
@@ -56,6 +57,8 @@ Runtime 串行处理控制操作，同一实例只能有一个活动任务；重
 AVATAR_DATA_DIR/
   state.json
   references/<sha256>.png
+  anchor-cache/<input-model-key>.json
+  observations/<run_id>/input.png、output/（手动观测、曲线和叠图）
   runs/<run_id>/
     job.json
     output/run.json
@@ -80,14 +83,16 @@ AvatarState v1 的 mode=paused 表示可恢复的参考状态；实时控制状�
 | GET /runtime/jobs/{run_id} | 查询本角色的持久任务；未知任务 404，非法 ID 422 |
 | POST /runtime/pause | 取消并等待当前任务释放，进入暂停 |
 | GET /runtime/events?limit=50 | 当前进程最近事件，limit 为 1–200 |
-| GET /observer/status | 三种测量均未知，并返回原因 |
+| GET /observer/status | 本进程最后一次手动观测；未观测/重启后为未知，运动始终未接入 |
+| POST /observer/observe | 原始图片对可信原图的手动 CPU 观测；200；环境/模型未配置 503 |
+| POST /observer/anomalies | 独立距离与显式阈值判定；缺测/未设置阈值为 unknown，不触发恢复 |
 | POST /recovery/trigger | 503：未实现恢复，不创建假任务 |
 
 API 仅接受初始化参考图的单段生成。CLI 仍提供手动视频续接和首尾帧参数。参数、默认值与返回类型也可在服务的 `/docs` 查看。
 
 ## 配置与开发次序
 
-配置来源是进程环境，`.env` 需通过 uv 的 `--env-file` 显式加载；见 [.env.example](../.env.example)。CLI 的 --repo/--python/--model/--timeout 覆盖对应环境变量；环境配置本身须先合法。只支持当前实际生效的设置，不加入没有实现的精度/Observer/恢复阈值开关。
+配置来源是进程环境，`.env` 需通过 uv 的 `--env-file` 显式加载；见 [.env.example](../.env.example)。生成 CLI 的 --repo/--python/--model/--timeout 覆盖对应环境变量；观测 CLI 的 --python/--models 覆盖独立观测配置，阈值须显式提供；环境配置本身须先合法。只支持当前实际生效的设置，不加入没有实现的精度或恢复开关。
 
 | 路线 | 下一步接入点及 Issue |
 | --- | --- |

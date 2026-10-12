@@ -15,9 +15,18 @@ class RuntimeConfig(BaseModel):
     skyreels_python: Path | None = None
     skyreels_model: Path = Path("models/skyreels-v2-df-1.3b-540p")
     generation_timeout_seconds: float = Field(default=1800, gt=0, allow_inf_nan=False)
+    observer_python: Path | None = None
+    observer_models: Path = Path("models/observers")
+    observation_timeout_seconds: float = Field(default=600, gt=0, allow_inf_nan=False)
 
     @field_validator(
-        "data_dir", "skyreels_repo", "skyreels_python", "skyreels_model", mode="before"
+        "data_dir",
+        "skyreels_repo",
+        "skyreels_python",
+        "skyreels_model",
+        "observer_python",
+        "observer_models",
+        mode="before",
     )
     @classmethod
     def reject_empty_path(cls, value: object) -> object:
@@ -25,7 +34,14 @@ class RuntimeConfig(BaseModel):
             raise ValueError("Path must not be blank; unset optional environment variables instead")
         return value
 
-    @field_validator("data_dir", "skyreels_repo", "skyreels_python", "skyreels_model")
+    @field_validator(
+        "data_dir",
+        "skyreels_repo",
+        "skyreels_python",
+        "skyreels_model",
+        "observer_python",
+        "observer_models",
+    )
     @classmethod
     def resolve_path(cls, value: Path | None) -> Path | None:
         return value.expanduser().resolve() if value is not None else None
@@ -39,6 +55,9 @@ class RuntimeConfig(BaseModel):
             "skyreels_python": "SKYREELS_PYTHON",
             "skyreels_model": "SKYREELS_MODEL",
             "generation_timeout_seconds": "AVATAR_GENERATION_TIMEOUT_SECONDS",
+            "observer_python": "AVATAR_OBSERVER_PYTHON",
+            "observer_models": "AVATAR_OBSERVER_MODELS",
+            "observation_timeout_seconds": "AVATAR_OBSERVATION_TIMEOUT_SECONDS",
         }
         return cls.model_validate(
             {field: os.environ[name] for field, name in variables.items() if name in os.environ}
