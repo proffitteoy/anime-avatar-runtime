@@ -1,0 +1,2657 @@
+{
+  "schema_version": 1,
+  "diagnostic_only": true,
+  "evidence_level": "numerical-evidence",
+  "reference_id": "s0000",
+  "data_hash": "0295b9676709b19cdd659576e2261de52573788ff15f276f5e8102da6206befc",
+  "manifest_sha256": "7739882cd9ae354afe5c4a3303f8a3b237dffcb26c6ca4e0c212bfd68e50c0a8",
+  "extraction_sha256": "9dd6762286976f34cbe65fcfd9d6af60490e69e792a95440f509c86645da375f",
+  "model_hash": "062cb4e53ecb0686109cbbd7f884414f0376fbada659fe10c09e5be02e677f88",
+  "implementation_sha256": "160c4f200488ce5a58b050846d05612705dc2d9e71b002a49f2c6f9cc65af9e0",
+  "local_geometry_sha256": "06d7cbc4693b3092172b29d8172b71efc5f855542e27788ed37b73b2526e5213",
+  "environment": {
+    "python": "3.12.13",
+    "numpy": "1.26.4",
+    "platform": "Windows-11-10.0.26100-SP0"
+  },
+  "independent_sources": 1,
+  "protocol": {
+    "precision": "float64; fixed confidence mask; reference RMS radius",
+    "variants": {
+      "complement": {
+        "left_eye": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          17,
+          19,
+          23
+        ],
+        "right_eye": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          11,
+          13,
+          23
+        ],
+        "eye_spacing": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          23
+        ],
+        "nose": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          11,
+          13,
+          17,
+          19
+        ],
+        "mouth": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          11,
+          13,
+          17,
+          19,
+          23
+        ],
+        "contour": [
+          11,
+          13,
+          17,
+          19,
+          23
+        ]
+      },
+      "without_nose": {
+        "left_eye": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          17,
+          19
+        ],
+        "right_eye": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          11,
+          13
+        ],
+        "eye_spacing": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "nose": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          11,
+          13,
+          17,
+          19
+        ],
+        "mouth": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          11,
+          13,
+          17,
+          19
+        ],
+        "contour": [
+          11,
+          13,
+          17,
+          19
+        ]
+      },
+      "with_mouth": {
+        "left_eye": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          17,
+          19,
+          23,
+          24,
+          26
+        ],
+        "right_eye": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          11,
+          13,
+          23,
+          24,
+          26
+        ],
+        "eye_spacing": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          23,
+          24,
+          26
+        ],
+        "nose": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          11,
+          13,
+          17,
+          19,
+          24,
+          26
+        ],
+        "mouth": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          11,
+          13,
+          17,
+          19,
+          23
+        ],
+        "contour": [
+          11,
+          13,
+          17,
+          19,
+          23,
+          24,
+          26
+        ]
+      }
+    },
+    "derivative_steps": [
+      1e-06,
+      0.0001
+    ],
+    "acceptance_tolerances": {
+      "derivative": 1e-08,
+      "similarity_and_chin": 1e-10
+    },
+    "gain_definition": "Worst weighted target RMS / unweighted source point RMS, over coordinate directions; overlapping regions are not a partition",
+    "noise_assumption": "Independent isotropic coordinate noise with unit variance, a sensitivity diagnostic only; confidence is not a calibrated probability",
+    "selection": "Predeclared diagnostic ablations; known single-source development labels; no candidate selection, threshold calibration or statistical acceptance"
+  },
+  "checks": {
+    "derivative_max_abs_error": 1.9985403332256624e-09,
+    "similarity_max_residual": 3.4061459860379535e-15,
+    "contour_chin_control_max_error": 1.3877787807814457e-15
+  },
+  "diagnostics": {
+    "complement": {
+      "left_eye": {
+        "fit_points": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          17,
+          19,
+          23
+        ],
+        "design_condition": 1.4872712344000145,
+        "spectral_coupling_rms_gain": {
+          "left_eye": 1.0038335848525894,
+          "right_eye": 0.2798863131604414,
+          "eye_spacing": 1.4690895116704412,
+          "nose": 0.15772630892442566,
+          "mouth": 0.0,
+          "contour": 1.0285598282804536
+        },
+        "isotropic_unit_coordinate_noise_rms_gain": 1.5998852205834737,
+        "finite_difference_max_abs_error": {
+          "1e-06": 1.3006466598186606e-09,
+          "0.0001": 9.34450405942755e-10
+        },
+        "similarity_tangent_max_abs_error": 7.632783294297951e-16,
+        "exact_similarity_max_residual": 9.634035697755105e-16,
+        "chin_shift_control_residual": 0.037343401782698404
+      },
+      "right_eye": {
+        "fit_points": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          11,
+          13,
+          23
+        ],
+        "design_condition": 1.4969474338720483,
+        "spectral_coupling_rms_gain": {
+          "left_eye": 0.2814249662789027,
+          "right_eye": 1.006890098340508,
+          "eye_spacing": 1.4705395632690805,
+          "nose": 0.1501119938368293,
+          "mouth": 0.0,
+          "contour": 1.051367742698
+        },
+        "isotropic_unit_coordinate_noise_rms_gain": 1.6051049472383487,
+        "finite_difference_max_abs_error": {
+          "1e-06": 1.2962515887060544e-09,
+          "0.0001": 9.484580898444506e-10
+        },
+        "similarity_tangent_max_abs_error": 9.205065752140419e-16,
+        "exact_similarity_max_residual": 1.7030729930189767e-15,
+        "chin_shift_control_residual": 0.0373392017101382
+      },
+      "eye_spacing": {
+        "fit_points": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          23
+        ],
+        "design_condition": 1.666554370785492,
+        "spectral_coupling_rms_gain": {
+          "left_eye": 0.7098787744194858,
+          "right_eye": 0.7119173852945949,
+          "eye_spacing": 1.0068032215728082,
+          "nose": 0.19879639905467356,
+          "mouth": 0.0,
+          "contour": 1.1081368737574984
+        },
+        "isotropic_unit_coordinate_noise_rms_gain": 1.642030725657697,
+        "finite_difference_max_abs_error": {
+          "1e-06": 1.5848706166887716e-09,
+          "0.0001": 1.0951748397047822e-09
+        },
+        "similarity_tangent_max_abs_error": 8.881784197001252e-16,
+        "exact_similarity_max_residual": 1.5232747932137828e-15,
+        "chin_shift_control_residual": 0.036189142268912754
+      },
+      "nose": {
+        "fit_points": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          11,
+          13,
+          17,
+          19
+        ],
+        "design_condition": 1.2944466581458096,
+        "spectral_coupling_rms_gain": {
+          "left_eye": 0.22793856078677882,
+          "right_eye": 0.21585681659800648,
+          "eye_spacing": 0.44395980170590554,
+          "nose": 1.0,
+          "mouth": 0.0,
+          "contour": 0.5573480454872578
+        },
+        "isotropic_unit_coordinate_noise_rms_gain": 1.490907405001652,
+        "finite_difference_max_abs_error": {
+          "1e-06": 1.2985643116358858e-09,
+          "0.0001": 7.019765879689999e-10
+        },
+        "similarity_tangent_max_abs_error": 9.71445146547012e-16,
+        "exact_similarity_max_residual": 1.5232747932137828e-15,
+        "chin_shift_control_residual": 0.03849898047781542
+      },
+      "mouth": {
+        "fit_points": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          11,
+          13,
+          17,
+          19,
+          23
+        ],
+        "design_condition": 1.2919415644492236,
+        "spectral_coupling_rms_gain": {
+          "left_eye": 0.18491899252336627,
+          "right_eye": 0.18802062238355238,
+          "eye_spacing": 0.35592673392183,
+          "nose": 0.0977393852166843,
+          "mouth": 1.0012995956953508,
+          "contour": 0.6427931136900941
+        },
+        "isotropic_unit_coordinate_noise_rms_gain": 1.5044486404701987,
+        "finite_difference_max_abs_error": {
+          "1e-06": 1.5547350490363598e-09,
+          "0.0001": 8.00332577988172e-10
+        },
+        "similarity_tangent_max_abs_error": 6.367865687675446e-16,
+        "exact_similarity_max_residual": 1.5232747932137828e-15,
+        "chin_shift_control_residual": 0.039017134966685345
+      },
+      "contour": {
+        "fit_points": [
+          11,
+          13,
+          17,
+          19,
+          23
+        ],
+        "design_condition": 1.3294101875498185,
+        "spectral_coupling_rms_gain": {
+          "left_eye": 0.7970734757657221,
+          "right_eye": 0.8281927437840589,
+          "eye_spacing": 1.5016795145075388,
+          "nose": 0.29038186336583094,
+          "mouth": 0.0,
+          "contour": 1.019428454660887
+        },
+        "isotropic_unit_coordinate_noise_rms_gain": 1.8769471439035927,
+        "finite_difference_max_abs_error": {
+          "1e-06": 1.8330179318848394e-09,
+          "0.0001": 2.1220936119448197e-09
+        },
+        "similarity_tangent_max_abs_error": 9.003994745284545e-16,
+        "exact_similarity_max_residual": 1.5232747932137828e-15,
+        "chin_shift_control_residual": 0.05000000000000139
+      }
+    },
+    "without_nose": {
+      "left_eye": {
+        "fit_points": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          17,
+          19
+        ],
+        "design_condition": 1.5198466024645583,
+        "spectral_coupling_rms_gain": {
+          "left_eye": 1.0038335848525894,
+          "right_eye": 0.31384767273435543,
+          "eye_spacing": 1.4827460379017314,
+          "nose": 0.0,
+          "mouth": 0.0,
+          "contour": 1.1295790961161782
+        },
+        "isotropic_unit_coordinate_noise_rms_gain": 1.6180390858499252,
+        "finite_difference_max_abs_error": {
+          "1e-06": 1.3634704892906413e-09,
+          "0.0001": 8.460004918831032e-10
+        },
+        "similarity_tangent_max_abs_error": 6.551848554327585e-16,
+        "exact_similarity_max_residual": 1.3624583944151813e-15,
+        "chin_shift_control_residual": 0.03654235564451322
+      },
+      "right_eye": {
+        "fit_points": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          11,
+          13
+        ],
+        "design_condition": 1.5214443916404337,
+        "spectral_coupling_rms_gain": {
+          "left_eye": 0.3143946325976817,
+          "right_eye": 1.006890098340508,
+          "eye_spacing": 1.4833494493474235,
+          "nose": 0.0,
+          "mouth": 0.0,
+          "contour": 1.1393188045801446
+        },
+        "isotropic_unit_coordinate_noise_rms_gain": 1.6214706014554319,
+        "finite_difference_max_abs_error": {
+          "1e-06": 1.4803946957187009e-09,
+          "0.0001": 8.569868148455839e-10
+        },
+        "similarity_tangent_max_abs_error": 7.494005416219807e-16,
+        "exact_similarity_max_residual": 2.1542358717840034e-15,
+        "chin_shift_control_residual": 0.036598853381620264
+      },
+      "eye_spacing": {
+        "fit_points": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "design_condition": 1.7352794519179786,
+        "spectral_coupling_rms_gain": {
+          "left_eye": 0.7098787744194858,
+          "right_eye": 0.7119173852945949,
+          "eye_spacing": 1.0068032215728082,
+          "nose": 0.0,
+          "mouth": 0.0,
+          "contour": 1.2785903918721093
+        },
+        "isotropic_unit_coordinate_noise_rms_gain": 1.6714971126174667,
+        "finite_difference_max_abs_error": {
+          "1e-06": 1.4263182024354393e-09,
+          "0.0001": 9.50336254135209e-10
+        },
+        "similarity_tangent_max_abs_error": 5.551115123125783e-16,
+        "exact_similarity_max_residual": 1.3624583944151813e-15,
+        "chin_shift_control_residual": 0.03521571039933224
+      },
+      "nose": {
+        "fit_points": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          11,
+          13,
+          17,
+          19
+        ],
+        "design_condition": 1.2944466581458096,
+        "spectral_coupling_rms_gain": {
+          "left_eye": 0.22793856078677882,
+          "right_eye": 0.21585681659800648,
+          "eye_spacing": 0.44395980170590554,
+          "nose": 1.0,
+          "mouth": 0.0,
+          "contour": 0.5573480454872578
+        },
+        "isotropic_unit_coordinate_noise_rms_gain": 1.490907405001652,
+        "finite_difference_max_abs_error": {
+          "1e-06": 1.2985643116358858e-09,
+          "0.0001": 7.019765879689999e-10
+        },
+        "similarity_tangent_max_abs_error": 9.71445146547012e-16,
+        "exact_similarity_max_residual": 1.5232747932137828e-15,
+        "chin_shift_control_residual": 0.03849898047781542
+      },
+      "mouth": {
+        "fit_points": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          11,
+          13,
+          17,
+          19
+        ],
+        "design_condition": 1.2944466581458096,
+        "spectral_coupling_rms_gain": {
+          "left_eye": 0.2047699618871196,
+          "right_eye": 0.2060651230984419,
+          "eye_spacing": 0.39552749076673555,
+          "nose": 0.0,
+          "mouth": 1.0012995956953508,
+          "contour": 0.6906679569657941
+        },
+        "isotropic_unit_coordinate_noise_rms_gain": 1.5116953892733638,
+        "finite_difference_max_abs_error": {
+          "1e-06": 1.2985643116358858e-09,
+          "0.0001": 7.019765879689999e-10
+        },
+        "similarity_tangent_max_abs_error": 9.71445146547012e-16,
+        "exact_similarity_max_residual": 1.5232747932137828e-15,
+        "chin_shift_control_residual": 0.03849898047781542
+      },
+      "contour": {
+        "fit_points": [
+          11,
+          13,
+          17,
+          19
+        ],
+        "design_condition": 1.2717404450867276,
+        "spectral_coupling_rms_gain": {
+          "left_eye": 0.9142984998449623,
+          "right_eye": 0.9283231978226845,
+          "eye_spacing": 1.6975373086387708,
+          "nose": 0.0,
+          "mouth": 0.0,
+          "contour": 1.019428454660887
+        },
+        "isotropic_unit_coordinate_noise_rms_gain": 1.9342553954560093,
+        "finite_difference_max_abs_error": {
+          "1e-06": 1.0866715305368757e-09,
+          "0.0001": 2.084708405902802e-09
+        },
+        "similarity_tangent_max_abs_error": 7.198177052912949e-16,
+        "exact_similarity_max_residual": 1.40438996767081e-15,
+        "chin_shift_control_residual": 0.049999999999998664
+      }
+    },
+    "with_mouth": {
+      "left_eye": {
+        "fit_points": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          17,
+          19,
+          23,
+          24,
+          26
+        ],
+        "design_condition": 1.6055550229684754,
+        "spectral_coupling_rms_gain": {
+          "left_eye": 1.0038335848525894,
+          "right_eye": 0.271497449364601,
+          "eye_spacing": 1.4656405172461264,
+          "nose": 0.13190214949043128,
+          "mouth": 0.23134695309962897,
+          "contour": 0.9016429830218957
+        },
+        "isotropic_unit_coordinate_noise_rms_gain": 1.579181066748891,
+        "finite_difference_max_abs_error": {
+          "1e-06": 1.4784340418572128e-09,
+          "0.0001": 9.448118953869766e-10
+        },
+        "similarity_tangent_max_abs_error": 1.0826371294917526e-15,
+        "exact_similarity_max_residual": 3.4061459860379535e-15,
+        "chin_shift_control_residual": 0.039836413450437876
+      },
+      "right_eye": {
+        "fit_points": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          11,
+          13,
+          23,
+          24,
+          26
+        ],
+        "design_condition": 1.6134694419947866,
+        "spectral_coupling_rms_gain": {
+          "left_eye": 0.2728251774794552,
+          "right_eye": 1.006890098340508,
+          "eye_spacing": 1.4679668825589745,
+          "nose": 0.12504144417351512,
+          "mouth": 0.23617330260077468,
+          "contour": 0.919790591322052
+        },
+        "isotropic_unit_coordinate_noise_rms_gain": 1.583591384404372,
+        "finite_difference_max_abs_error": {
+          "1e-06": 1.9985403332256624e-09,
+          "0.0001": 9.589823379840823e-10
+        },
+        "similarity_tangent_max_abs_error": 1.2377252001094519e-15,
+        "exact_similarity_max_residual": 1.7030729930189767e-15,
+        "chin_shift_control_residual": 0.03984200996223433
+      },
+      "eye_spacing": {
+        "fit_points": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          23,
+          24,
+          26
+        ],
+        "design_condition": 1.821053451947949,
+        "spectral_coupling_rms_gain": {
+          "left_eye": 0.7098787744194858,
+          "right_eye": 0.7119173852945949,
+          "eye_spacing": 1.0068032215728082,
+          "nose": 0.164906674315511,
+          "mouth": 0.23567523539551416,
+          "contour": 1.029762321581663
+        },
+        "isotropic_unit_coordinate_noise_rms_gain": 1.6178855731977158,
+        "finite_difference_max_abs_error": {
+          "1e-06": 1.2819849626310997e-09,
+          "0.0001": 1.1689963441696705e-09
+        },
+        "similarity_tangent_max_abs_error": 5.660290669244663e-16,
+        "exact_similarity_max_residual": 2.1542358717840034e-15,
+        "chin_shift_control_residual": 0.03908341118243127
+      },
+      "nose": {
+        "fit_points": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          11,
+          13,
+          17,
+          19,
+          24,
+          26
+        ],
+        "design_condition": 1.4122841446252894,
+        "spectral_coupling_rms_gain": {
+          "left_eye": 0.1952677459503548,
+          "right_eye": 0.18434250248873807,
+          "eye_spacing": 0.37976743102152055,
+          "nose": 1.0,
+          "mouth": 0.17808168328938856,
+          "contour": 0.4485549967450862
+        },
+        "isotropic_unit_coordinate_noise_rms_gain": 1.47793956939975,
+        "finite_difference_max_abs_error": {
+          "1e-06": 9.880412182861065e-10,
+          "0.0001": 7.473635044163984e-10
+        },
+        "similarity_tangent_max_abs_error": 8.257283745649602e-16,
+        "exact_similarity_max_residual": 2.80877993534162e-15,
+        "chin_shift_control_residual": 0.04064623721279917
+      },
+      "mouth": {
+        "fit_points": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          11,
+          13,
+          17,
+          19,
+          23
+        ],
+        "design_condition": 1.2919415644492236,
+        "spectral_coupling_rms_gain": {
+          "left_eye": 0.18491899252336627,
+          "right_eye": 0.18802062238355238,
+          "eye_spacing": 0.35592673392183,
+          "nose": 0.0977393852166843,
+          "mouth": 1.0012995956953508,
+          "contour": 0.6427931136900941
+        },
+        "isotropic_unit_coordinate_noise_rms_gain": 1.5044486404701987,
+        "finite_difference_max_abs_error": {
+          "1e-06": 1.5547350490363598e-09,
+          "0.0001": 8.00332577988172e-10
+        },
+        "similarity_tangent_max_abs_error": 6.367865687675446e-16,
+        "exact_similarity_max_residual": 1.5232747932137828e-15,
+        "chin_shift_control_residual": 0.039017134966685345
+      },
+      "contour": {
+        "fit_points": [
+          11,
+          13,
+          17,
+          19,
+          23,
+          24,
+          26
+        ],
+        "design_condition": 1.4007185711838464,
+        "spectral_coupling_rms_gain": {
+          "left_eye": 0.5452251816987572,
+          "right_eye": 0.5621229314647087,
+          "eye_spacing": 0.9975708408477745,
+          "nose": 0.15061135171141007,
+          "mouth": 0.5462669130907549,
+          "contour": 1.019428454660887
+        },
+        "isotropic_unit_coordinate_noise_rms_gain": 1.728020048762297,
+        "finite_difference_max_abs_error": {
+          "1e-06": 1.2162211307509274e-09,
+          "0.0001": 1.8416719260727632e-09
+        },
+        "similarity_tangent_max_abs_error": 9.71445146547012e-16,
+        "exact_similarity_max_residual": 1.40438996767081e-15,
+        "chin_shift_control_residual": 0.050000000000000704
+      }
+    }
+  },
+  "rows": [
+    {
+      "sample_id": "s0000",
+      "input_sha256": "61a1ba5b1c37b8cc650af140aa7df276a9aad97e59ce1e6051092daf3fc7dce6",
+      "transform": null,
+      "human": {
+        "label": "normal",
+        "parts": [],
+        "severity": "none",
+        "review_status": "confirmed"
+      },
+      "scores": {
+        "complement": {
+          "left_eye": {
+            "status": "valid",
+            "value": 8.676301778195949e-16,
+            "fit_cost": 5.110136233727124e-16,
+            "linear_prediction_error_rms": 8.676301778195948e-16
+          },
+          "right_eye": {
+            "status": "valid",
+            "value": 8.362525661477589e-16,
+            "fit_cost": 5.214292315007225e-16,
+            "linear_prediction_error_rms": 8.362525661477588e-16
+          },
+          "eye_spacing": {
+            "status": "valid",
+            "value": 1.6171007978071119e-15,
+            "fit_cost": 1.1507869215942809e-15,
+            "linear_prediction_error_rms": 1.6171007978071117e-15
+          },
+          "nose": {
+            "status": "valid",
+            "value": 0.0,
+            "fit_cost": 1.1182067527734226e-16,
+            "linear_prediction_error_rms": 0.0
+          },
+          "mouth": {
+            "status": "valid",
+            "value": 0.0,
+            "fit_cost": 2.4173698494135653e-16,
+            "linear_prediction_error_rms": 0.0
+          },
+          "contour": {
+            "status": "valid",
+            "value": 9.676874327153648e-16,
+            "fit_cost": 4.576191606610767e-16,
+            "linear_prediction_error_rms": 9.676874327153648e-16,
+            "chin": 1.3624583944151813e-15,
+            "sides": 8.398976484695435e-16,
+            "chin_before_alignment": 0.0,
+            "chin_linear_prediction": 0.0,
+            "chin_linear_fit_contribution": 0.0
+          }
+        },
+        "without_nose": {
+          "left_eye": {
+            "status": "valid",
+            "value": 5.373163931383103e-16,
+            "fit_cost": 3.121634257910612e-16,
+            "linear_prediction_error_rms": 5.373163931383103e-16
+          },
+          "right_eye": {
+            "status": "valid",
+            "value": 9.634035697755105e-16,
+            "fit_cost": 1.02723560948373e-15,
+            "linear_prediction_error_rms": 9.634035697755105e-16
+          },
+          "eye_spacing": {
+            "status": "valid",
+            "value": 0.0,
+            "fit_cost": 0.0,
+            "linear_prediction_error_rms": 0.0
+          },
+          "nose": {
+            "status": "valid",
+            "value": 0.0,
+            "fit_cost": 1.1182067527734226e-16,
+            "linear_prediction_error_rms": 0.0
+          },
+          "mouth": {
+            "status": "valid",
+            "value": 0.0,
+            "fit_cost": 1.1182067527734226e-16,
+            "linear_prediction_error_rms": 0.0
+          },
+          "contour": {
+            "status": "valid",
+            "value": 1.0911443698392582e-15,
+            "fit_cost": 4.824408820945405e-16,
+            "linear_prediction_error_rms": 1.0911443698392582e-15,
+            "chin": 1.3624583944151813e-15,
+            "sides": 1.0116481159783318e-15,
+            "chin_before_alignment": 0.0,
+            "chin_linear_prediction": 0.0,
+            "chin_linear_fit_contribution": 0.0
+          }
+        },
+        "with_mouth": {
+          "left_eye": {
+            "status": "valid",
+            "value": 3.4061459860379527e-16,
+            "fit_cost": 2.6073041451378945e-16,
+            "linear_prediction_error_rms": 3.4061459860379527e-16
+          },
+          "right_eye": {
+            "status": "valid",
+            "value": 0.0,
+            "fit_cost": 0.0,
+            "linear_prediction_error_rms": 0.0
+          },
+          "eye_spacing": {
+            "status": "valid",
+            "value": 2.3955230779179353e-16,
+            "fit_cost": 3.55162873582212e-16,
+            "linear_prediction_error_rms": 2.3955230779179353e-16
+          },
+          "nose": {
+            "status": "valid",
+            "value": 0.0,
+            "fit_cost": 3.943491259119903e-16,
+            "linear_prediction_error_rms": 0.0
+          },
+          "mouth": {
+            "status": "valid",
+            "value": 0.0,
+            "fit_cost": 2.4173698494135653e-16,
+            "linear_prediction_error_rms": 0.0
+          },
+          "contour": {
+            "status": "valid",
+            "value": 3.0519579056013234e-16,
+            "fit_cost": 0.0,
+            "linear_prediction_error_rms": 3.0519579056013234e-16,
+            "chin": 6.812291972075906e-16,
+            "sides": 0.0,
+            "chin_before_alignment": 0.0,
+            "chin_linear_prediction": 0.0,
+            "chin_linear_fit_contribution": 0.0
+          }
+        }
+      }
+    },
+    {
+      "sample_id": "s0001",
+      "input_sha256": "94f667529c9858e8bce6f0ec3a764cd09265ffddf22ce5e65bc0d613e6b8dd3f",
+      "transform": {
+        "kind": "similarity_rotation",
+        "degrees": -8
+      },
+      "human": {
+        "label": "normal",
+        "parts": [],
+        "severity": "none",
+        "review_status": "confirmed"
+      },
+      "scores": {
+        "complement": {
+          "left_eye": {
+            "status": "valid",
+            "value": 0.014518440625382604,
+            "fit_cost": 0.009332282070045505,
+            "linear_prediction_error_rms": 0.0018983363092583815
+          },
+          "right_eye": {
+            "status": "valid",
+            "value": 0.01984597027078098,
+            "fit_cost": 0.007286240757893644,
+            "linear_prediction_error_rms": 0.00262151181817691
+          },
+          "eye_spacing": {
+            "status": "valid",
+            "value": 0.018249451074411165,
+            "fit_cost": 0.002603763080912238,
+            "linear_prediction_error_rms": 0.0024120465230257227
+          },
+          "nose": {
+            "status": "valid",
+            "value": 0.004028075842877852,
+            "fit_cost": 0.010791610219022767,
+            "linear_prediction_error_rms": 0.0005141887341504011
+          },
+          "mouth": {
+            "status": "valid",
+            "value": 0.0064401316864968585,
+            "fit_cost": 0.010305274851017225,
+            "linear_prediction_error_rms": 0.0008298839447621008
+          },
+          "contour": {
+            "status": "valid",
+            "value": 0.011859298191682596,
+            "fit_cost": 0.012385330189723997,
+            "linear_prediction_error_rms": 0.0013621075840276086,
+            "chin": 0.008097280836468781,
+            "sides": 0.012628461963144518,
+            "chin_before_alignment": 0.19941585590944133,
+            "chin_linear_prediction": 0.008407616884113085,
+            "chin_linear_fit_contribution": 0.19770113500747186
+          }
+        },
+        "without_nose": {
+          "left_eye": {
+            "status": "valid",
+            "value": 0.014570321034750134,
+            "fit_cost": 0.009876227393947255,
+            "linear_prediction_error_rms": 0.0018989523377611578
+          },
+          "right_eye": {
+            "status": "valid",
+            "value": 0.019968989696730822,
+            "fit_cost": 0.00763072725550543,
+            "linear_prediction_error_rms": 0.002639963382963994
+          },
+          "eye_spacing": {
+            "status": "valid",
+            "value": 0.018761856469742332,
+            "fit_cost": 0.001488065999638355,
+            "linear_prediction_error_rms": 0.0024773143754134646
+          },
+          "nose": {
+            "status": "valid",
+            "value": 0.004028075842877852,
+            "fit_cost": 0.010791610219022767,
+            "linear_prediction_error_rms": 0.0005141887341504011
+          },
+          "mouth": {
+            "status": "valid",
+            "value": 0.0064816874232653116,
+            "fit_cost": 0.010791610219022767,
+            "linear_prediction_error_rms": 0.0008368138307797065
+          },
+          "contour": {
+            "status": "valid",
+            "value": 0.0122542298476433,
+            "fit_cost": 0.013672757897966443,
+            "linear_prediction_error_rms": 0.0014726719117145219,
+            "chin": 0.00819057586873788,
+            "sides": 0.013077047519111292,
+            "chin_before_alignment": 0.19941585590944133,
+            "chin_linear_prediction": 0.008544247455600777,
+            "chin_linear_fit_contribution": 0.1996770581786784
+          }
+        },
+        "with_mouth": {
+          "left_eye": {
+            "status": "valid",
+            "value": 0.014304217517347373,
+            "fit_cost": 0.008827480135770066,
+            "linear_prediction_error_rms": 0.0018787642052578112
+          },
+          "right_eye": {
+            "status": "valid",
+            "value": 0.020140014198041598,
+            "fit_cost": 0.006918111141789085,
+            "linear_prediction_error_rms": 0.002665807003786041
+          },
+          "eye_spacing": {
+            "status": "valid",
+            "value": 0.018234949463303514,
+            "fit_cost": 0.003613399690993922,
+            "linear_prediction_error_rms": 0.002421200141287907
+          },
+          "nose": {
+            "status": "valid",
+            "value": 0.00385596836108376,
+            "fit_cost": 0.010101424429625434,
+            "linear_prediction_error_rms": 0.0004873240712717315
+          },
+          "mouth": {
+            "status": "valid",
+            "value": 0.0064401316864968585,
+            "fit_cost": 0.010305274851017225,
+            "linear_prediction_error_rms": 0.0008298839447621008
+          },
+          "contour": {
+            "status": "valid",
+            "value": 0.009467670256588455,
+            "fit_cost": 0.011327467981550952,
+            "linear_prediction_error_rms": 0.0010325562027648063,
+            "chin": 0.0037503799363357883,
+            "sides": 0.01042093662508377,
+            "chin_before_alignment": 0.19941585590944133,
+            "chin_linear_prediction": 0.003909181156722462,
+            "chin_linear_fit_contribution": 0.19677862111780803
+          }
+        }
+      }
+    },
+    {
+      "sample_id": "s0002",
+      "input_sha256": "4b279ac3b9b754b47c3c17673b768fad91285d47c52fbb9cde4b8f6b1d1d67de",
+      "transform": {
+        "kind": "similarity_rotation",
+        "degrees": 8
+      },
+      "human": {
+        "label": "normal",
+        "parts": [],
+        "severity": "none",
+        "review_status": "confirmed"
+      },
+      "scores": {
+        "complement": {
+          "left_eye": {
+            "status": "valid",
+            "value": 0.02553906851626231,
+            "fit_cost": 0.011170334634357166,
+            "linear_prediction_error_rms": 0.0033557082679074026
+          },
+          "right_eye": {
+            "status": "valid",
+            "value": 0.012221228749176036,
+            "fit_cost": 0.015371410591781964,
+            "linear_prediction_error_rms": 0.0013439498014085596
+          },
+          "eye_spacing": {
+            "status": "valid",
+            "value": 0.018508614654568295,
+            "fit_cost": 0.0119066686655343,
+            "linear_prediction_error_rms": 0.0023718534294716043
+          },
+          "nose": {
+            "status": "valid",
+            "value": 0.001131140888113036,
+            "fit_cost": 0.015322545975853565,
+            "linear_prediction_error_rms": 0.0001337514240407383
+          },
+          "mouth": {
+            "status": "valid",
+            "value": 0.009919265174862217,
+            "fit_cost": 0.014526890305496993,
+            "linear_prediction_error_rms": 0.0012563031894550437
+          },
+          "contour": {
+            "status": "valid",
+            "value": 0.01910951266488608,
+            "fit_cost": 0.014364018995432494,
+            "linear_prediction_error_rms": 0.002563188100510712,
+            "chin": 0.02192040568863001,
+            "sides": 0.018332878960133962,
+            "chin_before_alignment": 0.20322094333846558,
+            "chin_linear_prediction": 0.02209903036026124,
+            "chin_linear_fit_contribution": 0.20260606415735408
+          }
+        },
+        "without_nose": {
+          "left_eye": {
+            "status": "valid",
+            "value": 0.025647532947643714,
+            "fit_cost": 0.011925205563036998,
+            "linear_prediction_error_rms": 0.0033698089126513913
+          },
+          "right_eye": {
+            "status": "valid",
+            "value": 0.01258840247103833,
+            "fit_cost": 0.01641874020336386,
+            "linear_prediction_error_rms": 0.0013820676250149008
+          },
+          "eye_spacing": {
+            "status": "valid",
+            "value": 0.018525369094202025,
+            "fit_cost": 0.01302601483544929,
+            "linear_prediction_error_rms": 0.002371421291876456
+          },
+          "nose": {
+            "status": "valid",
+            "value": 0.001131140888113036,
+            "fit_cost": 0.015322545975853565,
+            "linear_prediction_error_rms": 0.0001337514240407383
+          },
+          "mouth": {
+            "status": "valid",
+            "value": 0.009944463637863978,
+            "fit_cost": 0.015322545975853565,
+            "linear_prediction_error_rms": 0.0012597282541931152
+          },
+          "contour": {
+            "status": "valid",
+            "value": 0.0201632298753264,
+            "fit_cost": 0.015953861803332588,
+            "linear_prediction_error_rms": 0.002707349868827757,
+            "chin": 0.02390607543375014,
+            "sides": 0.019104119129109077,
+            "chin_before_alignment": 0.20322094333846558,
+            "chin_linear_prediction": 0.024080231463767313,
+            "chin_linear_fit_contribution": 0.20299131123790617
+          }
+        },
+        "with_mouth": {
+          "left_eye": {
+            "status": "valid",
+            "value": 0.025831116087647352,
+            "fit_cost": 0.010644451288828847,
+            "linear_prediction_error_rms": 0.003422134578557475
+          },
+          "right_eye": {
+            "status": "valid",
+            "value": 0.01305125253796,
+            "fit_cost": 0.0141870981941805,
+            "linear_prediction_error_rms": 0.0014349056381378093
+          },
+          "eye_spacing": {
+            "status": "valid",
+            "value": 0.01890095713785582,
+            "fit_cost": 0.010959705772208308,
+            "linear_prediction_error_rms": 0.002426959682283462
+          },
+          "nose": {
+            "status": "valid",
+            "value": 0.0014322770959405184,
+            "fit_cost": 0.014352889418275689,
+            "linear_prediction_error_rms": 0.00017006653568169377
+          },
+          "mouth": {
+            "status": "valid",
+            "value": 0.009919265174862217,
+            "fit_cost": 0.014526890305496993,
+            "linear_prediction_error_rms": 0.0012563031894550437
+          },
+          "contour": {
+            "status": "valid",
+            "value": 0.014335320892279063,
+            "fit_cost": 0.013891248470260216,
+            "linear_prediction_error_rms": 0.002000762464571226,
+            "chin": 0.01123261097570672,
+            "sides": 0.015016768694472696,
+            "chin_before_alignment": 0.20322094333846558,
+            "chin_linear_prediction": 0.011511852917677225,
+            "chin_linear_fit_contribution": 0.2050122240986352
+          }
+        }
+      }
+    },
+    {
+      "sample_id": "s0003",
+      "input_sha256": "e79ea09ace634101d0ab4eaa8ec4c44c88082b4eed1c256cabbbb57b32f1ad35",
+      "transform": {
+        "kind": "similarity_scale",
+        "scale": 0.9
+      },
+      "human": {
+        "label": "normal",
+        "parts": [],
+        "severity": "none",
+        "review_status": "confirmed"
+      },
+      "scores": {
+        "complement": {
+          "left_eye": {
+            "status": "valid",
+            "value": 0.00913018246046503,
+            "fit_cost": 0.008610637068127864,
+            "linear_prediction_error_rms": 0.0008943959695473708
+          },
+          "right_eye": {
+            "status": "valid",
+            "value": 0.014873368852981713,
+            "fit_cost": 0.006689189285221606,
+            "linear_prediction_error_rms": 0.001468724407947409
+          },
+          "eye_spacing": {
+            "status": "valid",
+            "value": 0.015062364957838347,
+            "fit_cost": 0.005352354770867226,
+            "linear_prediction_error_rms": 0.0014550307822713728
+          },
+          "nose": {
+            "status": "valid",
+            "value": 0.0039697019013930175,
+            "fit_cost": 0.008735334573787343,
+            "linear_prediction_error_rms": 0.00039270770863382036
+          },
+          "mouth": {
+            "status": "valid",
+            "value": 0.0033774550721168565,
+            "fit_cost": 0.008385156092464182,
+            "linear_prediction_error_rms": 0.0003187402854712064
+          },
+          "contour": {
+            "status": "valid",
+            "value": 0.012295027055533026,
+            "fit_cost": 0.006510351449655904,
+            "linear_prediction_error_rms": 0.0012251644489990616,
+            "chin": 0.004559923441970336,
+            "sides": 0.013568115065164707,
+            "chin_before_alignment": 0.1531465460549186,
+            "chin_linear_prediction": 0.004135350862335598,
+            "chin_linear_fit_contribution": 0.1552371310295794
+          }
+        },
+        "without_nose": {
+          "left_eye": {
+            "status": "valid",
+            "value": 0.00987804893554333,
+            "fit_cost": 0.008963677555890451,
+            "linear_prediction_error_rms": 0.0009709707683948626
+          },
+          "right_eye": {
+            "status": "valid",
+            "value": 0.01530766622894489,
+            "fit_cost": 0.006869620741712884,
+            "linear_prediction_error_rms": 0.0015075469593920073
+          },
+          "eye_spacing": {
+            "status": "valid",
+            "value": 0.016532315461593002,
+            "fit_cost": 0.0045330703215601805,
+            "linear_prediction_error_rms": 0.0015832992975076557
+          },
+          "nose": {
+            "status": "valid",
+            "value": 0.0039697019013930175,
+            "fit_cost": 0.008735334573787343,
+            "linear_prediction_error_rms": 0.00039270770863382036
+          },
+          "mouth": {
+            "status": "valid",
+            "value": 0.003538431584743792,
+            "fit_cost": 0.008735334573787343,
+            "linear_prediction_error_rms": 0.0003325947992756216
+          },
+          "contour": {
+            "status": "valid",
+            "value": 0.01249496589457842,
+            "fit_cost": 0.0070814683256287606,
+            "linear_prediction_error_rms": 0.001248154844877867,
+            "chin": 0.0034091030138915534,
+            "sides": 0.01387869206505068,
+            "chin_before_alignment": 0.1531465460549186,
+            "chin_linear_prediction": 0.0031124104603136157,
+            "chin_linear_fit_contribution": 0.15502345567571524
+          }
+        },
+        "with_mouth": {
+          "left_eye": {
+            "status": "valid",
+            "value": 0.008832960456543302,
+            "fit_cost": 0.00783707513268958,
+            "linear_prediction_error_rms": 0.0008663110353278529
+          },
+          "right_eye": {
+            "status": "valid",
+            "value": 0.014881417325720535,
+            "fit_cost": 0.006099581278508533,
+            "linear_prediction_error_rms": 0.0014678391430011822
+          },
+          "eye_spacing": {
+            "status": "valid",
+            "value": 0.014724457073417177,
+            "fit_cost": 0.004927920556670365,
+            "linear_prediction_error_rms": 0.0014229243780769815
+          },
+          "nose": {
+            "status": "valid",
+            "value": 0.0036872476788073617,
+            "fit_cost": 0.00801642323225422,
+            "linear_prediction_error_rms": 0.00036910706692442214
+          },
+          "mouth": {
+            "status": "valid",
+            "value": 0.0033774550721168565,
+            "fit_cost": 0.008385156092464182,
+            "linear_prediction_error_rms": 0.0003187402854712064
+          },
+          "contour": {
+            "status": "valid",
+            "value": 0.011925791852935692,
+            "fit_cost": 0.006008215602180038,
+            "linear_prediction_error_rms": 0.0011809015592244294,
+            "chin": 0.005709959324724054,
+            "sides": 0.013034921641304703,
+            "chin_before_alignment": 0.1531465460549186,
+            "chin_linear_prediction": 0.00515878218477372,
+            "chin_linear_fit_contribution": 0.15563016859482742
+          }
+        }
+      }
+    },
+    {
+      "sample_id": "s0004",
+      "input_sha256": "6846f7d3f6605553c736d567eef817914cf8e46cc3d19c395e0532ec6e95923c",
+      "transform": {
+        "kind": "eye_spacing",
+        "strength": 0.05,
+        "method": "inverse_compact_elliptic_displacement"
+      },
+      "human": {
+        "label": "normal",
+        "parts": [],
+        "severity": "none",
+        "review_status": "confirmed"
+      },
+      "scores": {
+        "complement": {
+          "left_eye": {
+            "status": "valid",
+            "value": 0.04827051298735595,
+            "fit_cost": 0.016331099101225408,
+            "linear_prediction_error_rms": 0.0007594916192656517
+          },
+          "right_eye": {
+            "status": "valid",
+            "value": 0.03760189954870561,
+            "fit_cost": 0.01942102460725454,
+            "linear_prediction_error_rms": 0.0009545022877220284
+          },
+          "eye_spacing": {
+            "status": "valid",
+            "value": 0.037038863452192636,
+            "fit_cost": 0.011547879900895335,
+            "linear_prediction_error_rms": 0.0004104040546868638
+          },
+          "nose": {
+            "status": "valid",
+            "value": 0.0034255079944375947,
+            "fit_cost": 0.023964918597736914,
+            "linear_prediction_error_rms": 6.877518747755338e-05
+          },
+          "mouth": {
+            "status": "valid",
+            "value": 0.007374550749837647,
+            "fit_cost": 0.022747932275922447,
+            "linear_prediction_error_rms": 0.00019034999600394818
+          },
+          "contour": {
+            "status": "valid",
+            "value": 0.04031704459393235,
+            "fit_cost": 0.0219882131393736,
+            "linear_prediction_error_rms": 0.0007827274367003618,
+            "chin": 0.04675479287151282,
+            "sides": 0.03854626504176063,
+            "chin_before_alignment": 0.0025268849186562063,
+            "chin_linear_prediction": 0.04735917174018162,
+            "chin_linear_fit_contribution": 0.0494322574233442
+          }
+        },
+        "without_nose": {
+          "left_eye": {
+            "status": "valid",
+            "value": 0.04957197622961126,
+            "fit_cost": 0.017230594019379524,
+            "linear_prediction_error_rms": 0.0007690031873017344
+          },
+          "right_eye": {
+            "status": "valid",
+            "value": 0.038808492527774914,
+            "fit_cost": 0.020460130714449968,
+            "linear_prediction_error_rms": 0.0009764872927549458
+          },
+          "eye_spacing": {
+            "status": "valid",
+            "value": 0.037198401496495496,
+            "fit_cost": 0.01260004653990736,
+            "linear_prediction_error_rms": 0.0004123984780370307
+          },
+          "nose": {
+            "status": "valid",
+            "value": 0.0034255079944375947,
+            "fit_cost": 0.023964918597736914,
+            "linear_prediction_error_rms": 6.877518747755338e-05
+          },
+          "mouth": {
+            "status": "valid",
+            "value": 0.0075420554500919825,
+            "fit_cost": 0.023964918597736914,
+            "linear_prediction_error_rms": 0.00018551265930333158
+          },
+          "contour": {
+            "status": "valid",
+            "value": 0.04380957054215024,
+            "fit_cost": 0.02357625794700765,
+            "linear_prediction_error_rms": 0.0009012713133967469,
+            "chin": 0.05157735296504124,
+            "sides": 0.04164956331615305,
+            "chin_before_alignment": 0.0025268849186562063,
+            "chin_linear_prediction": 0.05243709644585874,
+            "chin_linear_fit_contribution": 0.05458970041769303
+          }
+        },
+        "with_mouth": {
+          "left_eye": {
+            "status": "valid",
+            "value": 0.04751301417508444,
+            "fit_cost": 0.014764593666159254,
+            "linear_prediction_error_rms": 0.0007423054372410083
+          },
+          "right_eye": {
+            "status": "valid",
+            "value": 0.03702606639031265,
+            "fit_cost": 0.01763020945981207,
+            "linear_prediction_error_rms": 0.0009278422705851902
+          },
+          "eye_spacing": {
+            "status": "valid",
+            "value": 0.03710616372045046,
+            "fit_cost": 0.010055541679514531,
+            "linear_prediction_error_rms": 0.00040236457048522487
+          },
+          "nose": {
+            "status": "valid",
+            "value": 0.002826745226481712,
+            "fit_cost": 0.021793280810557415,
+            "linear_prediction_error_rms": 8.90872226878833e-05
+          },
+          "mouth": {
+            "status": "valid",
+            "value": 0.007374550749837647,
+            "fit_cost": 0.022747932275922447,
+            "linear_prediction_error_rms": 0.00019034999600394818
+          },
+          "contour": {
+            "status": "valid",
+            "value": 0.02807158704616562,
+            "fit_cost": 0.02153055738191134,
+            "linear_prediction_error_rms": 0.0006538177786601143,
+            "chin": 0.029770016699390917,
+            "sides": 0.027632216606326202,
+            "chin_before_alignment": 0.0025268849186562063,
+            "chin_linear_prediction": 0.02968803340176762,
+            "chin_linear_fit_contribution": 0.03164306511555681
+          }
+        }
+      }
+    },
+    {
+      "sample_id": "s0005",
+      "input_sha256": "ce7e7d8c437eb2462da3604b52808602049de8ba37546b6dcb59ef74053e8d76",
+      "transform": {
+        "kind": "eye_spacing",
+        "strength": 0.1,
+        "method": "inverse_compact_elliptic_displacement"
+      },
+      "human": {
+        "label": "normal",
+        "parts": [],
+        "severity": "none",
+        "review_status": "confirmed"
+      },
+      "scores": {
+        "complement": {
+          "left_eye": {
+            "status": "valid",
+            "value": 0.0882325257828767,
+            "fit_cost": 0.028148913787778767,
+            "linear_prediction_error_rms": 0.0028817161803635144
+          },
+          "right_eye": {
+            "status": "valid",
+            "value": 0.07063794584047248,
+            "fit_cost": 0.034058979052164734,
+            "linear_prediction_error_rms": 0.003410911587423287
+          },
+          "eye_spacing": {
+            "status": "valid",
+            "value": 0.06804835041741376,
+            "fit_cost": 0.017643967613675957,
+            "linear_prediction_error_rms": 0.00145628010788764
+          },
+          "nose": {
+            "status": "valid",
+            "value": 0.004972741143055014,
+            "fit_cost": 0.04285898597454326,
+            "linear_prediction_error_rms": 9.499400520081545e-05
+          },
+          "mouth": {
+            "status": "valid",
+            "value": 0.013062127306911961,
+            "fit_cost": 0.04065583321597992,
+            "linear_prediction_error_rms": 0.0005890961779928346
+          },
+          "contour": {
+            "status": "valid",
+            "value": 0.07383006469465876,
+            "fit_cost": 0.039028587708518074,
+            "linear_prediction_error_rms": 0.0025724063671679373,
+            "chin": 0.08320179241347014,
+            "sides": 0.07131993951252305,
+            "chin_before_alignment": 0.003466981528138809,
+            "chin_linear_prediction": 0.08589581383071063,
+            "chin_linear_fit_contribution": 0.0868335365735681
+          }
+        },
+        "without_nose": {
+          "left_eye": {
+            "status": "valid",
+            "value": 0.09102059118160744,
+            "fit_cost": 0.029420864200192152,
+            "linear_prediction_error_rms": 0.002916899875299102
+          },
+          "right_eye": {
+            "status": "valid",
+            "value": 0.07311361804372078,
+            "fit_cost": 0.035864225459731405,
+            "linear_prediction_error_rms": 0.0034998476619928615
+          },
+          "eye_spacing": {
+            "status": "valid",
+            "value": 0.06810335663589785,
+            "fit_cost": 0.01920400454700054,
+            "linear_prediction_error_rms": 0.001466577787621384
+          },
+          "nose": {
+            "status": "valid",
+            "value": 0.004972741143055014,
+            "fit_cost": 0.04285898597454326,
+            "linear_prediction_error_rms": 9.499400520081545e-05
+          },
+          "mouth": {
+            "status": "valid",
+            "value": 0.012853841062726893,
+            "fit_cost": 0.04285898597454326,
+            "linear_prediction_error_rms": 0.0005947598985395437
+          },
+          "contour": {
+            "status": "valid",
+            "value": 0.0779612743072527,
+            "fit_cost": 0.04287665290626622,
+            "linear_prediction_error_rms": 0.002897377417006533,
+            "chin": 0.08892100183966038,
+            "sides": 0.07500100911885212,
+            "chin_before_alignment": 0.003466981528138809,
+            "chin_linear_prediction": 0.09201986505042982,
+            "chin_linear_fit_contribution": 0.09309009125034594
+          }
+        },
+        "with_mouth": {
+          "left_eye": {
+            "status": "valid",
+            "value": 0.086248352897756,
+            "fit_cost": 0.025833455309999878,
+            "linear_prediction_error_rms": 0.0028374557298010386
+          },
+          "right_eye": {
+            "status": "valid",
+            "value": 0.0695577839623258,
+            "fit_cost": 0.03085086554326155,
+            "linear_prediction_error_rms": 0.003298113785016637
+          },
+          "eye_spacing": {
+            "status": "valid",
+            "value": 0.06828359521723368,
+            "fit_cost": 0.015613288634428294,
+            "linear_prediction_error_rms": 0.0014280955758190742
+          },
+          "nose": {
+            "status": "valid",
+            "value": 0.005864482232030577,
+            "fit_cost": 0.038949063005097255,
+            "linear_prediction_error_rms": 5.630888096298358e-05
+          },
+          "mouth": {
+            "status": "valid",
+            "value": 0.013062127306911961,
+            "fit_cost": 0.04065583321597992,
+            "linear_prediction_error_rms": 0.0005890961779928346
+          },
+          "contour": {
+            "status": "valid",
+            "value": 0.052707019082298745,
+            "fit_cost": 0.03826171760559089,
+            "linear_prediction_error_rms": 0.0013275496717753716,
+            "chin": 0.05474331801552866,
+            "sides": 0.05219061624213256,
+            "chin_before_alignment": 0.003466981528138809,
+            "chin_linear_prediction": 0.05504388767514099,
+            "chin_linear_fit_contribution": 0.055827302759355456
+          }
+        }
+      }
+    },
+    {
+      "sample_id": "s0006",
+      "input_sha256": "d68aa347e4fe94df781e45c57824a4ac54525d08080cea92116f736a2cbf35d8",
+      "transform": {
+        "kind": "eye_spacing",
+        "strength": 0.2,
+        "method": "inverse_compact_elliptic_displacement"
+      },
+      "human": {
+        "label": "geometry_anomaly",
+        "parts": [
+          "left_eye",
+          "right_eye",
+          "eye_spacing"
+        ],
+        "severity": "severe",
+        "review_status": "confirmed"
+      },
+      "scores": {
+        "complement": {
+          "left_eye": {
+            "status": "valid",
+            "value": 0.11701972147027052,
+            "fit_cost": 0.04577113222890632,
+            "linear_prediction_error_rms": 0.007514440595095591
+          },
+          "right_eye": {
+            "status": "valid",
+            "value": 0.1087217164942993,
+            "fit_cost": 0.04841339167229297,
+            "linear_prediction_error_rms": 0.0077429253877219755
+          },
+          "eye_spacing": {
+            "status": "valid",
+            "value": 0.10314254668577176,
+            "fit_cost": 0.025167530127726087,
+            "linear_prediction_error_rms": 0.00369304525085077
+          },
+          "nose": {
+            "status": "valid",
+            "value": 0.02359490517347414,
+            "fit_cost": 0.062471442240327316,
+            "linear_prediction_error_rms": 0.0013380790367754666
+          },
+          "mouth": {
+            "status": "valid",
+            "value": 0.01949469962882813,
+            "fit_cost": 0.059701351666659186,
+            "linear_prediction_error_rms": 0.001502541247835263
+          },
+          "contour": {
+            "status": "valid",
+            "value": 0.10309446059596779,
+            "fit_cost": 0.058336794659578986,
+            "linear_prediction_error_rms": 0.005377877642199463,
+            "chin": 0.1115062694873324,
+            "sides": 0.10081333488040624,
+            "chin_before_alignment": 0.002414489558294619,
+            "chin_linear_prediction": 0.11646022412666131,
+            "chin_linear_fit_contribution": 0.1177362547757061
+          }
+        },
+        "without_nose": {
+          "left_eye": {
+            "status": "valid",
+            "value": 0.12051525677069183,
+            "fit_cost": 0.04751201804039987,
+            "linear_prediction_error_rms": 0.007629391355505306
+          },
+          "right_eye": {
+            "status": "valid",
+            "value": 0.11222029064680517,
+            "fit_cost": 0.050296049261548445,
+            "linear_prediction_error_rms": 0.007869940390626553
+          },
+          "eye_spacing": {
+            "status": "valid",
+            "value": 0.10214341045529131,
+            "fit_cost": 0.026967789478804165,
+            "linear_prediction_error_rms": 0.0037190644632410013
+          },
+          "nose": {
+            "status": "valid",
+            "value": 0.02359490517347414,
+            "fit_cost": 0.062471442240327316,
+            "linear_prediction_error_rms": 0.0013380790367754666
+          },
+          "mouth": {
+            "status": "valid",
+            "value": 0.019305482020519644,
+            "fit_cost": 0.062471442240327316,
+            "linear_prediction_error_rms": 0.0016091986191792654
+          },
+          "contour": {
+            "status": "valid",
+            "value": 0.10297509583948257,
+            "fit_cost": 0.06516980757488106,
+            "linear_prediction_error_rms": 0.005155949822571895,
+            "chin": 0.11108781274487564,
+            "sides": 0.10077893577412428,
+            "chin_before_alignment": 0.002414489558294619,
+            "chin_linear_prediction": 0.11514448937496,
+            "chin_linear_fit_contribution": 0.11647009735291736
+          }
+        },
+        "with_mouth": {
+          "left_eye": {
+            "status": "valid",
+            "value": 0.11507759598861943,
+            "fit_cost": 0.04170326696266387,
+            "linear_prediction_error_rms": 0.007367044205180821
+          },
+          "right_eye": {
+            "status": "valid",
+            "value": 0.10621018892715174,
+            "fit_cost": 0.044276093495728724,
+            "linear_prediction_error_rms": 0.0075314061194181065
+          },
+          "eye_spacing": {
+            "status": "valid",
+            "value": 0.10401834269414821,
+            "fit_cost": 0.02223833791066405,
+            "linear_prediction_error_rms": 0.0036330213710017195
+          },
+          "nose": {
+            "status": "valid",
+            "value": 0.023572660992145875,
+            "fit_cost": 0.05692260466178332,
+            "linear_prediction_error_rms": 0.0010192295287162218
+          },
+          "mouth": {
+            "status": "valid",
+            "value": 0.01949469962882813,
+            "fit_cost": 0.059701351666659186,
+            "linear_prediction_error_rms": 0.001502541247835263
+          },
+          "contour": {
+            "status": "valid",
+            "value": 0.07885408498730644,
+            "fit_cost": 0.05542691318476018,
+            "linear_prediction_error_rms": 0.0028736736595783062,
+            "chin": 0.07761946437189825,
+            "sides": 0.0791690890354651,
+            "chin_before_alignment": 0.002414489558294619,
+            "chin_linear_prediction": 0.07886614865699541,
+            "chin_linear_fit_contribution": 0.08007322505661221
+          }
+        }
+      }
+    },
+    {
+      "sample_id": "s0007",
+      "input_sha256": "de21a7f853a09e4af6f1b1d2b053ba8f057248ad643e53045c3dab1bd4998a5f",
+      "transform": {
+        "kind": "nose_mouth",
+        "strength": 0.05,
+        "method": "inverse_compact_elliptic_displacement"
+      },
+      "human": {
+        "label": "normal",
+        "parts": [],
+        "severity": "none",
+        "review_status": "confirmed"
+      },
+      "scores": {
+        "complement": {
+          "left_eye": {
+            "status": "valid",
+            "value": 0.006473447408172295,
+            "fit_cost": 0.00963771610832059,
+            "linear_prediction_error_rms": 0.00011813928936769563
+          },
+          "right_eye": {
+            "status": "valid",
+            "value": 0.007131436159943006,
+            "fit_cost": 0.009542460590176967,
+            "linear_prediction_error_rms": 0.00012363458847532
+          },
+          "eye_spacing": {
+            "status": "valid",
+            "value": 0.005854834004580658,
+            "fit_cost": 0.010703171349780488,
+            "linear_prediction_error_rms": 0.00012885167487479136
+          },
+          "nose": {
+            "status": "valid",
+            "value": 0.026762991918504127,
+            "fit_cost": 0.004204737493732515,
+            "linear_prediction_error_rms": 0.00012335264942792346
+          },
+          "mouth": {
+            "status": "valid",
+            "value": 0.045894841839588925,
+            "fit_cost": 0.008945110564951314,
+            "linear_prediction_error_rms": 0.00017624970188744076
+          },
+          "contour": {
+            "status": "valid",
+            "value": 0.007165215187107063,
+            "fit_cost": 0.011179151780041485,
+            "linear_prediction_error_rms": 0.0002729157911904778,
+            "chin": 0.002550091125396915,
+            "sides": 0.00790925417280135,
+            "chin_before_alignment": 0.006442631161251918,
+            "chin_linear_prediction": 0.0025396081886190085,
+            "chin_linear_fit_contribution": 0.008979456254719598
+          }
+        },
+        "without_nose": {
+          "left_eye": {
+            "status": "valid",
+            "value": 0.005360332348535243,
+            "fit_cost": 0.004185389171335279,
+            "linear_prediction_error_rms": 4.618696350612228e-05
+          },
+          "right_eye": {
+            "status": "valid",
+            "value": 0.006663574958984621,
+            "fit_cost": 0.003789958970884128,
+            "linear_prediction_error_rms": 5.094805499619018e-05
+          },
+          "eye_spacing": {
+            "status": "valid",
+            "value": 0.005870808666308799,
+            "fit_cost": 0.0037355055155289503,
+            "linear_prediction_error_rms": 5.0513214047902486e-05
+          },
+          "nose": {
+            "status": "valid",
+            "value": 0.026762991918504127,
+            "fit_cost": 0.004204737493732515,
+            "linear_prediction_error_rms": 0.00012335264942792346
+          },
+          "mouth": {
+            "status": "valid",
+            "value": 0.048488492601638275,
+            "fit_cost": 0.004204737493732515,
+            "linear_prediction_error_rms": 0.0002159668644601732
+          },
+          "contour": {
+            "status": "valid",
+            "value": 0.008514400422647601,
+            "fit_cost": 0.0015657643052028646,
+            "linear_prediction_error_rms": 3.3063996711647996e-06,
+            "chin": 0.0071205637447788175,
+            "sides": 0.008828725654757107,
+            "chin_before_alignment": 0.006442631161251918,
+            "chin_linear_prediction": 0.007120010500400844,
+            "chin_linear_fit_contribution": 0.0006774559666266183
+          }
+        },
+        "with_mouth": {
+          "left_eye": {
+            "status": "valid",
+            "value": 0.015700976345301525,
+            "fit_cost": 0.01988165225016728,
+            "linear_prediction_error_rms": 0.0005174938799820893
+          },
+          "right_eye": {
+            "status": "valid",
+            "value": 0.015471521808325112,
+            "fit_cost": 0.01988830462100745,
+            "linear_prediction_error_rms": 0.0005268899514612775
+          },
+          "eye_spacing": {
+            "status": "valid",
+            "value": 0.01476743789550705,
+            "fit_cost": 0.02136679637486224,
+            "linear_prediction_error_rms": 0.0006041287916529884
+          },
+          "nose": {
+            "status": "valid",
+            "value": 0.01819686681036443,
+            "fit_cost": 0.019055484497765007,
+            "linear_prediction_error_rms": 0.00018575657349299805
+          },
+          "mouth": {
+            "status": "valid",
+            "value": 0.045894841839588925,
+            "fit_cost": 0.008945110564951314,
+            "linear_prediction_error_rms": 0.00017624970188744076
+          },
+          "contour": {
+            "status": "valid",
+            "value": 0.02471497293299175,
+            "fit_cost": 0.02038800899370118,
+            "linear_prediction_error_rms": 0.001153589435489928,
+            "chin": 0.029071059225257552,
+            "sides": 0.02349938195326432,
+            "chin_before_alignment": 0.006442631161251918,
+            "chin_linear_prediction": 0.029046250247011136,
+            "chin_linear_fit_contribution": 0.03548832618452178
+          }
+        }
+      }
+    },
+    {
+      "sample_id": "s0008",
+      "input_sha256": "78f86f39ab1dc70fba4118ecfbf62653956eedb586f018b83cfc2d153da8e60c",
+      "transform": {
+        "kind": "nose_mouth",
+        "strength": 0.1,
+        "method": "inverse_compact_elliptic_displacement"
+      },
+      "human": {
+        "label": "normal",
+        "parts": [],
+        "severity": "none",
+        "review_status": "confirmed"
+      },
+      "scores": {
+        "complement": {
+          "left_eye": {
+            "status": "valid",
+            "value": 0.010758339043200057,
+            "fit_cost": 0.018246660287022678,
+            "linear_prediction_error_rms": 0.000412383295192951
+          },
+          "right_eye": {
+            "status": "valid",
+            "value": 0.013178795119619122,
+            "fit_cost": 0.017977375414471582,
+            "linear_prediction_error_rms": 0.00044333001631575536
+          },
+          "eye_spacing": {
+            "status": "valid",
+            "value": 0.010146977764364332,
+            "fit_cost": 0.02036710161068216,
+            "linear_prediction_error_rms": 0.0004596394054809709
+          },
+          "nose": {
+            "status": "valid",
+            "value": 0.05061256912632791,
+            "fit_cost": 0.00760442477173347,
+            "linear_prediction_error_rms": 0.0004792459284563222
+          },
+          "mouth": {
+            "status": "valid",
+            "value": 0.09520695456875963,
+            "fit_cost": 0.01678508209614611,
+            "linear_prediction_error_rms": 0.0007751802447659957
+          },
+          "contour": {
+            "status": "valid",
+            "value": 0.013748891377543523,
+            "fit_cost": 0.02081536725578172,
+            "linear_prediction_error_rms": 0.0009537180841644982,
+            "chin": 0.0066802276709393305,
+            "sides": 0.014979669967936128,
+            "chin_before_alignment": 0.01183483085424509,
+            "chin_linear_prediction": 0.0066997433962956805,
+            "chin_linear_fit_contribution": 0.018504746624363903
+          }
+        },
+        "without_nose": {
+          "left_eye": {
+            "status": "valid",
+            "value": 0.00860641550158238,
+            "fit_cost": 0.007816870117747945,
+            "linear_prediction_error_rms": 0.0001522758826143116
+          },
+          "right_eye": {
+            "status": "valid",
+            "value": 0.011966016383196184,
+            "fit_cost": 0.0069786016386707474,
+            "linear_prediction_error_rms": 0.00018374458595523142
+          },
+          "eye_spacing": {
+            "status": "valid",
+            "value": 0.01025153494082729,
+            "fit_cost": 0.0072577622557030985,
+            "linear_prediction_error_rms": 0.00017873777929669255
+          },
+          "nose": {
+            "status": "valid",
+            "value": 0.05061256912632791,
+            "fit_cost": 0.00760442477173347,
+            "linear_prediction_error_rms": 0.0004792459284563222
+          },
+          "mouth": {
+            "status": "valid",
+            "value": 0.09998962217691665,
+            "fit_cost": 0.00760442477173347,
+            "linear_prediction_error_rms": 0.0009222889840695435
+          },
+          "contour": {
+            "status": "valid",
+            "value": 0.01501357787731067,
+            "fit_cost": 0.0016546446836744853,
+            "linear_prediction_error_rms": 2.5588909383340677e-05,
+            "chin": 0.011379041261782099,
+            "sides": 0.01577640982834378,
+            "chin_before_alignment": 0.01183483085424509,
+            "chin_linear_prediction": 0.011382494798621794,
+            "chin_linear_fit_contribution": 0.0005639610625512273
+          }
+        },
+        "with_mouth": {
+          "left_eye": {
+            "status": "valid",
+            "value": 0.029945704505287156,
+            "fit_cost": 0.04100359746994812,
+            "linear_prediction_error_rms": 0.0021659577946838942
+          },
+          "right_eye": {
+            "status": "valid",
+            "value": 0.030333313911747806,
+            "fit_cost": 0.04092655463512117,
+            "linear_prediction_error_rms": 0.00223745048577478
+          },
+          "eye_spacing": {
+            "status": "valid",
+            "value": 0.028534728868614995,
+            "fit_cost": 0.044269203951604545,
+            "linear_prediction_error_rms": 0.0025821817343192324
+          },
+          "nose": {
+            "status": "valid",
+            "value": 0.033438430944525546,
+            "fit_cost": 0.039337762994577946,
+            "linear_prediction_error_rms": 0.0007205337981356572
+          },
+          "mouth": {
+            "status": "valid",
+            "value": 0.09520695456875963,
+            "fit_cost": 0.01678508209614611,
+            "linear_prediction_error_rms": 0.0007751802447659957
+          },
+          "contour": {
+            "status": "valid",
+            "value": 0.050386175069127855,
+            "fit_cost": 0.04203222411050315,
+            "linear_prediction_error_rms": 0.004929766385151862,
+            "chin": 0.060008890056609386,
+            "sides": 0.04773529494925885,
+            "chin_before_alignment": 0.01183483085424509,
+            "chin_linear_prediction": 0.06003050021174251,
+            "chin_linear_fit_contribution": 0.07182906223527785
+          }
+        }
+      }
+    },
+    {
+      "sample_id": "s0009",
+      "input_sha256": "393133621b5092c7024792b4f4f9af705cda9a88c8d53e965f4ccb0ba628ae5e",
+      "transform": {
+        "kind": "nose_mouth",
+        "strength": 0.2,
+        "method": "inverse_compact_elliptic_displacement"
+      },
+      "human": {
+        "label": "geometry_anomaly",
+        "parts": [
+          "mouth"
+        ],
+        "severity": "mild",
+        "review_status": "confirmed"
+      },
+      "scores": {
+        "complement": {
+          "left_eye": {
+            "status": "valid",
+            "value": 0.01745810485260311,
+            "fit_cost": 0.03983507345784807,
+            "linear_prediction_error_rms": 0.0018212394339387162
+          },
+          "right_eye": {
+            "status": "valid",
+            "value": 0.024457852289057735,
+            "fit_cost": 0.03916652979690751,
+            "linear_prediction_error_rms": 0.001750686014697788
+          },
+          "eye_spacing": {
+            "status": "valid",
+            "value": 0.019675763563320098,
+            "fit_cost": 0.044674063039072565,
+            "linear_prediction_error_rms": 0.0020211839392020353
+          },
+          "nose": {
+            "status": "valid",
+            "value": 0.11468581378118263,
+            "fit_cost": 0.011705209163235005,
+            "linear_prediction_error_rms": 0.0016117383733060269
+          },
+          "mouth": {
+            "status": "valid",
+            "value": 0.2071718650660613,
+            "fit_cost": 0.03618063670328268,
+            "linear_prediction_error_rms": 0.002370374185684289
+          },
+          "contour": {
+            "status": "valid",
+            "value": 0.029703166131208315,
+            "fit_cost": 0.04615124288272707,
+            "linear_prediction_error_rms": 0.004908869534019201,
+            "chin": 0.028140606673846567,
+            "sides": 0.030074052122477293,
+            "chin_before_alignment": 0.014092543634984753,
+            "chin_linear_prediction": 0.02821842103058827,
+            "chin_linear_fit_contribution": 0.042078216378884446
+          }
+        },
+        "without_nose": {
+          "left_eye": {
+            "status": "valid",
+            "value": 0.011493226265418053,
+            "fit_cost": 0.012340700612975826,
+            "linear_prediction_error_rms": 0.00033451885547163235
+          },
+          "right_eye": {
+            "status": "valid",
+            "value": 0.017794964114299063,
+            "fit_cost": 0.010907003705617443,
+            "linear_prediction_error_rms": 0.00040708334690361416
+          },
+          "eye_spacing": {
+            "status": "valid",
+            "value": 0.01535022535424612,
+            "fit_cost": 0.011635129267699577,
+            "linear_prediction_error_rms": 0.00040445227162004186
+          },
+          "nose": {
+            "status": "valid",
+            "value": 0.11468581378118263,
+            "fit_cost": 0.011705209163235005,
+            "linear_prediction_error_rms": 0.0016117383733060269
+          },
+          "mouth": {
+            "status": "valid",
+            "value": 0.21763381884973246,
+            "fit_cost": 0.011705209163235005,
+            "linear_prediction_error_rms": 0.003002065427198489
+          },
+          "contour": {
+            "status": "valid",
+            "value": 0.02133676484522103,
+            "fit_cost": 0.0037657379528126685,
+            "linear_prediction_error_rms": 6.366480672312113e-05,
+            "chin": 0.01260875552044307,
+            "sides": 0.022976766475151535,
+            "chin_before_alignment": 0.014092543634984753,
+            "chin_linear_prediction": 0.012615381849479888,
+            "chin_linear_fit_contribution": 0.0021364223429562236
+          }
+        },
+        "with_mouth": {
+          "left_eye": {
+            "status": "valid",
+            "value": 0.05583876922402751,
+            "fit_cost": 0.0906517402135087,
+            "linear_prediction_error_rms": 0.010630231820860942
+          },
+          "right_eye": {
+            "status": "valid",
+            "value": 0.06404418770044866,
+            "fit_cost": 0.08971985379469981,
+            "linear_prediction_error_rms": 0.010247003533712858
+          },
+          "eye_spacing": {
+            "status": "valid",
+            "value": 0.059448026421760634,
+            "fit_cost": 0.09783074061379801,
+            "linear_prediction_error_rms": 0.012623587396417548
+          },
+          "nose": {
+            "status": "valid",
+            "value": 0.0790253048175073,
+            "fit_cost": 0.08564061040703148,
+            "linear_prediction_error_rms": 0.0030494250115121898
+          },
+          "mouth": {
+            "status": "valid",
+            "value": 0.2071718650660613,
+            "fit_cost": 0.03618063670328268,
+            "linear_prediction_error_rms": 0.002370374185684289
+          },
+          "contour": {
+            "status": "valid",
+            "value": 0.11132408151350937,
+            "fit_cost": 0.09255199097750735,
+            "linear_prediction_error_rms": 0.02388429774969734,
+            "chin": 0.13535631738835677,
+            "sides": 0.10458916046249764,
+            "chin_before_alignment": 0.014092543634984753,
+            "chin_linear_prediction": 0.13581890143476202,
+            "chin_linear_fit_contribution": 0.14953218976169766
+          }
+        }
+      }
+    },
+    {
+      "sample_id": "s0010",
+      "input_sha256": "1c24dc5ebc893c3ddd2d516d8d5312224b705b7805b596a262db901525d115e0",
+      "transform": {
+        "kind": "chin",
+        "strength": 0.05,
+        "method": "inverse_compact_elliptic_displacement"
+      },
+      "human": {
+        "label": "normal",
+        "parts": [],
+        "severity": "none",
+        "review_status": "confirmed"
+      },
+      "scores": {
+        "complement": {
+          "left_eye": {
+            "status": "valid",
+            "value": 0.017339636083481786,
+            "fit_cost": 0.02402511420000714,
+            "linear_prediction_error_rms": 0.0005058537894836027
+          },
+          "right_eye": {
+            "status": "valid",
+            "value": 0.0217015521854941,
+            "fit_cost": 0.023331608724421533,
+            "linear_prediction_error_rms": 0.0006475543985492693
+          },
+          "eye_spacing": {
+            "status": "valid",
+            "value": 0.01749236292862374,
+            "fit_cost": 0.025962182380737074,
+            "linear_prediction_error_rms": 0.000622946154182824
+          },
+          "nose": {
+            "status": "valid",
+            "value": 0.0038533820501093093,
+            "fit_cost": 0.023603940089277225,
+            "linear_prediction_error_rms": 2.4814494845718733e-05
+          },
+          "mouth": {
+            "status": "valid",
+            "value": 0.010169787819956021,
+            "fit_cost": 0.022428089416620525,
+            "linear_prediction_error_rms": 0.00024182754873522562
+          },
+          "contour": {
+            "status": "valid",
+            "value": 0.03799582529698319,
+            "fit_cost": 0.00596279635845633,
+            "linear_prediction_error_rms": 0.00022888305346390717,
+            "chin": 0.08055194659200103,
+            "sides": 0.013325621651777548,
+            "chin_before_alignment": 0.07169488331141653,
+            "chin_linear_prediction": 0.08009603904560751,
+            "chin_linear_fit_contribution": 0.00879686696456258
+          }
+        },
+        "without_nose": {
+          "left_eye": {
+            "status": "valid",
+            "value": 0.01798371516062975,
+            "fit_cost": 0.025590127136432172,
+            "linear_prediction_error_rms": 0.0005169085688732218
+          },
+          "right_eye": {
+            "status": "valid",
+            "value": 0.02192977722742661,
+            "fit_cost": 0.024889810493985868,
+            "linear_prediction_error_rms": 0.000660321757762542
+          },
+          "eye_spacing": {
+            "status": "valid",
+            "value": 0.017522365257044085,
+            "fit_cost": 0.028360776264706376,
+            "linear_prediction_error_rms": 0.0006552570176424244
+          },
+          "nose": {
+            "status": "valid",
+            "value": 0.0038533820501093093,
+            "fit_cost": 0.023603940089277225,
+            "linear_prediction_error_rms": 2.4814494845718733e-05
+          },
+          "mouth": {
+            "status": "valid",
+            "value": 0.009879461429717016,
+            "fit_cost": 0.023603940089277225,
+            "linear_prediction_error_rms": 0.00024127109580779382
+          },
+          "contour": {
+            "status": "valid",
+            "value": 0.040178346350868116,
+            "fit_cost": 0.0036900619941550904,
+            "linear_prediction_error_rms": 0.00031672091139476016,
+            "chin": 0.08509180263850566,
+            "sides": 0.014222567084803258,
+            "chin_before_alignment": 0.07169488331141653,
+            "chin_linear_prediction": 0.08443417867071563,
+            "chin_linear_fit_contribution": 0.013020880996259795
+          }
+        },
+        "with_mouth": {
+          "left_eye": {
+            "status": "valid",
+            "value": 0.01499573588464534,
+            "fit_cost": 0.022013230308351887,
+            "linear_prediction_error_rms": 0.0005391922050002395
+          },
+          "right_eye": {
+            "status": "valid",
+            "value": 0.020008432261260947,
+            "fit_cost": 0.02139037750262436,
+            "linear_prediction_error_rms": 0.0006251178125053602
+          },
+          "eye_spacing": {
+            "status": "valid",
+            "value": 0.016657062518459827,
+            "fit_cost": 0.023184690177293136,
+            "linear_prediction_error_rms": 0.0006512140987338052
+          },
+          "nose": {
+            "status": "valid",
+            "value": 0.00529689374828462,
+            "fit_cost": 0.02162087327929494,
+            "linear_prediction_error_rms": 3.995462399875877e-05
+          },
+          "mouth": {
+            "status": "valid",
+            "value": 0.010169787819956021,
+            "fit_cost": 0.022428089416620525,
+            "linear_prediction_error_rms": 0.00024182754873522562
+          },
+          "contour": {
+            "status": "valid",
+            "value": 0.036607039246847994,
+            "fit_cost": 0.005397872870350481,
+            "linear_prediction_error_rms": 0.00018335731424916726,
+            "chin": 0.07763712188406399,
+            "sides": 0.012793821658919808,
+            "chin_before_alignment": 0.07169488331141653,
+            "chin_linear_prediction": 0.07729586496606707,
+            "chin_linear_fit_contribution": 0.006654406226217632
+          }
+        }
+      }
+    },
+    {
+      "sample_id": "s0011",
+      "input_sha256": "28f6e545e9e74177ccd33b306375cc8eb2428a984008b359ee88d9d50dcf1bda",
+      "transform": {
+        "kind": "chin",
+        "strength": 0.1,
+        "method": "inverse_compact_elliptic_displacement"
+      },
+      "human": {
+        "label": "geometry_anomaly",
+        "parts": [
+          "contour"
+        ],
+        "severity": "mild",
+        "review_status": "confirmed"
+      },
+      "scores": {
+        "complement": {
+          "left_eye": {
+            "status": "valid",
+            "value": 0.019754444096238753,
+            "fit_cost": 0.04257446628201371,
+            "linear_prediction_error_rms": 0.0020926372049903516
+          },
+          "right_eye": {
+            "status": "valid",
+            "value": 0.0301855547935898,
+            "fit_cost": 0.041359586658902776,
+            "linear_prediction_error_rms": 0.0016805571750622065
+          },
+          "eye_spacing": {
+            "status": "valid",
+            "value": 0.022651749229261695,
+            "fit_cost": 0.04698390844216316,
+            "linear_prediction_error_rms": 0.002168031637230652
+          },
+          "nose": {
+            "status": "valid",
+            "value": 0.013245658101307138,
+            "fit_cost": 0.0407381332018968,
+            "linear_prediction_error_rms": 0.00023548728346716374
+          },
+          "mouth": {
+            "status": "valid",
+            "value": 0.01472035878463569,
+            "fit_cost": 0.038846972511813974,
+            "linear_prediction_error_rms": 0.0007177615917322615
+          },
+          "contour": {
+            "status": "valid",
+            "value": 0.06294885098206572,
+            "fit_cost": 0.00787221860751332,
+            "linear_prediction_error_rms": 0.0006793540606872633,
+            "chin": 0.13937616874566686,
+            "sides": 0.012026829174014203,
+            "chin_before_alignment": 0.12492974368399362,
+            "chin_linear_prediction": 0.13826846481219132,
+            "chin_linear_fit_contribution": 0.015008519094913493
+          }
+        },
+        "without_nose": {
+          "left_eye": {
+            "status": "valid",
+            "value": 0.02178537276799001,
+            "fit_cost": 0.045117694490045386,
+            "linear_prediction_error_rms": 0.002185882619106315
+          },
+          "right_eye": {
+            "status": "valid",
+            "value": 0.03114676321156875,
+            "fit_cost": 0.04386691934569992,
+            "linear_prediction_error_rms": 0.001724759426387465
+          },
+          "eye_spacing": {
+            "status": "valid",
+            "value": 0.023327562426216076,
+            "fit_cost": 0.05092856560553177,
+            "linear_prediction_error_rms": 0.0023015404401274422
+          },
+          "nose": {
+            "status": "valid",
+            "value": 0.013245658101307138,
+            "fit_cost": 0.0407381332018968,
+            "linear_prediction_error_rms": 0.00023548728346716374
+          },
+          "mouth": {
+            "status": "valid",
+            "value": 0.015965895145545816,
+            "fit_cost": 0.0407381332018968,
+            "linear_prediction_error_rms": 0.0006981465617426153
+          },
+          "contour": {
+            "status": "valid",
+            "value": 0.06317010306943349,
+            "fit_cost": 0.008754991914992493,
+            "linear_prediction_error_rms": 0.0006733434841383897,
+            "chin": 0.139818874979677,
+            "sides": 0.012203305696517064,
+            "chin_before_alignment": 0.12492974368399362,
+            "chin_linear_prediction": 0.13870245556095812,
+            "chin_linear_fit_contribution": 0.015099267002446674
+          }
+        },
+        "with_mouth": {
+          "left_eye": {
+            "status": "valid",
+            "value": 0.016097095914036186,
+            "fit_cost": 0.0386174822384963,
+            "linear_prediction_error_rms": 0.0020401826364520935
+          },
+          "right_eye": {
+            "status": "valid",
+            "value": 0.027798028915238967,
+            "fit_cost": 0.03755494294338869,
+            "linear_prediction_error_rms": 0.0016766651150340347
+          },
+          "eye_spacing": {
+            "status": "valid",
+            "value": 0.02090741010970751,
+            "fit_cost": 0.04146600674431638,
+            "linear_prediction_error_rms": 0.0022198770864518633
+          },
+          "nose": {
+            "status": "valid",
+            "value": 0.010520596653215504,
+            "fit_cost": 0.037225520256681154,
+            "linear_prediction_error_rms": 0.00029498186268334125
+          },
+          "mouth": {
+            "status": "valid",
+            "value": 0.01472035878463569,
+            "fit_cost": 0.038846972511813974,
+            "linear_prediction_error_rms": 0.0007177615917322615
+          },
+          "contour": {
+            "status": "valid",
+            "value": 0.06035012945710416,
+            "fit_cost": 0.007558323868579629,
+            "linear_prediction_error_rms": 0.0005808475261993008,
+            "chin": 0.1336857423729365,
+            "sides": 0.011347281111628782,
+            "chin_before_alignment": 0.12492974368399362,
+            "chin_linear_prediction": 0.13295432166650284,
+            "chin_linear_fit_contribution": 0.011588473994542636
+          }
+        }
+      }
+    },
+    {
+      "sample_id": "s0012",
+      "input_sha256": "06dbc46f4914ffb31615df907114e01c9046ed66128384f3b37950407d186d1e",
+      "transform": {
+        "kind": "chin",
+        "strength": 0.2,
+        "method": "inverse_compact_elliptic_displacement"
+      },
+      "human": {
+        "label": "geometry_anomaly",
+        "parts": [
+          "contour"
+        ],
+        "severity": "moderate",
+        "review_status": "confirmed"
+      },
+      "scores": {
+        "complement": {
+          "left_eye": {
+            "status": "valid",
+            "value": 0.050175637660968705,
+            "fit_cost": 0.0675020240796327,
+            "linear_prediction_error_rms": 0.005536550013700314
+          },
+          "right_eye": {
+            "status": "valid",
+            "value": 0.04390215510542289,
+            "fit_cost": 0.06810305719410509,
+            "linear_prediction_error_rms": 0.005405872845364509
+          },
+          "eye_spacing": {
+            "status": "valid",
+            "value": 0.04321444735490494,
+            "fit_cost": 0.07561277838642752,
+            "linear_prediction_error_rms": 0.006171275801421576
+          },
+          "nose": {
+            "status": "valid",
+            "value": 0.017409379708551852,
+            "fit_cost": 0.06631665879744228,
+            "linear_prediction_error_rms": 0.0004650963374652789
+          },
+          "mouth": {
+            "status": "valid",
+            "value": 0.03423552303768554,
+            "fit_cost": 0.06308808068198526,
+            "linear_prediction_error_rms": 0.001750054005548814
+          },
+          "contour": {
+            "status": "valid",
+            "value": 0.10407720700061945,
+            "fit_cost": 0.008761026226144083,
+            "linear_prediction_error_rms": 0.000577114043757505,
+            "chin": 0.22564565402819559,
+            "sides": 0.027754259328063025,
+            "chin_before_alignment": 0.21721977007938226,
+            "chin_linear_prediction": 0.22445132852612595,
+            "chin_linear_fit_contribution": 0.007284805639426023
+          }
+        },
+        "without_nose": {
+          "left_eye": {
+            "status": "valid",
+            "value": 0.0542436456173617,
+            "fit_cost": 0.07154228841436186,
+            "linear_prediction_error_rms": 0.005774962861644787
+          },
+          "right_eye": {
+            "status": "valid",
+            "value": 0.047032354452647265,
+            "fit_cost": 0.07230203718567332,
+            "linear_prediction_error_rms": 0.005564110354115402
+          },
+          "eye_spacing": {
+            "status": "valid",
+            "value": 0.048904471620883364,
+            "fit_cost": 0.0815552813532313,
+            "linear_prediction_error_rms": 0.006396643977470254
+          },
+          "nose": {
+            "status": "valid",
+            "value": 0.017409379708551852,
+            "fit_cost": 0.06631665879744228,
+            "linear_prediction_error_rms": 0.0004650963374652789
+          },
+          "mouth": {
+            "status": "valid",
+            "value": 0.035954578383198266,
+            "fit_cost": 0.06631665879744228,
+            "linear_prediction_error_rms": 0.001708340273979817
+          },
+          "contour": {
+            "status": "valid",
+            "value": 0.1073251796750984,
+            "fit_cost": 0.006429978671522176,
+            "linear_prediction_error_rms": 0.0008115955465911534,
+            "chin": 0.23194872227499594,
+            "sides": 0.030087984129712964,
+            "chin_before_alignment": 0.21721977007938226,
+            "chin_linear_prediction": 0.23020296828236966,
+            "chin_linear_fit_contribution": 0.013035318027119455
+          }
+        },
+        "with_mouth": {
+          "left_eye": {
+            "status": "valid",
+            "value": 0.04091800249348803,
+            "fit_cost": 0.062479196920647836,
+            "linear_prediction_error_rms": 0.005522435952234197
+          },
+          "right_eye": {
+            "status": "valid",
+            "value": 0.03576639383473417,
+            "fit_cost": 0.06281723553963033,
+            "linear_prediction_error_rms": 0.00539350928286239
+          },
+          "eye_spacing": {
+            "status": "valid",
+            "value": 0.03341689267552867,
+            "fit_cost": 0.06853778979845347,
+            "linear_prediction_error_rms": 0.0065792175743774935
+          },
+          "nose": {
+            "status": "valid",
+            "value": 0.010964910394167686,
+            "fit_cost": 0.061289231570930656,
+            "linear_prediction_error_rms": 0.0006432089052860946
+          },
+          "mouth": {
+            "status": "valid",
+            "value": 0.03423552303768554,
+            "fit_cost": 0.06308808068198526,
+            "linear_prediction_error_rms": 0.001750054005548814
+          },
+          "contour": {
+            "status": "valid",
+            "value": 0.10171292417438381,
+            "fit_cost": 0.008232710271917493,
+            "linear_prediction_error_rms": 0.0003551957611030517,
+            "chin": 0.22049380318850623,
+            "sides": 0.02717666670053092,
+            "chin_before_alignment": 0.21721977007938226,
+            "chin_linear_prediction": 0.219844822940611,
+            "chin_linear_fit_contribution": 0.003091059520459115
+          }
+        }
+      }
+    }
+  ],
+  "scope": "Reuses real extracted coordinates; perturbations and fit ablations do not rerun the detector or validate GPU generation, pose robustness or recovery"
+}

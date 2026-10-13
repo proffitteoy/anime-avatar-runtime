@@ -1,0 +1,1443 @@
+{
+  "schema_version": 1,
+  "diagnostic_only": true,
+  "new_real_cpu_feature_extraction": true,
+  "real_cpu_identity_metric_inference_on_saved_features": true,
+  "source": {
+    "page": "https://huggingface.co/datasets/JiashengGuo/ExpressEdit",
+    "dataset": "JiashengGuo/ExpressEdit",
+    "revision": "85ea6cb43553c705a9301630985279b917190ee3",
+    "license": "CC-BY-NC-SA-4.0",
+    "independent_dataset_collections": 1,
+    "character_groups": 2,
+    "same_character_source_groups_each": 1
+  },
+  "upstream_generation": {
+    "source_kind": "external_diffusion_expression_edit",
+    "exact_generator_model_revision": null,
+    "generator_configuration": null,
+    "hardware": null,
+    "exact_seed_values": null,
+    "upstream_wall_time": null,
+    "published_round_index": 1,
+    "selection_tags": [
+      66,
+      13,
+      35,
+      69,
+      110
+    ],
+    "metadata_field_name_hint": "wai_illustrious_sdxl_16_auto_edit",
+    "unknowns": "No exact configuration, hardware or numeric seed values for these outputs verified from public source; round is not a seed",
+    "not_local_generation": true,
+    "video": false,
+    "skyreels": false
+  },
+  "human_reviewed_labels": 0,
+  "calibration_performed": false,
+  "formal_fpr": null,
+  "protocol": {
+    "reference": "Own generated expressionless t066_r1 preselected before model scores; not original input or trusted anchor",
+    "identity_comparison": "Each character compared only against its own reference; no cross-character pairs",
+    "selection": "10 frontal single-character complete-face portraits assistant-screened individually before model scores; slight in-plane tilt permitted; not human ground truth",
+    "intrinsic_components": [
+      "chin_height",
+      "chin_lateral",
+      "left_side_height",
+      "right_side_height",
+      "left_side_lateral",
+      "right_side_lateral"
+    ],
+    "scores": "Raw, uncalibrated; no adopted thresholds",
+    "author_intent": "Published requested expression tag only; intended emotion is not a reviewed normal/anomaly label"
+  },
+  "implementation_hash": "c07e2998d2f95cb2ab6519260fc9d4dbd97ba89c165f70c2a02405b646cb6f38",
+  "summary_script_sha256": "935b3d7149951f2277a7c3b2ccd7dc3c597a8d033d31273196909055bfb5da82",
+  "geometry_script_sha256": "079744c585ad2939ab7caf76a0c8cc0992028aa0328ca70f2f159d13fb8d7f88",
+  "identity_metric_weights_sha256": "7e4646fdfbe369ad485b227ec47ac4092c98b8deef3af44e19fdbd8ba7bc25c1",
+  "models": {
+    "ccip_model": "ccip-caformer-24-randaug-pruned",
+    "ccip_code_commit": "46df848dc4d20ac93f4919a40e2636d5f7c19766",
+    "face_code_commit": "98a9fb480fa04bdd96acbe4d98da191a898267f3",
+    "files": {
+      "ccip_feature.onnx": {
+        "repo": "deepghs/ccip_onnx",
+        "revision": "eb2acdd29af1703388d3d0c04221add322bc9110",
+        "filename": "ccip-caformer-24-randaug-pruned/model_feat.onnx",
+        "sha256": "4ea118d16496274f4f6e08d3afc768cc592389e8f7f32f8732ce2215c228ac5f"
+      },
+      "ccip_metric.onnx": {
+        "repo": "deepghs/ccip_onnx",
+        "revision": "eb2acdd29af1703388d3d0c04221add322bc9110",
+        "filename": "ccip-caformer-24-randaug-pruned/model_metrics.onnx",
+        "sha256": "7e4646fdfbe369ad485b227ec47ac4092c98b8deef3af44e19fdbd8ba7bc25c1"
+      },
+      "yolov3.safetensors": {
+        "repo": "hysts/anime-face-detector-yolov3",
+        "revision": "afdd4226a79ae8bb81f334dbcffd34f8cc000c38",
+        "filename": "model.safetensors",
+        "sha256": "23bbc708146bcbc1c910f00fe152adbc70d7658d875a0121eaf4ee61d978b2c4"
+      },
+      "hrnetv2.safetensors": {
+        "repo": "hysts/anime-face-detector-hrnetv2",
+        "revision": "9b3435248b26aeb82e2a8578fe9d86d5d57158af",
+        "filename": "model.safetensors",
+        "sha256": "e71271376406a743c01528a0460637fcc06e72aeeea583f85007cc72dc8b7a4a"
+      }
+    }
+  },
+  "environment": {
+    "device": "cpu",
+    "python": "3.12.13",
+    "numpy": "1.26.4",
+    "metric_loader_threads": {
+      "intra": 2,
+      "inter": 1
+    }
+  },
+  "identity_load_seconds": 3.952999999997701,
+  "elapsed_seconds": 4.562999999998283,
+  "characters": [
+    {
+      "character_id": "expressedit-c1",
+      "n_samples": 5,
+      "source_groups_in_this_character": 1,
+      "reference_id": "s0000",
+      "reference_intent": "expressionless",
+      "reference_is_original_input": false,
+      "reference_trusted_anchor": false,
+      "selection_record_sha256": "500210f3278467c2ee9029a98d80b243697b56ba6748c6f88a58a05a79edd6a9",
+      "data_hash": "ea4ab260dd897c282d7b46ddb4a3d0ff2d5708514f636581ac0e564a43a0e6cc",
+      "manifest_sha256": "79ec835216b6b53a854577b2f1b164e94c689fb8c80c266c13d9f5363d33a287",
+      "extraction_sha256": "fb2b14a4fe61da3650ff2035497a79ea3435c40151d6955bec96205fab066f31",
+      "diagnostics_sha256": "3fc0e14ee124478ba97c97217addcb88798572ea9e6c17b434d37d12c039e6a7",
+      "models_hash": "062cb4e53ecb0686109cbbd7f884414f0376fbada659fe10c09e5be02e677f88",
+      "face_counts": {
+        "1": 5
+      },
+      "confidence_failure_samples": [],
+      "summary": {
+        "wls": {
+          "valid_samples": 5,
+          "unknown_samples": 0,
+          "min": 2.1238580973364052e-16,
+          "max": 0.03081232952535862,
+          "max_sample_id": "s0002",
+          "max_author_intent": "angry"
+        },
+        "intrinsic_contour": {
+          "valid_samples": 5,
+          "unknown_samples": 0,
+          "min": 0.0,
+          "max": 0.011576011442330815,
+          "max_sample_id": "s0001",
+          "max_author_intent": ":o"
+        },
+        "ccip_identity": {
+          "valid_samples": 5,
+          "unknown_samples": 0,
+          "min": 3.5942801446253725e-07,
+          "max": 0.0015813198406249285,
+          "max_sample_id": "s0004",
+          "max_author_intent": "smile"
+        },
+        "left_eye": {
+          "valid_samples": 5,
+          "unknown_samples": 0,
+          "min": 0.0,
+          "max": 0.02301896110063005,
+          "max_sample_id": "s0004",
+          "max_author_intent": "smile"
+        },
+        "right_eye": {
+          "valid_samples": 5,
+          "unknown_samples": 0,
+          "min": 0.0,
+          "max": 0.027010029285315176,
+          "max_sample_id": "s0004",
+          "max_author_intent": "smile"
+        },
+        "eye_spacing": {
+          "valid_samples": 5,
+          "unknown_samples": 0,
+          "min": 6.33509016088424e-16,
+          "max": 0.025156108165446462,
+          "max_sample_id": "s0004",
+          "max_author_intent": "smile"
+        },
+        "nose": {
+          "valid_samples": 5,
+          "unknown_samples": 0,
+          "min": 0.0,
+          "max": 0.08107270720199376,
+          "max_sample_id": "s0002",
+          "max_author_intent": "angry"
+        },
+        "mouth": {
+          "valid_samples": 5,
+          "unknown_samples": 0,
+          "min": 0.0,
+          "max": 0.2478834432194356,
+          "max_sample_id": "s0002",
+          "max_author_intent": "angry"
+        },
+        "contour": {
+          "valid_samples": 5,
+          "unknown_samples": 0,
+          "min": 6.303481122653111e-16,
+          "max": 0.047663908323995835,
+          "max_sample_id": "s0002",
+          "max_author_intent": "angry"
+        }
+      },
+      "rows": [
+        {
+          "sample_id": "s0000",
+          "input_sha256": "4182a72982e28a03111f70afa4b1babda959a1faf62e63ec5a81a10fea715ce2",
+          "author_intent": "expressionless",
+          "tag_id": 66,
+          "round": 1,
+          "author_source_filename": "c1_t066_r1.png",
+          "human_label": null,
+          "assistant_visual_screen": {
+            "frontal_single_complete_face": true,
+            "expression_note": null
+          },
+          "face_count": 1,
+          "legacy_face_status": "valid",
+          "landmark_confidence_min": 0.8192459344863892,
+          "landmarks_below_0_3": 0,
+          "low_confidence_point_indices": [],
+          "nose_confidence": 0.901879072189331,
+          "extraction_errors": {},
+          "wls": {
+            "value": 2.1238580973364052e-16,
+            "expression": 1.1531898545228995e-16,
+            "status": "valid"
+          },
+          "single_local": {
+            "left_eye": {
+              "value": 0.0,
+              "fit_cost": 2.0282034210844832e-16,
+              "status": "valid",
+              "width_error": 0.0,
+              "opening": 0.530930182513574
+            },
+            "right_eye": {
+              "value": 0.0,
+              "fit_cost": 9.519131955369422e-17,
+              "status": "valid",
+              "width_error": 0.0,
+              "opening": 0.507355050096712
+            },
+            "eye_spacing": {
+              "value": 6.33509016088424e-16,
+              "fit_cost": 6.109761745352017e-16,
+              "status": "valid",
+              "center_relation_error": 2.8351022695910204e-16
+            },
+            "nose": {
+              "value": 0.0,
+              "fit_cost": 1.310083005740863e-16,
+              "status": "valid"
+            },
+            "mouth": {
+              "value": 0.0,
+              "fit_cost": 2.1238580973364048e-16,
+              "status": "valid",
+              "width_error": 0.0,
+              "opening": 0.0046609512812847914
+            },
+            "contour": {
+              "value": 6.303481122653111e-16,
+              "fit_cost": 0.0,
+              "status": "valid"
+            }
+          },
+          "intrinsic_local": {
+            "left_eye": {
+              "value": 0.0,
+              "fit_cost": 2.0282034210844832e-16,
+              "status": "valid",
+              "width_error": 0.0,
+              "opening": 0.530930182513574
+            },
+            "right_eye": {
+              "value": 0.0,
+              "fit_cost": 9.519131955369422e-17,
+              "status": "valid",
+              "width_error": 0.0,
+              "opening": 0.507355050096712
+            },
+            "eye_spacing": {
+              "value": 6.33509016088424e-16,
+              "fit_cost": 6.109761745352017e-16,
+              "status": "valid",
+              "center_relation_error": 2.8351022695910204e-16
+            },
+            "nose": {
+              "value": 0.0,
+              "fit_cost": 1.310083005740863e-16,
+              "status": "valid"
+            },
+            "mouth": {
+              "value": 0.0,
+              "fit_cost": 2.1238580973364048e-16,
+              "status": "valid",
+              "width_error": 0.0,
+              "opening": 0.0046609512812847914
+            },
+            "contour": {
+              "value": 0.0,
+              "status": "valid",
+              "chin_height_error": 0.0,
+              "chin_lateral_error": 0.0
+            }
+          },
+          "intrinsic_component_absolute_errors": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "intrinsic_error": null,
+          "ccip_distance_to_own_neutral": 3.5942801446253725e-07,
+          "identity_error": null
+        },
+        {
+          "sample_id": "s0001",
+          "input_sha256": "7f64a7ab6ba0cf5bcc14b1887638b26fdda0897c533a9ea306bf460f162d3e0e",
+          "author_intent": ":o",
+          "tag_id": 13,
+          "round": 1,
+          "author_source_filename": "c1_t013_r1.png",
+          "human_label": null,
+          "assistant_visual_screen": {
+            "frontal_single_complete_face": true,
+            "expression_note": null
+          },
+          "face_count": 1,
+          "legacy_face_status": "valid",
+          "landmark_confidence_min": 0.8762331008911133,
+          "landmarks_below_0_3": 0,
+          "low_confidence_point_indices": [],
+          "nose_confidence": 1.007967233657837,
+          "extraction_errors": {},
+          "wls": {
+            "value": 0.022371338822005402,
+            "expression": 0.054045106257395836,
+            "status": "valid"
+          },
+          "single_local": {
+            "left_eye": {
+              "value": 0.022104490802423295,
+              "fit_cost": 0.022614215514216326,
+              "status": "valid",
+              "width_error": 0.007272510670353234,
+              "opening": 0.5302466612484286
+            },
+            "right_eye": {
+              "value": 0.020234645209960794,
+              "fit_cost": 0.02325323684317073,
+              "status": "valid",
+              "width_error": 0.01728990713468448,
+              "opening": 0.5042517002632373
+            },
+            "eye_spacing": {
+              "value": 0.02123697677885822,
+              "fit_cost": 0.02393797542847372,
+              "status": "valid",
+              "center_relation_error": 0.016654667034261387
+            },
+            "nose": {
+              "value": 0.035067388710177776,
+              "fit_cost": 0.02085695624679489,
+              "status": "valid"
+            },
+            "mouth": {
+              "value": 0.09177137527918645,
+              "fit_cost": 0.02237711704629264,
+              "status": "valid",
+              "width_error": 0.15073792467385624,
+              "opening": 0.1767225473155583
+            },
+            "contour": {
+              "value": 0.025484677376478554,
+              "fit_cost": 0.020955453239193005,
+              "status": "valid"
+            }
+          },
+          "intrinsic_local": {
+            "left_eye": {
+              "value": 0.022104490802423295,
+              "fit_cost": 0.022614215514216326,
+              "status": "valid",
+              "width_error": 0.007272510670353234,
+              "opening": 0.5302466612484286
+            },
+            "right_eye": {
+              "value": 0.020234645209960794,
+              "fit_cost": 0.02325323684317073,
+              "status": "valid",
+              "width_error": 0.01728990713468448,
+              "opening": 0.5042517002632373
+            },
+            "eye_spacing": {
+              "value": 0.02123697677885822,
+              "fit_cost": 0.02393797542847372,
+              "status": "valid",
+              "center_relation_error": 0.016654667034261387
+            },
+            "nose": {
+              "value": 0.035067388710177776,
+              "fit_cost": 0.02085695624679489,
+              "status": "valid"
+            },
+            "mouth": {
+              "value": 0.09177137527918645,
+              "fit_cost": 0.02237711704629264,
+              "status": "valid",
+              "width_error": 0.15073792467385624,
+              "opening": 0.1767225473155583
+            },
+            "contour": {
+              "value": 0.011576011442330815,
+              "status": "valid",
+              "chin_height_error": 0.014227439936449704,
+              "chin_lateral_error": 0.007428830954353177
+            }
+          },
+          "intrinsic_component_absolute_errors": [
+            0.014227439936449704,
+            0.007428830954353177,
+            0.005806394713645302,
+            0.022618333147717773,
+            0.00022020442899189918,
+            0.0010319714346140318
+          ],
+          "intrinsic_error": null,
+          "ccip_distance_to_own_neutral": 0.001307697151787579,
+          "identity_error": null
+        },
+        {
+          "sample_id": "s0002",
+          "input_sha256": "326ed9b171a25969e820f1b22f3783719affb6d353f40c5a790d86964c7fa232",
+          "author_intent": "angry",
+          "tag_id": 35,
+          "round": 1,
+          "author_source_filename": "c1_t035_r1.png",
+          "human_label": null,
+          "assistant_visual_screen": {
+            "frontal_single_complete_face": true,
+            "expression_note": null
+          },
+          "face_count": 1,
+          "legacy_face_status": "valid",
+          "landmark_confidence_min": 0.6081238389015198,
+          "landmarks_below_0_3": 0,
+          "low_confidence_point_indices": [],
+          "nose_confidence": 0.9215929508209229,
+          "extraction_errors": {},
+          "wls": {
+            "value": 0.03081232952535862,
+            "expression": 0.16474916213748628,
+            "status": "valid"
+          },
+          "single_local": {
+            "left_eye": {
+              "value": 0.015172448829216966,
+              "fit_cost": 0.03406632879085937,
+              "status": "valid",
+              "width_error": 0.013049260649252966,
+              "opening": 0.5239596949905798
+            },
+            "right_eye": {
+              "value": 0.006601325313555361,
+              "fit_cost": 0.03437528021991387,
+              "status": "valid",
+              "width_error": 0.009014946791934481,
+              "opening": 0.5028211717016478
+            },
+            "eye_spacing": {
+              "value": 0.013981433546520284,
+              "fit_cost": 0.039089614781741215,
+              "status": "valid",
+              "center_relation_error": 0.010892955389305806
+            },
+            "nose": {
+              "value": 0.08107270720199376,
+              "fit_cost": 0.020260872177804572,
+              "status": "valid"
+            },
+            "mouth": {
+              "value": 0.2478834432194356,
+              "fit_cost": 0.03088723865084346,
+              "status": "valid",
+              "width_error": 0.3896488634534482,
+              "opening": 0.20725671662842815
+            },
+            "contour": {
+              "value": 0.047663908323995835,
+              "fit_cost": 0.026846151289953893,
+              "status": "valid"
+            }
+          },
+          "intrinsic_local": {
+            "left_eye": {
+              "value": 0.015172448829216966,
+              "fit_cost": 0.03406632879085937,
+              "status": "valid",
+              "width_error": 0.013049260649252966,
+              "opening": 0.5239596949905798
+            },
+            "right_eye": {
+              "value": 0.006601325313555361,
+              "fit_cost": 0.03437528021991387,
+              "status": "valid",
+              "width_error": 0.009014946791934481,
+              "opening": 0.5028211717016478
+            },
+            "eye_spacing": {
+              "value": 0.013981433546520284,
+              "fit_cost": 0.039089614781741215,
+              "status": "valid",
+              "center_relation_error": 0.010892955389305806
+            },
+            "nose": {
+              "value": 0.08107270720199376,
+              "fit_cost": 0.020260872177804572,
+              "status": "valid"
+            },
+            "mouth": {
+              "value": 0.2478834432194356,
+              "fit_cost": 0.03088723865084346,
+              "status": "valid",
+              "width_error": 0.3896488634534482,
+              "opening": 0.20725671662842815
+            },
+            "contour": {
+              "value": 0.008495595464307,
+              "status": "valid",
+              "chin_height_error": 0.0037608150214913927,
+              "chin_lateral_error": 0.005878768188443434
+            }
+          },
+          "intrinsic_component_absolute_errors": [
+            0.0037608150214913927,
+            0.005878768188443434,
+            0.003437358637921162,
+            0.009757381373661278,
+            0.015718255774169188,
+            0.005501065211450051
+          ],
+          "intrinsic_error": null,
+          "ccip_distance_to_own_neutral": 0.0013315173564478755,
+          "identity_error": null
+        },
+        {
+          "sample_id": "s0003",
+          "input_sha256": "3ab7281626ee516e559dbda24b9e38ca2494e9b047cee634d909fca5afb2067b",
+          "author_intent": "frown",
+          "tag_id": 69,
+          "round": 1,
+          "author_source_filename": "c1_t069_r1.png",
+          "human_label": null,
+          "assistant_visual_screen": {
+            "frontal_single_complete_face": true,
+            "expression_note": null
+          },
+          "face_count": 1,
+          "legacy_face_status": "valid",
+          "landmark_confidence_min": 0.8176679611206055,
+          "landmarks_below_0_3": 0,
+          "low_confidence_point_indices": [],
+          "nose_confidence": 0.9883558750152588,
+          "extraction_errors": {},
+          "wls": {
+            "value": 0.020219233637639906,
+            "expression": 0.08167303546853742,
+            "status": "valid"
+          },
+          "single_local": {
+            "left_eye": {
+              "value": 0.016493675190391202,
+              "fit_cost": 0.02111968570150763,
+              "status": "valid",
+              "width_error": 0.03164563949414073,
+              "opening": 0.5118891246066628
+            },
+            "right_eye": {
+              "value": 0.011199732688749766,
+              "fit_cost": 0.021977078793632737,
+              "status": "valid",
+              "width_error": 0.008847437420220263,
+              "opening": 0.5101841146776096
+            },
+            "eye_spacing": {
+              "value": 0.014356206883958172,
+              "fit_cost": 0.023651254670650143,
+              "status": "valid",
+              "center_relation_error": 0.007472149801891093
+            },
+            "nose": {
+              "value": 0.038396225213519444,
+              "fit_cost": 0.01752952308071166,
+              "status": "valid"
+            },
+            "mouth": {
+              "value": 0.11808200542290151,
+              "fit_cost": 0.020201548391651496,
+              "status": "valid",
+              "width_error": 0.06728658333798714,
+              "opening": 0.022765634775573255
+            },
+            "contour": {
+              "value": 0.03410199472124476,
+              "fit_cost": 0.015403086895583569,
+              "status": "valid"
+            }
+          },
+          "intrinsic_local": {
+            "left_eye": {
+              "value": 0.016493675190391202,
+              "fit_cost": 0.02111968570150763,
+              "status": "valid",
+              "width_error": 0.03164563949414073,
+              "opening": 0.5118891246066628
+            },
+            "right_eye": {
+              "value": 0.011199732688749766,
+              "fit_cost": 0.021977078793632737,
+              "status": "valid",
+              "width_error": 0.008847437420220263,
+              "opening": 0.5101841146776096
+            },
+            "eye_spacing": {
+              "value": 0.014356206883958172,
+              "fit_cost": 0.023651254670650143,
+              "status": "valid",
+              "center_relation_error": 0.007472149801891093
+            },
+            "nose": {
+              "value": 0.038396225213519444,
+              "fit_cost": 0.01752952308071166,
+              "status": "valid"
+            },
+            "mouth": {
+              "value": 0.11808200542290151,
+              "fit_cost": 0.020201548391651496,
+              "status": "valid",
+              "width_error": 0.06728658333798714,
+              "opening": 0.022765634775573255
+            },
+            "contour": {
+              "value": 0.009547905090337839,
+              "status": "valid",
+              "chin_height_error": 0.0018261308310227875,
+              "chin_lateral_error": 0.006992277837362948
+            }
+          },
+          "intrinsic_component_absolute_errors": [
+            0.0018261308310227875,
+            0.006992277837362948,
+            0.007966923402173642,
+            0.01954644662474364,
+            0.0005076131076712787,
+            0.006996794358888392
+          ],
+          "intrinsic_error": null,
+          "ccip_distance_to_own_neutral": 0.0013112913584336638,
+          "identity_error": null
+        },
+        {
+          "sample_id": "s0004",
+          "input_sha256": "7aa7a7b1315390d46d1892fd23ebe99dbf0ce68a47084178e9d39218f86ea40d",
+          "author_intent": "smile",
+          "tag_id": 110,
+          "round": 1,
+          "author_source_filename": "c1_t110_r1.png",
+          "human_label": null,
+          "assistant_visual_screen": {
+            "frontal_single_complete_face": true,
+            "expression_note": null
+          },
+          "face_count": 1,
+          "legacy_face_status": "valid",
+          "landmark_confidence_min": 0.8511607646942139,
+          "landmarks_below_0_3": 0,
+          "low_confidence_point_indices": [],
+          "nose_confidence": 0.9658563137054443,
+          "extraction_errors": {},
+          "wls": {
+            "value": 0.022933781142483966,
+            "expression": 0.08567024819817157,
+            "status": "valid"
+          },
+          "single_local": {
+            "left_eye": {
+              "value": 0.02301896110063005,
+              "fit_cost": 0.023156760472522873,
+              "status": "valid",
+              "width_error": 0.018636569204608044,
+              "opening": 0.5010532981910193
+            },
+            "right_eye": {
+              "value": 0.027010029285315176,
+              "fit_cost": 0.022423667344325982,
+              "status": "valid",
+              "width_error": 0.0071435578524615675,
+              "opening": 0.4940756404408034
+            },
+            "eye_spacing": {
+              "value": 0.025156108165446462,
+              "fit_cost": 0.0226204868437785,
+              "status": "valid",
+              "center_relation_error": 0.020190147531902305
+            },
+            "nose": {
+              "value": 0.03966373389194704,
+              "fit_cost": 0.020765893173573753,
+              "status": "valid"
+            },
+            "mouth": {
+              "value": 0.21427695428639199,
+              "fit_cost": 0.022964529492763796,
+              "status": "valid",
+              "width_error": 0.35933567923704296,
+              "opening": 0.004464028236138601
+            },
+            "contour": {
+              "value": 0.033882618798226266,
+              "fit_cost": 0.021720535993264505,
+              "status": "valid"
+            }
+          },
+          "intrinsic_local": {
+            "left_eye": {
+              "value": 0.02301896110063005,
+              "fit_cost": 0.023156760472522873,
+              "status": "valid",
+              "width_error": 0.018636569204608044,
+              "opening": 0.5010532981910193
+            },
+            "right_eye": {
+              "value": 0.027010029285315176,
+              "fit_cost": 0.022423667344325982,
+              "status": "valid",
+              "width_error": 0.0071435578524615675,
+              "opening": 0.4940756404408034
+            },
+            "eye_spacing": {
+              "value": 0.025156108165446462,
+              "fit_cost": 0.0226204868437785,
+              "status": "valid",
+              "center_relation_error": 0.020190147531902305
+            },
+            "nose": {
+              "value": 0.03966373389194704,
+              "fit_cost": 0.020765893173573753,
+              "status": "valid"
+            },
+            "mouth": {
+              "value": 0.21427695428639199,
+              "fit_cost": 0.022964529492763796,
+              "status": "valid",
+              "width_error": 0.35933567923704296,
+              "opening": 0.004464028236138601
+            },
+            "contour": {
+              "value": 0.006946862485638605,
+              "status": "valid",
+              "chin_height_error": 0.007836511938149715,
+              "chin_lateral_error": 0.0029635119907252816
+            }
+          },
+          "intrinsic_component_absolute_errors": [
+            0.007836511938149715,
+            0.0029635119907252816,
+            0.007239935157280997,
+            0.00889591442876475,
+            0.008554708532997501,
+            0.0038240129445680227
+          ],
+          "intrinsic_error": null,
+          "ccip_distance_to_own_neutral": 0.0015813198406249285,
+          "identity_error": null
+        }
+      ]
+    },
+    {
+      "character_id": "expressedit-c2",
+      "n_samples": 5,
+      "source_groups_in_this_character": 1,
+      "reference_id": "s0000",
+      "reference_intent": "expressionless",
+      "reference_is_original_input": false,
+      "reference_trusted_anchor": false,
+      "selection_record_sha256": "a3c35473fc3a1860ba22dae5b05543937f05850b983d670ffc08d88de732f5ad",
+      "data_hash": "cde5fed8907b6fdc37cba8e1432a1994d95d9f8a0997302b46779e59f7c1b011",
+      "manifest_sha256": "352c1292ac91d5d121fc62c8a6e888b88e0bd8910e25423d452d406f1b442630",
+      "extraction_sha256": "af10f61fe3b57f5ebad3acd68b47efda1a8bdc620706c73d8374c27aaa02b2d6",
+      "diagnostics_sha256": "f14fdd79b4bb659d8f510e3a7f09dc4616f925ab1e39db5c1dc9cc65e770c9ed",
+      "models_hash": "062cb4e53ecb0686109cbbd7f884414f0376fbada659fe10c09e5be02e677f88",
+      "face_counts": {
+        "1": 5
+      },
+      "confidence_failure_samples": [],
+      "summary": {
+        "wls": {
+          "valid_samples": 5,
+          "unknown_samples": 0,
+          "min": 4.373029613528985e-16,
+          "max": 0.03973986367616063,
+          "max_sample_id": "s0003",
+          "max_author_intent": "frown"
+        },
+        "intrinsic_contour": {
+          "valid_samples": 5,
+          "unknown_samples": 0,
+          "min": 0.0,
+          "max": 0.014757942713369986,
+          "max_sample_id": "s0001",
+          "max_author_intent": ":o"
+        },
+        "ccip_identity": {
+          "valid_samples": 5,
+          "unknown_samples": 0,
+          "min": 1.3070109616819536e-07,
+          "max": 0.0010266897734254599,
+          "max_sample_id": "s0001",
+          "max_author_intent": ":o"
+        },
+        "left_eye": {
+          "valid_samples": 5,
+          "unknown_samples": 0,
+          "min": 5.687680123739523e-16,
+          "max": 0.04597338022838098,
+          "max_sample_id": "s0004",
+          "max_author_intent": "smile"
+        },
+        "right_eye": {
+          "valid_samples": 5,
+          "unknown_samples": 0,
+          "min": 3.0537164823249795e-16,
+          "max": 0.054564010418418546,
+          "max_sample_id": "s0004",
+          "max_author_intent": "smile"
+        },
+        "eye_spacing": {
+          "valid_samples": 5,
+          "unknown_samples": 0,
+          "min": 4.562887975953744e-16,
+          "max": 0.05497106909907773,
+          "max_sample_id": "s0003",
+          "max_author_intent": "frown"
+        },
+        "nose": {
+          "valid_samples": 5,
+          "unknown_samples": 0,
+          "min": 0.0,
+          "max": 0.0715899129069804,
+          "max_sample_id": "s0003",
+          "max_author_intent": "frown"
+        },
+        "mouth": {
+          "valid_samples": 5,
+          "unknown_samples": 0,
+          "min": 0.0,
+          "max": 0.2228101780824106,
+          "max_sample_id": "s0004",
+          "max_author_intent": "smile"
+        },
+        "contour": {
+          "valid_samples": 5,
+          "unknown_samples": 0,
+          "min": 0.0,
+          "max": 0.06422541595842053,
+          "max_sample_id": "s0003",
+          "max_author_intent": "frown"
+        }
+      },
+      "rows": [
+        {
+          "sample_id": "s0000",
+          "input_sha256": "89c8c926cc02d2c644dd88ad8668135eb30537398a61a81ace6b935e1da9eda6",
+          "author_intent": "expressionless",
+          "tag_id": 66,
+          "round": 1,
+          "author_source_filename": "c2_t066_r1.png",
+          "human_label": null,
+          "assistant_visual_screen": {
+            "frontal_single_complete_face": true,
+            "expression_note": null
+          },
+          "face_count": 1,
+          "legacy_face_status": "valid",
+          "landmark_confidence_min": 0.8825186491012573,
+          "landmarks_below_0_3": 0,
+          "low_confidence_point_indices": [],
+          "nose_confidence": 1.0013800859451294,
+          "extraction_errors": {},
+          "wls": {
+            "value": 4.373029613528985e-16,
+            "expression": 4.089927220575328e-16,
+            "status": "valid"
+          },
+          "single_local": {
+            "left_eye": {
+              "value": 5.687680123739523e-16,
+              "fit_cost": 4.034937315708367e-16,
+              "status": "valid",
+              "width_error": 0.0,
+              "opening": 0.4861389071101722
+            },
+            "right_eye": {
+              "value": 3.0537164823249795e-16,
+              "fit_cost": 2.639434043852484e-16,
+              "status": "valid",
+              "width_error": 0.0,
+              "opening": 0.4880814558625055
+            },
+            "eye_spacing": {
+              "value": 4.562887975953744e-16,
+              "fit_cost": 7.055124004099647e-16,
+              "status": "valid",
+              "center_relation_error": 6.107432964649959e-16
+            },
+            "nose": {
+              "value": 0.0,
+              "fit_cost": 0.0,
+              "status": "valid"
+            },
+            "mouth": {
+              "value": 0.0,
+              "fit_cost": 4.3730296135289846e-16,
+              "status": "valid",
+              "width_error": 0.0,
+              "opening": 0.00672668663130962
+            },
+            "contour": {
+              "value": 0.0,
+              "fit_cost": 0.0,
+              "status": "valid"
+            }
+          },
+          "intrinsic_local": {
+            "left_eye": {
+              "value": 5.687680123739523e-16,
+              "fit_cost": 4.034937315708367e-16,
+              "status": "valid",
+              "width_error": 0.0,
+              "opening": 0.4861389071101722
+            },
+            "right_eye": {
+              "value": 3.0537164823249795e-16,
+              "fit_cost": 2.639434043852484e-16,
+              "status": "valid",
+              "width_error": 0.0,
+              "opening": 0.4880814558625055
+            },
+            "eye_spacing": {
+              "value": 4.562887975953744e-16,
+              "fit_cost": 7.055124004099647e-16,
+              "status": "valid",
+              "center_relation_error": 6.107432964649959e-16
+            },
+            "nose": {
+              "value": 0.0,
+              "fit_cost": 0.0,
+              "status": "valid"
+            },
+            "mouth": {
+              "value": 0.0,
+              "fit_cost": 4.3730296135289846e-16,
+              "status": "valid",
+              "width_error": 0.0,
+              "opening": 0.00672668663130962
+            },
+            "contour": {
+              "value": 0.0,
+              "status": "valid",
+              "chin_height_error": 0.0,
+              "chin_lateral_error": 0.0
+            }
+          },
+          "intrinsic_component_absolute_errors": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "intrinsic_error": null,
+          "ccip_distance_to_own_neutral": 1.3070109616819536e-07,
+          "identity_error": null
+        },
+        {
+          "sample_id": "s0001",
+          "input_sha256": "184f1f551556b2bf41c4c0f4dfc71301f7e13ee6b1adb33f536fc20853a81e08",
+          "author_intent": ":o",
+          "tag_id": 13,
+          "round": 1,
+          "author_source_filename": "c2_t013_r1.png",
+          "human_label": null,
+          "assistant_visual_screen": {
+            "frontal_single_complete_face": true,
+            "expression_note": null
+          },
+          "face_count": 1,
+          "legacy_face_status": "valid",
+          "landmark_confidence_min": 0.8809072375297546,
+          "landmarks_below_0_3": 0,
+          "low_confidence_point_indices": [],
+          "nose_confidence": 0.9584506750106812,
+          "extraction_errors": {},
+          "wls": {
+            "value": 0.0369101791447517,
+            "expression": 0.043982224072091666,
+            "status": "valid"
+          },
+          "single_local": {
+            "left_eye": {
+              "value": 0.04574335071922265,
+              "fit_cost": 0.0367929110496821,
+              "status": "valid",
+              "width_error": 0.007691343418134866,
+              "opening": 0.5128573333061895
+            },
+            "right_eye": {
+              "value": 0.03626435174383508,
+              "fit_cost": 0.03846340963392094,
+              "status": "valid",
+              "width_error": 0.00855174014888171,
+              "opening": 0.5125203423510982
+            },
+            "eye_spacing": {
+              "value": 0.04725515752520484,
+              "fit_cost": 0.037670390305127074,
+              "status": "valid",
+              "center_relation_error": 0.06705184869666468
+            },
+            "nose": {
+              "value": 0.062106681823771916,
+              "fit_cost": 0.033627727483999725,
+              "status": "valid"
+            },
+            "mouth": {
+              "value": 0.07647868542650456,
+              "fit_cost": 0.036998021315743104,
+              "status": "valid",
+              "width_error": 0.1502285256219611,
+              "opening": 0.15332376816592805
+            },
+            "contour": {
+              "value": 0.05675260626608427,
+              "fit_cost": 0.026312920687890304,
+              "status": "valid"
+            }
+          },
+          "intrinsic_local": {
+            "left_eye": {
+              "value": 0.04574335071922265,
+              "fit_cost": 0.0367929110496821,
+              "status": "valid",
+              "width_error": 0.007691343418134866,
+              "opening": 0.5128573333061895
+            },
+            "right_eye": {
+              "value": 0.03626435174383508,
+              "fit_cost": 0.03846340963392094,
+              "status": "valid",
+              "width_error": 0.00855174014888171,
+              "opening": 0.5125203423510982
+            },
+            "eye_spacing": {
+              "value": 0.04725515752520484,
+              "fit_cost": 0.037670390305127074,
+              "status": "valid",
+              "center_relation_error": 0.06705184869666468
+            },
+            "nose": {
+              "value": 0.062106681823771916,
+              "fit_cost": 0.033627727483999725,
+              "status": "valid"
+            },
+            "mouth": {
+              "value": 0.07647868542650456,
+              "fit_cost": 0.036998021315743104,
+              "status": "valid",
+              "width_error": 0.1502285256219611,
+              "opening": 0.15332376816592805
+            },
+            "contour": {
+              "value": 0.014757942713369986,
+              "status": "valid",
+              "chin_height_error": 0.010611959673588856,
+              "chin_lateral_error": 0.012454960355172816
+            }
+          },
+          "intrinsic_component_absolute_errors": [
+            0.010611959673588856,
+            0.012454960355172816,
+            0.009677244020013354,
+            0.014675615137441533,
+            0.026161987162390987,
+            0.006750496978264686
+          ],
+          "intrinsic_error": null,
+          "ccip_distance_to_own_neutral": 0.0010266897734254599,
+          "identity_error": null
+        },
+        {
+          "sample_id": "s0002",
+          "input_sha256": "031e506d04cc9332880c30f6983a49fedfd807472a32cf87545e3a11c79cd507",
+          "author_intent": "angry",
+          "tag_id": 35,
+          "round": 1,
+          "author_source_filename": "c2_t035_r1.png",
+          "human_label": null,
+          "assistant_visual_screen": {
+            "frontal_single_complete_face": true,
+            "expression_note": null
+          },
+          "face_count": 1,
+          "legacy_face_status": "valid",
+          "landmark_confidence_min": 0.7321816682815552,
+          "landmarks_below_0_3": 0,
+          "low_confidence_point_indices": [],
+          "nose_confidence": 0.946215033531189,
+          "extraction_errors": {},
+          "wls": {
+            "value": 0.030845968773857202,
+            "expression": 0.17532486351167584,
+            "status": "valid"
+          },
+          "single_local": {
+            "left_eye": {
+              "value": 0.011003161301428331,
+              "fit_cost": 0.03434859694819426,
+              "status": "valid",
+              "width_error": 0.0054897237136931586,
+              "opening": 0.4743707523951159
+            },
+            "right_eye": {
+              "value": 0.04845308483035928,
+              "fit_cost": 0.028334098019610638,
+              "status": "valid",
+              "width_error": 0.01568790580157991,
+              "opening": 0.47728439155912616
+            },
+            "eye_spacing": {
+              "value": 0.04249965162050649,
+              "fit_cost": 0.03078273705787241,
+              "status": "valid",
+              "center_relation_error": 0.04042458872010373
+            },
+            "nose": {
+              "value": 0.03126445371790815,
+              "fit_cost": 0.031117158517617517,
+              "status": "valid"
+            },
+            "mouth": {
+              "value": 0.18498874711981142,
+              "fit_cost": 0.03096611099353375,
+              "status": "valid",
+              "width_error": 0.36828008893872677,
+              "opening": 0.07296400568945037
+            },
+            "contour": {
+              "value": 0.055314275527780996,
+              "fit_cost": 0.010694030381591108,
+              "status": "valid"
+            }
+          },
+          "intrinsic_local": {
+            "left_eye": {
+              "value": 0.011003161301428331,
+              "fit_cost": 0.03434859694819426,
+              "status": "valid",
+              "width_error": 0.0054897237136931586,
+              "opening": 0.4743707523951159
+            },
+            "right_eye": {
+              "value": 0.04845308483035928,
+              "fit_cost": 0.028334098019610638,
+              "status": "valid",
+              "width_error": 0.01568790580157991,
+              "opening": 0.47728439155912616
+            },
+            "eye_spacing": {
+              "value": 0.04249965162050649,
+              "fit_cost": 0.03078273705787241,
+              "status": "valid",
+              "center_relation_error": 0.04042458872010373
+            },
+            "nose": {
+              "value": 0.03126445371790815,
+              "fit_cost": 0.031117158517617517,
+              "status": "valid"
+            },
+            "mouth": {
+              "value": 0.18498874711981142,
+              "fit_cost": 0.03096611099353375,
+              "status": "valid",
+              "width_error": 0.36828008893872677,
+              "opening": 0.07296400568945037
+            },
+            "contour": {
+              "value": 0.014535475617956596,
+              "status": "valid",
+              "chin_height_error": 0.01762336472703674,
+              "chin_lateral_error": 0.004287283484321806
+            }
+          },
+          "intrinsic_component_absolute_errors": [
+            0.01762336472703674,
+            0.004287283484321806,
+            0.005539032660738963,
+            0.01240502694955603,
+            0.02501242287598332,
+            0.01133709178322223
+          ],
+          "intrinsic_error": null,
+          "ccip_distance_to_own_neutral": 0.0007425455842167139,
+          "identity_error": null
+        },
+        {
+          "sample_id": "s0003",
+          "input_sha256": "27d71bc8a9bdcfbd071624d41e6dbc10f3ef0481ceb7aae267a2d6c09c5091a2",
+          "author_intent": "frown",
+          "tag_id": 69,
+          "round": 1,
+          "author_source_filename": "c2_t069_r1.png",
+          "human_label": null,
+          "assistant_visual_screen": {
+            "frontal_single_complete_face": true,
+            "expression_note": null
+          },
+          "face_count": 1,
+          "legacy_face_status": "valid",
+          "landmark_confidence_min": 0.882233738899231,
+          "landmarks_below_0_3": 0,
+          "low_confidence_point_indices": [],
+          "nose_confidence": 0.9776678681373596,
+          "extraction_errors": {},
+          "wls": {
+            "value": 0.03973986367616063,
+            "expression": 0.06471730475038413,
+            "status": "valid"
+          },
+          "single_local": {
+            "left_eye": {
+              "value": 0.04275395936154568,
+              "fit_cost": 0.04114049524855701,
+              "status": "valid",
+              "width_error": 0.012643730294809108,
+              "opening": 0.4880839850610377
+            },
+            "right_eye": {
+              "value": 0.051516183350366555,
+              "fit_cost": 0.039280396764764025,
+              "status": "valid",
+              "width_error": 0.006836319703656424,
+              "opening": 0.4891928715977136
+            },
+            "eye_spacing": {
+              "value": 0.05497106909907773,
+              "fit_cost": 0.039092423235204746,
+              "status": "valid",
+              "center_relation_error": 0.07914580086097024
+            },
+            "nose": {
+              "value": 0.0715899129069804,
+              "fit_cost": 0.03533997850800662,
+              "status": "valid"
+            },
+            "mouth": {
+              "value": 0.07959198149631458,
+              "fit_cost": 0.03997501382238238,
+              "status": "valid",
+              "width_error": 0.1580645397289419,
+              "opening": 0.012063690331644948
+            },
+            "contour": {
+              "value": 0.06422541595842053,
+              "fit_cost": 0.028199696470207737,
+              "status": "valid"
+            }
+          },
+          "intrinsic_local": {
+            "left_eye": {
+              "value": 0.04275395936154568,
+              "fit_cost": 0.04114049524855701,
+              "status": "valid",
+              "width_error": 0.012643730294809108,
+              "opening": 0.4880839850610377
+            },
+            "right_eye": {
+              "value": 0.051516183350366555,
+              "fit_cost": 0.039280396764764025,
+              "status": "valid",
+              "width_error": 0.006836319703656424,
+              "opening": 0.4891928715977136
+            },
+            "eye_spacing": {
+              "value": 0.05497106909907773,
+              "fit_cost": 0.039092423235204746,
+              "status": "valid",
+              "center_relation_error": 0.07914580086097024
+            },
+            "nose": {
+              "value": 0.0715899129069804,
+              "fit_cost": 0.03533997850800662,
+              "status": "valid"
+            },
+            "mouth": {
+              "value": 0.07959198149631458,
+              "fit_cost": 0.03997501382238238,
+              "status": "valid",
+              "width_error": 0.1580645397289419,
+              "opening": 0.012063690331644948
+            },
+            "contour": {
+              "value": 0.009334818644096262,
+              "status": "valid",
+              "chin_height_error": 0.008671439332282316,
+              "chin_lateral_error": 0.004222646320984378
+            }
+          },
+          "intrinsic_component_absolute_errors": [
+            0.008671439332282316,
+            0.004222646320984378,
+            0.009970343194823927,
+            0.010675415049849757,
+            0.014514795059939078,
+            0.0023993597317336635
+          ],
+          "intrinsic_error": null,
+          "ccip_distance_to_own_neutral": 0.00047238642582669854,
+          "identity_error": null
+        },
+        {
+          "sample_id": "s0004",
+          "input_sha256": "c6a31d378e8a55db2019718d2c81e328d6c987d003e5686359b0be597ff8b834",
+          "author_intent": "smile",
+          "tag_id": 110,
+          "round": 1,
+          "author_source_filename": "c2_t110_r1.png",
+          "human_label": null,
+          "assistant_visual_screen": {
+            "frontal_single_complete_face": true,
+            "expression_note": null
+          },
+          "face_count": 1,
+          "legacy_face_status": "valid",
+          "landmark_confidence_min": 0.8886095285415649,
+          "landmarks_below_0_3": 0,
+          "low_confidence_point_indices": [],
+          "nose_confidence": 0.9601044654846191,
+          "extraction_errors": {},
+          "wls": {
+            "value": 0.03245704348642278,
+            "expression": 0.08607837644176204,
+            "status": "valid"
+          },
+          "single_local": {
+            "left_eye": {
+              "value": 0.04597338022838098,
+              "fit_cost": 0.031168045172075907,
+              "status": "valid",
+              "width_error": 0.023096985658760432,
+              "opening": 0.489790566581112
+            },
+            "right_eye": {
+              "value": 0.054564010418418546,
+              "fit_cost": 0.027991919955428147,
+              "status": "valid",
+              "width_error": 0.01833644952846758,
+              "opening": 0.49887013362799304
+            },
+            "eye_spacing": {
+              "value": 0.05483967884762886,
+              "fit_cost": 0.02279472062426713,
+              "status": "valid",
+              "center_relation_error": 0.08318605580796558
+            },
+            "nose": {
+              "value": 0.03393673229603131,
+              "fit_cost": 0.032578828054908145,
+              "status": "valid"
+            },
+            "mouth": {
+              "value": 0.2228101780824106,
+              "fit_cost": 0.032535882872719656,
+              "status": "valid",
+              "width_error": 0.4084225885505795,
+              "opening": 0.003132315669134489
+            },
+            "contour": {
+              "value": 0.057041034848487326,
+              "fit_cost": 0.023698804211387422,
+              "status": "valid"
+            }
+          },
+          "intrinsic_local": {
+            "left_eye": {
+              "value": 0.04597338022838098,
+              "fit_cost": 0.031168045172075907,
+              "status": "valid",
+              "width_error": 0.023096985658760432,
+              "opening": 0.489790566581112
+            },
+            "right_eye": {
+              "value": 0.054564010418418546,
+              "fit_cost": 0.027991919955428147,
+              "status": "valid",
+              "width_error": 0.01833644952846758,
+              "opening": 0.49887013362799304
+            },
+            "eye_spacing": {
+              "value": 0.05483967884762886,
+              "fit_cost": 0.02279472062426713,
+              "status": "valid",
+              "center_relation_error": 0.08318605580796558
+            },
+            "nose": {
+              "value": 0.03393673229603131,
+              "fit_cost": 0.032578828054908145,
+              "status": "valid"
+            },
+            "mouth": {
+              "value": 0.2228101780824106,
+              "fit_cost": 0.032535882872719656,
+              "status": "valid",
+              "width_error": 0.4084225885505795,
+              "opening": 0.003132315669134489
+            },
+            "contour": {
+              "value": 0.0064885672990128065,
+              "status": "valid",
+              "chin_height_error": 0.005446547363193388,
+              "chin_lateral_error": 0.003461671766562394
+            }
+          },
+          "intrinsic_component_absolute_errors": [
+            0.005446547363193388,
+            0.003461671766562394,
+            0.008851081157397911,
+            0.0011860043287137412,
+            0.010993747907692919,
+            0.0032171799737520934
+          ],
+          "intrinsic_error": null,
+          "ccip_distance_to_own_neutral": 0.0007084652897901833,
+          "identity_error": null
+        }
+      ]
+    }
+  ],
+  "scope": "External published diffusion-edited frontal still-image diagnostic; two base characters each form one source group. No human anomaly truth, calibration, original input anchor, local generation, SkyReels, real video, GPU inference or recovery acceptance"
+}

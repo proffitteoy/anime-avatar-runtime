@@ -13,7 +13,31 @@ dependencies = [
   "pydantic>=2.10,<3",
   "uvicorn>=0.34,<1",
   "pillow>=11,<13",
+  "numpy>=1.26.4,<2",
 ]
+
+[project.optional-dependencies]
+observers = [
+  "dghs-imgutils @ https://github.com/deepghs/imgutils/archive/46df848dc4d20ac93f4919a40e2636d5f7c19766.tar.gz",
+  "anime-face-detector @ https://github.com/hysts/anime-face-detector/archive/98a9fb480fa04bdd96acbe4d98da191a898267f3.tar.gz",
+  "onnxruntime>=1.20,<2",
+  "torch==2.5.1",
+  "torchvision==0.20.1",
+  "opencv-contrib-python-headless==4.11.0.86",
+]
+
+[tool.uv]
+# Both upstream projects request another cv2 provider; install one contrib/headless wheel.
+exclude-dependencies = ["opencv-python", "opencv-python-headless", "opencv-contrib-python"]
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[tool.uv.sources]
+torch = { index = "pytorch-cpu" }
+torchvision = { index = "pytorch-cpu" }
 
 [project.scripts]
 avatar-runtime = "anime_avatar_runtime.cli:main"
@@ -23,6 +47,9 @@ dev = ["pytest>=8,<10", "httpx2>=2.13,<3", "ruff>=0.11,<1", "mypy>=1.15,<2"]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/anime_avatar_runtime"]
+
+[tool.hatch.metadata]
+allow-direct-references = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

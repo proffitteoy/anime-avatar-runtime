@@ -1,13 +1,23 @@
 """Single-process manual generation lifecycle, independent of HTTP and GPU imports."""
 
 import asyncio
+import io
 from collections import deque
 from datetime import UTC, datetime
 from threading import Event
 from uuid import UUID, uuid4
 
 from .config import RuntimeConfig
-from .contracts import EventKind, GenerationJob, GenerationRequest, Observation, RuntimeEvent
+from .contracts import (
+    EventKind,
+    GenerationJob,
+    GenerationRequest,
+    Observation,
+    ObservationRequest,
+    ObservationResult,
+    RuntimeEvent,
+)
+from .observers import read_image, run_observation
 from .skyreels import GenerationCancelled, backend_unavailable_reason, run_generation
 from .state import AvatarState, atomic_write, initialize, load_state
 
@@ -34,15 +44,22 @@ class Runtime:
         self._control_lock = asyncio.Lock()
         self._paused = True
         self._closed = False
+        self._stopping = False
+        self._state_revision = 0
         self._task: asyncio.Task[None] | None = None
         self._cancel = Event()
         self._active_job: GenerationJob | None = None
         self._last_error: str | None = None
         self._events: deque[RuntimeEvent] = deque(maxlen=200)
+        self._latest_observation: Observation | None = None
+        self._observation_task: asyncio.Task[ObservationResult] | None = None
+        self._observation_cancel = Event()
         self._emit("runtime_started", "Reference checkpoint loaded; manual runtime starts paused")
 
     @property
     def mode(self) -> str:
+        if self._stopping:
+            return "stopping" if self._closed else "pausing"
         if self._closed:
             return "stopped"
         if self.state is None:
@@ -72,6 +89,9 @@ class Runtime:
             "generation": "managed_subprocess",
             "autonomous_loop": False,
             "observers_enabled": [],
+            "offline_observers_configured": self.config.observer_python is not None,
+            "observation_active": self._observation_task is not None,
+            "state_revision": self._state_revision,
             "recovery_available": False,
             "backend_configured": reason is None,
             "backend_unavailable_reason": reason,
@@ -84,14 +104,106 @@ class Runtime:
         return list(self._events)[-limit:]
 
     def observation(self) -> Observation:
+        if self._latest_observation is not None:
+            return self._latest_observation
         return Observation(
             avatar_id=self.state.avatar_id if self.state else None,
-            unavailable_reason="Identity, geometry and motion observers are not implemented",
+            unavailable_reason=(
+                "No frame observed; offline identity/geometry require configuration; "
+                "motion is unavailable"
+            ),
         )
+
+    async def observe(self, payload: bytes, request: ObservationRequest) -> ObservationResult:
+        """Manually observe one uploaded frame against the trusted checkpoint."""
+        async with self._control_lock:
+            self._require_open()
+            state = self.avatar_state()
+            if self._task is not None or self._observation_task is not None:
+                raise RuntimeConflict("Generation or observation is already active")
+            if self.config.observer_python is None or not self.config.observer_python.is_file():
+                raise CapabilityUnavailable(
+                    "Configure AVATAR_OBSERVER_PYTHON; see docs/observers.md"
+                )
+            if not (self.config.observer_models / "manifest.json").is_file():
+                raise CapabilityUnavailable("Prepare the pinned observer models first")
+            run_id = uuid4()
+            root = self.config.data_dir / "observations" / str(run_id)
+            input_path = root / "input.png"
+            revision = self._state_revision
+            cancel = Event()
+            self._observation_cancel = cancel
+
+            def execute() -> ObservationResult:
+                if cancel.is_set():
+                    raise GenerationCancelled("Observation cancelled before preparing input")
+                image = read_image(payload)
+                buffer = io.BytesIO()
+                image.save(buffer, format="PNG")
+                if cancel.is_set():
+                    raise GenerationCancelled("Observation cancelled before starting backend")
+                atomic_write(input_path, buffer.getvalue())
+                return run_observation(
+                    self.config,
+                    request,
+                    root / "output",
+                    anchors=[self.config.data_dir / "references" / f"{state.reference_sha256}.png"],
+                    image=input_path,
+                    run_id=run_id,
+                    avatar_id=state.avatar_id,
+                    cancel_event=cancel,
+                )
+
+            worker = asyncio.create_task(asyncio.to_thread(execute), name=f"observation-{run_id}")
+            self._observation_task = worker
+        try:
+            try:
+                result = await asyncio.shield(worker)
+            except asyncio.CancelledError:
+                cancel.set()
+                try:
+                    await asyncio.shield(worker)
+                except Exception:
+                    pass
+                raise
+            async with self._control_lock:
+                if cancel.is_set() or self._closed or revision != self._state_revision:
+                    raise RuntimeConflict("Observation cancelled or stale; result not accepted")
+                current = self.avatar_state()
+                if (current.avatar_id, current.reference_sha256) != (
+                    state.avatar_id,
+                    state.reference_sha256,
+                ):
+                    raise RuntimeConflict("Observation reference changed; result not accepted")
+                if (result.run_id, result.avatar_id) != (run_id, state.avatar_id):
+                    raise RuntimeConflict("Observation result identity mismatch")
+                measurement = Observation.model_validate(
+                    result.latest.observation.model_dump() | {"state_revision": revision}
+                )
+                result = result.model_copy(
+                    update={
+                        "latest": result.latest.model_copy(update={"observation": measurement}),
+                    }
+                )
+                self._latest_observation = measurement
+                self._emit("observation_recorded", result.latest.anomaly.status, run_id)
+                return result
+        except RuntimeConflict:
+            raise
+        except GenerationCancelled as exc:
+            raise RuntimeConflict("Observation cancelled; result not accepted") from exc
+        except (OSError, RuntimeError) as exc:
+            raise CapabilityUnavailable(str(exc)) from exc
+        finally:
+            async with self._control_lock:
+                if self._observation_task is worker:
+                    self._observation_task = None
 
     def _require_open(self) -> None:
         if self._closed:
             raise RuntimeConflict("Runtime is stopped")
+        if self._stopping:
+            raise RuntimeConflict("Runtime is cancelling active work")
 
     def avatar_state(self) -> AvatarState:
         # Revalidate references at reads and submission, including external tampering.
@@ -113,6 +225,7 @@ class Runtime:
                 self.state = await worker
                 raise
             self._emit("avatar_initialized", "Canonical reference checkpoint saved")
+            self._state_revision += 1
             return self.state
 
     async def resume(self) -> dict[str, object]:
@@ -122,6 +235,8 @@ class Runtime:
             if self._paused or self._last_error:
                 self._paused = False
                 self._last_error = None
+                self._state_revision += 1
+                self._observation_cancel.set()
                 self._emit("runtime_resumed", "Manual generation submissions enabled")
             return self.status()
 
@@ -129,22 +244,57 @@ class Runtime:
         async with self._control_lock:
             self._require_open()
             self._paused = True
+            self._stopping = True
+            self._state_revision += 1
             self._cancel.set()
-            if self._task is not None:
-                await asyncio.shield(self._task)
-            self._emit("runtime_paused", "Paused after releasing the active backend process")
-            return self.status()
+            self._observation_cancel.set()
+            generation, observation = self._task, self._observation_task
+        await self._finish_stop(generation, observation)
+        return self.status()
 
     async def close(self) -> None:
         async with self._control_lock:
-            if self._closed:
+            if self._closed and not self._stopping:
                 return
             self._paused = True
-            self._cancel.set()
-            if self._task is not None:
-                await asyncio.shield(self._task)
             self._closed = True
-            self._emit("runtime_stopped", "Shutdown completed; no generation is scheduled")
+            self._stopping = True
+            self._state_revision += 1
+            self._cancel.set()
+            self._observation_cancel.set()
+            generation, observation = self._task, self._observation_task
+        await self._finish_stop(generation, observation)
+
+    async def _finish_stop(
+        self,
+        generation: asyncio.Task[None] | None,
+        observation: asyncio.Task[ObservationResult] | None,
+    ) -> None:
+        """Wait outside the control lock, retaining cleanup if the caller disconnects."""
+
+        async def cleanup() -> None:
+            for task in (generation, observation):
+                if task is not None:
+                    try:
+                        await asyncio.shield(task)
+                    except Exception:
+                        pass
+            async with self._control_lock:
+                if self._observation_task is observation:
+                    self._observation_task = None
+                if self._stopping:
+                    self._stopping = False
+                    self._emit(
+                        "runtime_stopped" if self._closed else "runtime_paused",
+                        "Control completed after releasing generation and observation processes",
+                    )
+
+        worker = asyncio.create_task(cleanup())
+        try:
+            await asyncio.shield(worker)
+        except asyncio.CancelledError:
+            await asyncio.shield(worker)
+            raise
 
     def _save_job(self, job: GenerationJob) -> None:
         path = self.config.data_dir / "runs" / str(job.run_id) / "job.json"
@@ -176,8 +326,8 @@ class Runtime:
         async with self._control_lock:
             self._require_open()
             state = self.avatar_state()
-            if self._task is not None:
-                raise RuntimeConflict("A generation job is already active")
+            if self._task is not None or self._observation_task is not None:
+                raise RuntimeConflict("Generation or observation is already active")
             if self._paused or self._last_error:
                 raise RuntimeConflict("Resume the runtime before submitting generation")
             if reason := backend_unavailable_reason(self.config):

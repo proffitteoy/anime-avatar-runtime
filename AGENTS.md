@@ -12,7 +12,7 @@
 - 控制程序为 Python 3.12 单进程本地 API/CLI，uv 管理 pyproject.toml 与 uv.lock；使用 FastAPI、Pydantic 2、Uvicorn 和 Pillow。
 - 首个生成后端是 SkyReels-V2 DF 1.3B 540P。独立 Python 3.10 / Torch 2.5.1 / CUDA 环境，经 subprocess 参数列表调用；禁止 shell=True 或拼接 shell 命令。
 - [开源选型](./docs/open-source-selection.md) 记录模型、源码提交与许可。代码开源不等于所有权重具有相同许可，升级必须重新核对接口和依赖。
-- 当前已有参考图 checkpoint、统一配置/契约、单任务 Runtime、API/CLI 生成桥接、取消/超时与任务记录；尚无自主生成/观测/恢复闭环。不得将 CPU 测试或 dry-run 报告成 GPU 推理通过。
+- 当前已有参考图 checkpoint、统一配置/契约、单任务 Runtime、API/CLI 生成桥接、取消/超时与任务记录，以及独立 CPU 身份/几何观测与手动接口；尚无自主生成/观测/恢复闭环。不得将 CPU 测试或 dry-run 报告成 GPU 推理通过。
 - 控制程序可在 Windows 开发；模型推理部署基线见 [backend-setup](./docs/backend-setup.md)。不因未取得目标硬件细节而阻塞仓库初始化。
 - V0 使用 FastAPI 自带接口文档作为操作入口；尚无展示前端、数据库、迁移或生产部署，不为它们创建空模块。
 
@@ -26,6 +26,7 @@
 | src/anime_avatar_runtime/api.py | HTTP 输入、错误映射、Runtime 操作与 lifespan 关停 |
 | src/anime_avatar_runtime/state.py | AvatarState、图片校验、原子持久化与哈希校验 |
 | src/anime_avatar_runtime/skyreels.py | 固定上游版本、参数、模型预检、可取消独立进程与实验日志 |
+| src/anime_avatar_runtime/observers.py | 固定 CPU 模型、Anchor 缓存、特征与几何计算、离线曲线叠图、独立进程桥接；见 docs/observers.md |
 | src/anime_avatar_runtime/cli.py | 命令入口、服务启动、有效配置、退出状态；复用生成执行函数 |
 | tests/ | 控制行为、失败路径、上游参数契约；模型不作为常规测试依赖 |
 | docs/ | 原始流程、开源选型、模型部署和初始化证据 |

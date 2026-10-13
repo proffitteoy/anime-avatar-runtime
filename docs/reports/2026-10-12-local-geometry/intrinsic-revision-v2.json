@@ -1,0 +1,817 @@
+{
+  "schema_version": 1,
+  "revision_date": "2026-10-13",
+  "diagnostic_only": true,
+  "intrinsic": {
+    "schema_version": 1,
+    "diagnostic_only": true,
+    "evidence_level": "numerical-evidence",
+    "reference_id": "s0000",
+    "data_hash": "0295b9676709b19cdd659576e2261de52573788ff15f276f5e8102da6206befc",
+    "labels_hash": "7739882cd9ae354afe5c4a3303f8a3b237dffcb26c6ca4e0c212bfd68e50c0a8",
+    "extraction_hash": "9dd6762286976f34cbe65fcfd9d6af60490e69e792a95440f509c86645da375f",
+    "model_hash": "062cb4e53ecb0686109cbbd7f884414f0376fbada659fe10c09e5be02e677f88",
+    "implementation_sha256": "079744c585ad2939ab7caf76a0c8cc0992028aa0328ca70f2f159d13fb8d7f88",
+    "independent_sources": 1,
+    "protocol": {
+      "shape_components": [
+        "chin_height",
+        "chin_lateral",
+        "left_side_height",
+        "right_side_height",
+        "left_side_lateral",
+        "right_side_lateral"
+      ],
+      "target": "Frontal contour internal ratios only; all five contour points required",
+      "selection": "Development diagnostic; no threshold fitting or method adoption",
+      "negative_control": "Unbounded eye-spacing projection; no normal range learned"
+    },
+    "checks": {
+      "similarity_max_abs_error": 1.6653345369377348e-16,
+      "unrelated_points_max_abs_error": 0.0,
+      "chin_height_change": 0.019894605080270078,
+      "chin_height_expected": 0.019894605080270213,
+      "side_lateral_old_four_rms": 2.7755575615628914e-17,
+      "side_lateral_six_rms": 0.08164965809277261,
+      "side_lateral_six_expected": 0.08164965809277261
+    },
+    "rows": [
+      {
+        "sample_id": "s0000",
+        "transform": null,
+        "label": "normal",
+        "pose": "front",
+        "parts": [],
+        "intrinsic": {
+          "status": "valid",
+          "shape_rms": 0.0,
+          "chin_height_error": 0.0,
+          "chin_lateral_error": 0.0,
+          "left_side_height_error": 0.0,
+          "right_side_height_error": 0.0,
+          "left_side_lateral_error": 0.0,
+          "right_side_lateral_error": 0.0
+        }
+      },
+      {
+        "sample_id": "s0001",
+        "transform": {
+          "kind": "similarity_rotation",
+          "degrees": -8
+        },
+        "label": "normal",
+        "pose": "front",
+        "parts": [],
+        "intrinsic": {
+          "status": "valid",
+          "shape_rms": 0.0006001071442466237,
+          "chin_height_error": 0.0006984897725176298,
+          "chin_lateral_error": 0.0003235839759527324,
+          "left_side_height_error": 0.0005524217110949858,
+          "right_side_height_error": 0.0008064169578305136,
+          "left_side_lateral_error": 0.0006840880300653107,
+          "right_side_lateral_error": 0.00038042406076055357
+        }
+      },
+      {
+        "sample_id": "s0002",
+        "transform": {
+          "kind": "similarity_rotation",
+          "degrees": 8
+        },
+        "label": "normal",
+        "pose": "front",
+        "parts": [],
+        "intrinsic": {
+          "status": "valid",
+          "shape_rms": 0.007154210284459726,
+          "chin_height_error": 0.008209055063362669,
+          "chin_lateral_error": 0.0035817631223355097,
+          "left_side_height_error": 0.011909963699972714,
+          "right_side_height_error": 0.003905356344278077,
+          "left_side_lateral_error": 0.0028106127598365727,
+          "right_side_lateral_error": 0.00786639365094044
+        }
+      },
+      {
+        "sample_id": "s0003",
+        "transform": {
+          "kind": "similarity_scale",
+          "scale": 0.9
+        },
+        "label": "normal",
+        "pose": "front",
+        "parts": [],
+        "intrinsic": {
+          "status": "valid",
+          "shape_rms": 0.00203095197081282,
+          "chin_height_error": 0.0008112765362290331,
+          "chin_lateral_error": 0.0031445637390463493,
+          "left_side_height_error": 0.0012820981300338818,
+          "right_side_height_error": 0.003161851804506899,
+          "left_side_lateral_error": 0.0011398331588892696,
+          "right_side_lateral_error": 0.0011233176934983824
+        }
+      },
+      {
+        "sample_id": "s0004",
+        "transform": {
+          "kind": "eye_spacing",
+          "strength": 0.05,
+          "method": "inverse_compact_elliptic_displacement"
+        },
+        "label": "normal",
+        "pose": "front",
+        "parts": [],
+        "intrinsic": {
+          "status": "valid",
+          "shape_rms": 0.008202397754783906,
+          "chin_height_error": 0.011131739580189093,
+          "chin_lateral_error": 0.003257626435069718,
+          "left_side_height_error": 0.009152276971070905,
+          "right_side_height_error": 0.00919465301071315,
+          "left_side_lateral_error": 0.006978777804495295,
+          "right_side_lateral_error": 0.007220738196844101
+        }
+      },
+      {
+        "sample_id": "s0005",
+        "transform": {
+          "kind": "eye_spacing",
+          "strength": 0.1,
+          "method": "inverse_compact_elliptic_displacement"
+        },
+        "label": "normal",
+        "pose": "front",
+        "parts": [],
+        "intrinsic": {
+          "status": "valid",
+          "shape_rms": 0.01265993840904738,
+          "chin_height_error": 0.01607949687949939,
+          "chin_lateral_error": 0.009738179072832509,
+          "left_side_height_error": 0.01585966965575597,
+          "right_side_height_error": 0.011244500518728051,
+          "left_side_lateral_error": 0.005521238721350297,
+          "right_side_lateral_error": 0.014135413013044051
+        }
+      },
+      {
+        "sample_id": "s0006",
+        "transform": {
+          "kind": "eye_spacing",
+          "strength": 0.2,
+          "method": "inverse_compact_elliptic_displacement"
+        },
+        "label": "geometry_anomaly",
+        "pose": "front",
+        "parts": [
+          "left_eye",
+          "right_eye",
+          "eye_spacing"
+        ],
+        "intrinsic": {
+          "status": "valid",
+          "shape_rms": 0.0171976625911507,
+          "chin_height_error": 0.023210739507306066,
+          "chin_lateral_error": 0.006708119710069049,
+          "left_side_height_error": 0.018925297916475514,
+          "right_side_height_error": 0.01468368445001772,
+          "left_side_lateral_error": 0.011859313487673107,
+          "right_side_lateral_error": 0.02182657752419742
+        }
+      },
+      {
+        "sample_id": "s0007",
+        "transform": {
+          "kind": "nose_mouth",
+          "strength": 0.05,
+          "method": "inverse_compact_elliptic_displacement"
+        },
+        "label": "normal",
+        "pose": "front",
+        "parts": [],
+        "intrinsic": {
+          "status": "valid",
+          "shape_rms": 0.002429955900364328,
+          "chin_height_error": 0.0017002962585215275,
+          "chin_lateral_error": 0.00218064229885384,
+          "left_side_height_error": 0.003319192744261179,
+          "right_side_height_error": 0.0001338373590761277,
+          "left_side_lateral_error": 0.002431488604194343,
+          "right_side_lateral_error": 0.003291628186693041
+        }
+      },
+      {
+        "sample_id": "s0008",
+        "transform": {
+          "kind": "nose_mouth",
+          "strength": 0.1,
+          "method": "inverse_compact_elliptic_displacement"
+        },
+        "label": "normal",
+        "pose": "front",
+        "parts": [],
+        "intrinsic": {
+          "status": "valid",
+          "shape_rms": 0.004654580532526862,
+          "chin_height_error": 0.002763760173120633,
+          "chin_lateral_error": 0.004255738450486728,
+          "left_side_height_error": 0.005744279456747492,
+          "right_side_height_error": 0.0005252815715294235,
+          "left_side_lateral_error": 0.0057132862458690314,
+          "right_side_lateral_error": 0.006190858794654697
+        }
+      },
+      {
+        "sample_id": "s0009",
+        "transform": {
+          "kind": "nose_mouth",
+          "strength": 0.2,
+          "method": "inverse_compact_elliptic_displacement"
+        },
+        "label": "geometry_anomaly",
+        "pose": "front",
+        "parts": [
+          "mouth"
+        ],
+        "intrinsic": {
+          "status": "valid",
+          "shape_rms": 0.007265461361465457,
+          "chin_height_error": 0.003949015093645092,
+          "chin_lateral_error": 0.0059808325938856014,
+          "left_side_height_error": 0.00777950195301963,
+          "right_side_height_error": 0.001031226656307782,
+          "left_side_lateral_error": 0.009719296448642223,
+          "right_side_lateral_error": 0.01045503187625263
+        }
+      },
+      {
+        "sample_id": "s0010",
+        "transform": {
+          "kind": "chin",
+          "strength": 0.05,
+          "method": "inverse_compact_elliptic_displacement"
+        },
+        "label": "normal",
+        "pose": "front",
+        "parts": [],
+        "intrinsic": {
+          "status": "valid",
+          "shape_rms": 0.013028139228136773,
+          "chin_height_error": 0.031658022464130964,
+          "chin_lateral_error": 0.0009171924593646682,
+          "left_side_height_error": 0.0012955007095715176,
+          "right_side_height_error": 0.003003208051480466,
+          "left_side_lateral_error": 0.0020854029604425173,
+          "right_side_lateral_error": 0.0005256956752354713
+        }
+      },
+      {
+        "sample_id": "s0011",
+        "transform": {
+          "kind": "chin",
+          "strength": 0.1,
+          "method": "inverse_compact_elliptic_displacement"
+        },
+        "label": "geometry_anomaly",
+        "pose": "front",
+        "parts": [
+          "contour"
+        ],
+        "intrinsic": {
+          "status": "valid",
+          "shape_rms": 0.023553799338302022,
+          "chin_height_error": 0.056800555299999056,
+          "chin_lateral_error": 0.0019034874420881835,
+          "left_side_height_error": 0.0005105128152605443,
+          "right_side_height_error": 0.0019637886318000786,
+          "left_side_lateral_error": 0.005832064458815123,
+          "right_side_lateral_error": 0.007786678868865471
+        }
+      },
+      {
+        "sample_id": "s0012",
+        "transform": {
+          "kind": "chin",
+          "strength": 0.2,
+          "method": "inverse_compact_elliptic_displacement"
+        },
+        "label": "geometry_anomaly",
+        "pose": "front",
+        "parts": [
+          "contour"
+        ],
+        "intrinsic": {
+          "status": "valid",
+          "shape_rms": 0.03944707015820748,
+          "chin_height_error": 0.09413791423642237,
+          "chin_lateral_error": 0.000607282911074581,
+          "left_side_height_error": 0.014761634287039804,
+          "right_side_height_error": 0.014442516782556425,
+          "left_side_lateral_error": 0.004794542580813188,
+          "right_side_lateral_error": 0.004963123883523157
+        }
+      }
+    ],
+    "eye_nuisance_negative_control": [
+      {
+        "sample_id": "s0004",
+        "label": "normal",
+        "strength": 0.05,
+        "before_unweighted_rms": 0.03682216106693247,
+        "after_unweighted_rms": 0.017519277779833493,
+        "fraction_removed_squared_norm": 0.7736326166633343
+      },
+      {
+        "sample_id": "s0005",
+        "label": "normal",
+        "strength": 0.1,
+        "before_unweighted_rms": 0.06856348423060088,
+        "after_unweighted_rms": 0.02853992919766272,
+        "fraction_removed_squared_norm": 0.8267313370154371
+      },
+      {
+        "sample_id": "s0006",
+        "label": "geometry_anomaly",
+        "strength": 0.2,
+        "before_unweighted_rms": 0.10365873386087264,
+        "after_unweighted_rms": 0.05046537555874839,
+        "fraction_removed_squared_norm": 0.762985334360452
+      }
+    ],
+    "limitations": [
+      "Internal ratios are different observables from aligned RMS, not comparable thresholds",
+      "Does not detect isotropic contour enlargement or guarantee 3D pose invariance",
+      "Contour detection can still shift when other image regions change",
+      "One labelled frontal source; no independent calibration or validation"
+    ]
+  },
+  "formal_stages": {
+    "frozen_hash": "1915de76121ab65ea06577771a2f9174331f590099aef57e60979482a2119ab1",
+    "policy": {
+      "min_confidence": 0.3,
+      "mad_floor": 1e-06,
+      "min_development": 20,
+      "min_calibration": 39,
+      "min_anomaly_sources": 20,
+      "alpha": 0.05,
+      "coverage_target": 0.8,
+      "bootstrap_repeats": 2000,
+      "seed": 42
+    },
+    "reference_ids": {
+      "front": "s0000"
+    },
+    "source_counts": {
+      "development": 1,
+      "calibration": 0,
+      "validation": 0
+    },
+    "calibration": {
+      "schema_version": 1,
+      "stage": "calibration",
+      "frozen_hash": "1915de76121ab65ea06577771a2f9174331f590099aef57e60979482a2119ab1",
+      "profiles": {
+        "wls": {
+          "front": {
+            "threshold": null,
+            "rank": 1,
+            "n_sources": 0,
+            "missing_to_minimum": 39,
+            "masks": [],
+            "status": "insufficient_data"
+          },
+          "left_turn": {
+            "threshold": null,
+            "rank": 1,
+            "n_sources": 0,
+            "missing_to_minimum": 39,
+            "masks": [],
+            "status": "insufficient_data"
+          },
+          "right_turn": {
+            "threshold": null,
+            "rank": 1,
+            "n_sources": 0,
+            "missing_to_minimum": 39,
+            "masks": [],
+            "status": "insufficient_data"
+          },
+          "down": {
+            "threshold": null,
+            "rank": 1,
+            "n_sources": 0,
+            "missing_to_minimum": 39,
+            "masks": [],
+            "status": "insufficient_data"
+          },
+          "up": {
+            "threshold": null,
+            "rank": 1,
+            "n_sources": 0,
+            "missing_to_minimum": 39,
+            "masks": [],
+            "status": "insufficient_data"
+          }
+        },
+        "single_local": {
+          "front": {
+            "threshold": null,
+            "rank": 1,
+            "n_sources": 0,
+            "missing_to_minimum": 39,
+            "masks": [],
+            "status": "insufficient_data"
+          },
+          "left_turn": {
+            "threshold": null,
+            "rank": 1,
+            "n_sources": 0,
+            "missing_to_minimum": 39,
+            "masks": [],
+            "status": "insufficient_data"
+          },
+          "right_turn": {
+            "threshold": null,
+            "rank": 1,
+            "n_sources": 0,
+            "missing_to_minimum": 39,
+            "masks": [],
+            "status": "insufficient_data"
+          },
+          "down": {
+            "threshold": null,
+            "rank": 1,
+            "n_sources": 0,
+            "missing_to_minimum": 39,
+            "masks": [],
+            "status": "insufficient_data"
+          },
+          "up": {
+            "threshold": null,
+            "rank": 1,
+            "n_sources": 0,
+            "missing_to_minimum": 39,
+            "masks": [],
+            "status": "insufficient_data"
+          }
+        },
+        "pose_local": {
+          "front": {
+            "threshold": null,
+            "rank": 1,
+            "n_sources": 0,
+            "missing_to_minimum": 39,
+            "masks": [],
+            "status": "insufficient_data"
+          },
+          "left_turn": {
+            "threshold": null,
+            "rank": 1,
+            "n_sources": 0,
+            "missing_to_minimum": 39,
+            "masks": [],
+            "status": "insufficient_data"
+          },
+          "right_turn": {
+            "threshold": null,
+            "rank": 1,
+            "n_sources": 0,
+            "missing_to_minimum": 39,
+            "masks": [],
+            "status": "insufficient_data"
+          },
+          "down": {
+            "threshold": null,
+            "rank": 1,
+            "n_sources": 0,
+            "missing_to_minimum": 39,
+            "masks": [],
+            "status": "insufficient_data"
+          },
+          "up": {
+            "threshold": null,
+            "rank": 1,
+            "n_sources": 0,
+            "missing_to_minimum": 39,
+            "masks": [],
+            "status": "insufficient_data"
+          }
+        },
+        "oracle": {
+          "front": {
+            "threshold": null,
+            "rank": 1,
+            "n_sources": 0,
+            "missing_to_minimum": 39,
+            "masks": [],
+            "status": "insufficient_data"
+          },
+          "left_turn": {
+            "threshold": null,
+            "rank": 1,
+            "n_sources": 0,
+            "missing_to_minimum": 39,
+            "masks": [],
+            "status": "insufficient_data"
+          },
+          "right_turn": {
+            "threshold": null,
+            "rank": 1,
+            "n_sources": 0,
+            "missing_to_minimum": 39,
+            "masks": [],
+            "status": "insufficient_data"
+          },
+          "down": {
+            "threshold": null,
+            "rank": 1,
+            "n_sources": 0,
+            "missing_to_minimum": 39,
+            "masks": [],
+            "status": "insufficient_data"
+          },
+          "up": {
+            "threshold": null,
+            "rank": 1,
+            "n_sources": 0,
+            "missing_to_minimum": 39,
+            "masks": [],
+            "status": "insufficient_data"
+          }
+        },
+        "intrinsic_local": {
+          "front": {
+            "threshold": null,
+            "rank": 1,
+            "n_sources": 0,
+            "missing_to_minimum": 39,
+            "masks": [],
+            "status": "insufficient_data"
+          },
+          "left_turn": {
+            "threshold": null,
+            "rank": 1,
+            "n_sources": 0,
+            "missing_to_minimum": 39,
+            "masks": [],
+            "status": "insufficient_data"
+          },
+          "right_turn": {
+            "threshold": null,
+            "rank": 1,
+            "n_sources": 0,
+            "missing_to_minimum": 39,
+            "masks": [],
+            "status": "insufficient_data"
+          },
+          "down": {
+            "threshold": null,
+            "rank": 1,
+            "n_sources": 0,
+            "missing_to_minimum": 39,
+            "masks": [],
+            "status": "insufficient_data"
+          },
+          "up": {
+            "threshold": null,
+            "rank": 1,
+            "n_sources": 0,
+            "missing_to_minimum": 39,
+            "masks": [],
+            "status": "insufficient_data"
+          }
+        }
+      },
+      "artifact_hash": "8019954c50e16b7220e65d0863451e534f51a335d08089f74ca36d143bd3da89"
+    },
+    "summary": {
+      "wls": {
+        "normal_primary_sources": 0,
+        "valid_normal_sources": 0,
+        "false_positives": 0,
+        "fpr": null,
+        "fpr_upper95": null,
+        "normal_coverage": null,
+        "normal_unknown": 0,
+        "anomaly_samples": 0,
+        "anomaly_sources": 0,
+        "detected": 0,
+        "recall": null,
+        "anomaly_unknown_counted_missed": 0,
+        "region_coverage": {
+          "global": null
+        }
+      },
+      "single_local": {
+        "normal_primary_sources": 0,
+        "valid_normal_sources": 0,
+        "false_positives": 0,
+        "fpr": null,
+        "fpr_upper95": null,
+        "normal_coverage": null,
+        "normal_unknown": 0,
+        "anomaly_samples": 0,
+        "anomaly_sources": 0,
+        "detected": 0,
+        "recall": null,
+        "anomaly_unknown_counted_missed": 0,
+        "region_coverage": {
+          "left_eye": null,
+          "right_eye": null,
+          "eye_spacing": null,
+          "nose": null,
+          "mouth": null,
+          "contour": null
+        }
+      },
+      "pose_local": {
+        "normal_primary_sources": 0,
+        "valid_normal_sources": 0,
+        "false_positives": 0,
+        "fpr": null,
+        "fpr_upper95": null,
+        "normal_coverage": null,
+        "normal_unknown": 0,
+        "anomaly_samples": 0,
+        "anomaly_sources": 0,
+        "detected": 0,
+        "recall": null,
+        "anomaly_unknown_counted_missed": 0,
+        "region_coverage": {
+          "left_eye": null,
+          "right_eye": null,
+          "eye_spacing": null,
+          "nose": null,
+          "mouth": null,
+          "contour": null
+        }
+      },
+      "oracle": {
+        "normal_primary_sources": 0,
+        "valid_normal_sources": 0,
+        "false_positives": 0,
+        "fpr": null,
+        "fpr_upper95": null,
+        "normal_coverage": null,
+        "normal_unknown": 0,
+        "anomaly_samples": 0,
+        "anomaly_sources": 0,
+        "detected": 0,
+        "recall": null,
+        "anomaly_unknown_counted_missed": 0,
+        "region_coverage": {
+          "left_eye": null,
+          "right_eye": null,
+          "eye_spacing": null,
+          "nose": null,
+          "mouth": null,
+          "contour": null
+        }
+      },
+      "intrinsic_local": {
+        "normal_primary_sources": 0,
+        "valid_normal_sources": 0,
+        "false_positives": 0,
+        "fpr": null,
+        "fpr_upper95": null,
+        "normal_coverage": null,
+        "normal_unknown": 0,
+        "anomaly_samples": 0,
+        "anomaly_sources": 0,
+        "detected": 0,
+        "recall": null,
+        "anomaly_unknown_counted_missed": 0,
+        "region_coverage": {
+          "left_eye": null,
+          "right_eye": null,
+          "eye_spacing": null,
+          "nose": null,
+          "mouth": null,
+          "contour": null
+        }
+      }
+    },
+    "adoption": {
+      "single_local": {
+        "adopt": false,
+        "selected_before_calibration": false,
+        "status": "not_accepted",
+        "bootstrap_all": {
+          "n_sources": 0,
+          "minimum_sources": 20,
+          "sign_test": {
+            "positive_sources": 0,
+            "negative_sources": 0,
+            "tied_sources": 0,
+            "p_one_sided": null,
+            "target": "P(source recall difference > 0 | nonzero difference) > 0.5"
+          },
+          "interval_target": "Sample-weighted recall difference; source-cluster percentile approximation",
+          "status": "insufficient_independent_anomaly_sources",
+          "interval95": null
+        },
+        "bootstrap_real_anomalies": {
+          "n_sources": 0,
+          "minimum_sources": 20,
+          "sign_test": {
+            "positive_sources": 0,
+            "negative_sources": 0,
+            "tied_sources": 0,
+            "p_one_sided": null,
+            "target": "P(source recall difference > 0 | nonzero difference) > 0.5"
+          },
+          "interval_target": "Sample-weighted recall difference; source-cluster percentile approximation",
+          "status": "insufficient_independent_anomaly_sources",
+          "interval95": null
+        },
+        "requirements": "FPR upper95 <=5%; coverage>=80%; calibrated WLS comparator; positive paired source interval on human-reviewed anomalies; at least 20 independent anomaly sources; source-direction sign p<=0.05; synthetic and real evidence reported separately"
+      },
+      "pose_local": {
+        "adopt": false,
+        "selected_before_calibration": false,
+        "status": "not_accepted",
+        "bootstrap_all": {
+          "n_sources": 0,
+          "minimum_sources": 20,
+          "sign_test": {
+            "positive_sources": 0,
+            "negative_sources": 0,
+            "tied_sources": 0,
+            "p_one_sided": null,
+            "target": "P(source recall difference > 0 | nonzero difference) > 0.5"
+          },
+          "interval_target": "Sample-weighted recall difference; source-cluster percentile approximation",
+          "status": "insufficient_independent_anomaly_sources",
+          "interval95": null
+        },
+        "bootstrap_real_anomalies": {
+          "n_sources": 0,
+          "minimum_sources": 20,
+          "sign_test": {
+            "positive_sources": 0,
+            "negative_sources": 0,
+            "tied_sources": 0,
+            "p_one_sided": null,
+            "target": "P(source recall difference > 0 | nonzero difference) > 0.5"
+          },
+          "interval_target": "Sample-weighted recall difference; source-cluster percentile approximation",
+          "status": "insufficient_independent_anomaly_sources",
+          "interval95": null
+        },
+        "requirements": "FPR upper95 <=5%; coverage>=80%; calibrated WLS comparator; positive paired source interval on human-reviewed anomalies; at least 20 independent anomaly sources; source-direction sign p<=0.05; synthetic and real evidence reported separately"
+      },
+      "intrinsic_local": {
+        "adopt": false,
+        "selected_before_calibration": true,
+        "status": "not_accepted",
+        "bootstrap_all": {
+          "n_sources": 0,
+          "minimum_sources": 20,
+          "sign_test": {
+            "positive_sources": 0,
+            "negative_sources": 0,
+            "tied_sources": 0,
+            "p_one_sided": null,
+            "target": "P(source recall difference > 0 | nonzero difference) > 0.5"
+          },
+          "interval_target": "Sample-weighted recall difference; source-cluster percentile approximation",
+          "status": "insufficient_independent_anomaly_sources",
+          "interval95": null
+        },
+        "bootstrap_real_anomalies": {
+          "n_sources": 0,
+          "minimum_sources": 20,
+          "sign_test": {
+            "positive_sources": 0,
+            "negative_sources": 0,
+            "tied_sources": 0,
+            "p_one_sided": null,
+            "target": "P(source recall difference > 0 | nonzero difference) > 0.5"
+          },
+          "interval_target": "Sample-weighted recall difference; source-cluster percentile approximation",
+          "status": "insufficient_independent_anomaly_sources",
+          "interval95": null
+        },
+        "requirements": "FPR upper95 <=5%; coverage>=80%; calibrated WLS comparator; positive paired source interval on human-reviewed anomalies; at least 20 independent anomaly sources; source-direction sign p<=0.05; synthetic and real evidence reported separately"
+      }
+    }
+  },
+  "replay": {
+    "synthetic_timeline": true,
+    "policy": {
+      "enter": 0.03,
+      "exit": 0.015,
+      "dwell_seconds": 0.5,
+      "max_gap_seconds": 0.15
+    },
+    "new_recommendations": {
+      "normal": 0,
+      "normal_eye_transient": 0,
+      "anomaly_transient": 0,
+      "anomaly_persistent": 1,
+      "gap_interrupts_anomaly": 0
+    }
+  },
+  "scope": "Six-dimensional source diagnostic and sample-size guards; no new human labels or research acceptance"
+}

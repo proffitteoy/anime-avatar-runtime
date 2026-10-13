@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "diagnostic_only": true,
+  "zero_false_positive_validation": [
+    {
+      "false_positives": 0,
+      "minimum_valid_normals": 59,
+      "upper95": 0.04950760988822689
+    },
+    {
+      "false_positives": 1,
+      "minimum_valid_normals": 93,
+      "upper95": 0.04999397838798847
+    },
+    {
+      "false_positives": 2,
+      "minimum_valid_normals": 124,
+      "upper95": 0.04990017122831296
+    },
+    {
+      "false_positives": 3,
+      "minimum_valid_normals": 153,
+      "upper95": 0.04989503037896291
+    },
+    {
+      "false_positives": 4,
+      "minimum_valid_normals": 181,
+      "upper95": 0.04985531794888497
+    },
+    {
+      "false_positives": 5,
+      "minimum_valid_normals": 208,
+      "upper95": 0.0498759664017147
+    }
+  ],
+  "validity_sampling": {
+    "assumed_probability": 0.8,
+    "independent_trials": true,
+    "required_valid": 59,
+    "probability_target": 0.95,
+    "minimum_sampled_normals": 81
+  },
+  "current_60_20_20_source_split": [
+    {
+      "required_validation_sources": 59,
+      "total_sources": 292,
+      "development": 175,
+      "calibration": 58,
+      "validation": 59
+    },
+    {
+      "required_validation_sources": 81,
+      "total_sources": 402,
+      "development": 241,
+      "calibration": 80,
+      "validation": 81
+    }
+  ],
+  "uniform_rank_calibration_control": {
+    "n": 39,
+    "rank": 38,
+    "marginal_false_positive_probability": 0.05,
+    "probability_frozen_true_fpr_exceeds_5_percent": 0.4129476499044865
+  },
+  "scope": "Binomial/uniform planning assumptions, not new normal data or measured FPR. Rank calibration controls marginal risk; independent validation is required"
+}

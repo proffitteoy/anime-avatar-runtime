@@ -1,0 +1,218 @@
+{
+  "schema_version": 1,
+  "stage": "calibration",
+  "frozen_hash": "318a22a378fed21e57363810367c5cacdd90fbc620ee727c5145b30528711013",
+  "profiles": {
+    "wls": {
+      "front": {
+        "threshold": null,
+        "rank": 1,
+        "n_sources": 0,
+        "missing_to_minimum": 39,
+        "masks": [],
+        "status": "insufficient_data"
+      },
+      "left_turn": {
+        "threshold": null,
+        "rank": 1,
+        "n_sources": 0,
+        "missing_to_minimum": 39,
+        "masks": [],
+        "status": "insufficient_data"
+      },
+      "right_turn": {
+        "threshold": null,
+        "rank": 1,
+        "n_sources": 0,
+        "missing_to_minimum": 39,
+        "masks": [],
+        "status": "insufficient_data"
+      },
+      "down": {
+        "threshold": null,
+        "rank": 1,
+        "n_sources": 0,
+        "missing_to_minimum": 39,
+        "masks": [],
+        "status": "insufficient_data"
+      },
+      "up": {
+        "threshold": null,
+        "rank": 1,
+        "n_sources": 0,
+        "missing_to_minimum": 39,
+        "masks": [],
+        "status": "insufficient_data"
+      }
+    },
+    "single_local": {
+      "front": {
+        "threshold": null,
+        "rank": 1,
+        "n_sources": 0,
+        "missing_to_minimum": 39,
+        "masks": [],
+        "status": "insufficient_data"
+      },
+      "left_turn": {
+        "threshold": null,
+        "rank": 1,
+        "n_sources": 0,
+        "missing_to_minimum": 39,
+        "masks": [],
+        "status": "insufficient_data"
+      },
+      "right_turn": {
+        "threshold": null,
+        "rank": 1,
+        "n_sources": 0,
+        "missing_to_minimum": 39,
+        "masks": [],
+        "status": "insufficient_data"
+      },
+      "down": {
+        "threshold": null,
+        "rank": 1,
+        "n_sources": 0,
+        "missing_to_minimum": 39,
+        "masks": [],
+        "status": "insufficient_data"
+      },
+      "up": {
+        "threshold": null,
+        "rank": 1,
+        "n_sources": 0,
+        "missing_to_minimum": 39,
+        "masks": [],
+        "status": "insufficient_data"
+      }
+    },
+    "pose_local": {
+      "front": {
+        "threshold": null,
+        "rank": 1,
+        "n_sources": 0,
+        "missing_to_minimum": 39,
+        "masks": [],
+        "status": "insufficient_data"
+      },
+      "left_turn": {
+        "threshold": null,
+        "rank": 1,
+        "n_sources": 0,
+        "missing_to_minimum": 39,
+        "masks": [],
+        "status": "insufficient_data"
+      },
+      "right_turn": {
+        "threshold": null,
+        "rank": 1,
+        "n_sources": 0,
+        "missing_to_minimum": 39,
+        "masks": [],
+        "status": "insufficient_data"
+      },
+      "down": {
+        "threshold": null,
+        "rank": 1,
+        "n_sources": 0,
+        "missing_to_minimum": 39,
+        "masks": [],
+        "status": "insufficient_data"
+      },
+      "up": {
+        "threshold": null,
+        "rank": 1,
+        "n_sources": 0,
+        "missing_to_minimum": 39,
+        "masks": [],
+        "status": "insufficient_data"
+      }
+    },
+    "oracle": {
+      "front": {
+        "threshold": null,
+        "rank": 1,
+        "n_sources": 0,
+        "missing_to_minimum": 39,
+        "masks": [],
+        "status": "insufficient_data"
+      },
+      "left_turn": {
+        "threshold": null,
+        "rank": 1,
+        "n_sources": 0,
+        "missing_to_minimum": 39,
+        "masks": [],
+        "status": "insufficient_data"
+      },
+      "right_turn": {
+        "threshold": null,
+        "rank": 1,
+        "n_sources": 0,
+        "missing_to_minimum": 39,
+        "masks": [],
+        "status": "insufficient_data"
+      },
+      "down": {
+        "threshold": null,
+        "rank": 1,
+        "n_sources": 0,
+        "missing_to_minimum": 39,
+        "masks": [],
+        "status": "insufficient_data"
+      },
+      "up": {
+        "threshold": null,
+        "rank": 1,
+        "n_sources": 0,
+        "missing_to_minimum": 39,
+        "masks": [],
+        "status": "insufficient_data"
+      }
+    },
+    "intrinsic_local": {
+      "front": {
+        "threshold": null,
+        "rank": 1,
+        "n_sources": 0,
+        "missing_to_minimum": 39,
+        "masks": [],
+        "status": "insufficient_data"
+      },
+      "left_turn": {
+        "threshold": null,
+        "rank": 1,
+        "n_sources": 0,
+        "missing_to_minimum": 39,
+        "masks": [],
+        "status": "insufficient_data"
+      },
+      "right_turn": {
+        "threshold": null,
+        "rank": 1,
+        "n_sources": 0,
+        "missing_to_minimum": 39,
+        "masks": [],
+        "status": "insufficient_data"
+      },
+      "down": {
+        "threshold": null,
+        "rank": 1,
+        "n_sources": 0,
+        "missing_to_minimum": 39,
+        "masks": [],
+        "status": "insufficient_data"
+      },
+      "up": {
+        "threshold": null,
+        "rank": 1,
+        "n_sources": 0,
+        "missing_to_minimum": 39,
+        "masks": [],
+        "status": "insufficient_data"
+      }
+    }
+  },
+  "artifact_hash": "9969cad81c4bd34675005b9afea7ad96fc570715b3120e7dfd9032577c749f43"
+}

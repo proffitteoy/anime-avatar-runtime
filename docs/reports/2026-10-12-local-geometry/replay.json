@@ -1,0 +1,626 @@
+{
+  "schema_version": 1,
+  "diagnostic_only": true,
+  "synthetic_timeline": true,
+  "data_hash": "0295b9676709b19cdd659576e2261de52573788ff15f276f5e8102da6206befc",
+  "implementation_sha256": "9faf2204e408dbf6de1d52f206218a8740e5651c8e7670eead886617a3ab3c7c",
+  "policy": {
+    "enter": 0.03,
+    "exit": 0.015,
+    "dwell_seconds": 0.5,
+    "max_gap_seconds": 0.15
+  },
+  "scenarios": {
+    "normal": [
+      {
+        "time": 0.0,
+        "sample_id": "s0000",
+        "value": 0.0,
+        "mode": "idle",
+        "state": "NORMAL",
+        "gap_reset": false,
+        "watch_seconds": 0.0,
+        "new_recommendation": false
+      },
+      {
+        "time": 0.1,
+        "sample_id": "s0000",
+        "value": 0.0,
+        "mode": "idle",
+        "state": "NORMAL",
+        "gap_reset": false,
+        "watch_seconds": 0.0,
+        "new_recommendation": false
+      },
+      {
+        "time": 0.2,
+        "sample_id": "s0000",
+        "value": 0.0,
+        "mode": "idle",
+        "state": "NORMAL",
+        "gap_reset": false,
+        "watch_seconds": 0.0,
+        "new_recommendation": false
+      },
+      {
+        "time": 0.30000000000000004,
+        "sample_id": "s0000",
+        "value": 0.0,
+        "mode": "idle",
+        "state": "NORMAL",
+        "gap_reset": false,
+        "watch_seconds": 0.0,
+        "new_recommendation": false
+      },
+      {
+        "time": 0.4,
+        "sample_id": "s0000",
+        "value": 0.0,
+        "mode": "idle",
+        "state": "NORMAL",
+        "gap_reset": false,
+        "watch_seconds": 0.0,
+        "new_recommendation": false
+      },
+      {
+        "time": 0.5,
+        "sample_id": "s0000",
+        "value": 0.0,
+        "mode": "idle",
+        "state": "NORMAL",
+        "gap_reset": false,
+        "watch_seconds": 0.0,
+        "new_recommendation": false
+      },
+      {
+        "time": 0.6000000000000001,
+        "sample_id": "s0000",
+        "value": 0.0,
+        "mode": "idle",
+        "state": "NORMAL",
+        "gap_reset": false,
+        "watch_seconds": 0.0,
+        "new_recommendation": false
+      },
+      {
+        "time": 0.7000000000000001,
+        "sample_id": "s0000",
+        "value": 0.0,
+        "mode": "idle",
+        "state": "NORMAL",
+        "gap_reset": false,
+        "watch_seconds": 0.0,
+        "new_recommendation": false
+      },
+      {
+        "time": 0.8,
+        "sample_id": "s0000",
+        "value": 0.0,
+        "mode": "idle",
+        "state": "NORMAL",
+        "gap_reset": false,
+        "watch_seconds": 0.0,
+        "new_recommendation": false
+      },
+      {
+        "time": 0.9,
+        "sample_id": "s0000",
+        "value": 0.0,
+        "mode": "idle",
+        "state": "NORMAL",
+        "gap_reset": false,
+        "watch_seconds": 0.0,
+        "new_recommendation": false
+      },
+      {
+        "time": 1.0,
+        "sample_id": "s0000",
+        "value": 0.0,
+        "mode": "idle",
+        "state": "NORMAL",
+        "gap_reset": false,
+        "watch_seconds": 0.0,
+        "new_recommendation": false
+      },
+      {
+        "time": 1.1,
+        "sample_id": "s0000",
+        "value": 0.0,
+        "mode": "idle",
+        "state": "NORMAL",
+        "gap_reset": false,
+        "watch_seconds": 0.0,
+        "new_recommendation": false
+      }
+    ],
+    "normal_eye_transient": [
+      {
+        "time": 0.0,
+        "sample_id": "s0000",
+        "value": 0.0,
+        "mode": "idle",
+        "state": "NORMAL",
+        "gap_reset": false,
+        "watch_seconds": 0.0,
+        "new_recommendation": false
+      },
+      {
+        "time": 0.1,
+        "sample_id": "s0000",
+        "value": 0.0,
+        "mode": "idle",
+        "state": "NORMAL",
+        "gap_reset": false,
+        "watch_seconds": 0.0,
+        "new_recommendation": false
+      },
+      {
+        "time": 0.2,
+        "sample_id": "s0000",
+        "value": 0.0,
+        "mode": "idle",
+        "state": "NORMAL",
+        "gap_reset": false,
+        "watch_seconds": 0.0,
+        "new_recommendation": false
+      },
+      {
+        "time": 0.30000000000000004,
+        "sample_id": "s0005",
+        "value": 0.013521744202004467,
+        "mode": "idle",
+        "state": "NORMAL",
+        "gap_reset": false,
+        "watch_seconds": 0.0,
+        "new_recommendation": false
+      },
+      {
+        "time": 0.4,
+        "sample_id": "s0000",
+        "value": 0.0,
+        "mode": "idle",
+        "state": "NORMAL",
+        "gap_reset": false,
+        "watch_seconds": 0.0,
+        "new_recommendation": false
+      },
+      {
+        "time": 0.5,
+        "sample_id": "s0000",
+        "value": 0.0,
+        "mode": "idle",
+        "state": "NORMAL",
+        "gap_reset": false,
+        "watch_seconds": 0.0,
+        "new_recommendation": false
+      },
+      {
+        "time": 0.6000000000000001,
+        "sample_id": "s0000",
+        "value": 0.0,
+        "mode": "idle",
+        "state": "NORMAL",
+        "gap_reset": false,
+        "watch_seconds": 0.0,
+        "new_recommendation": false
+      },
+      {
+        "time": 0.7000000000000001,
+        "sample_id": "s0000",
+        "value": 0.0,
+        "mode": "idle",
+        "state": "NORMAL",
+        "gap_reset": false,
+        "watch_seconds": 0.0,
+        "new_recommendation": false
+      },
+      {
+        "time": 0.8,
+        "sample_id": "s0000",
+        "value": 0.0,
+        "mode": "idle",
+        "state": "NORMAL",
+        "gap_reset": false,
+        "watch_seconds": 0.0,
+        "new_recommendation": false
+      },
+      {
+        "time": 0.9,
+        "sample_id": "s0000",
+        "value": 0.0,
+        "mode": "idle",
+        "state": "NORMAL",
+        "gap_reset": false,
+        "watch_seconds": 0.0,
+        "new_recommendation": false
+      },
+      {
+        "time": 1.0,
+        "sample_id": "s0000",
+        "value": 0.0,
+        "mode": "idle",
+        "state": "NORMAL",
+        "gap_reset": false,
+        "watch_seconds": 0.0,
+        "new_recommendation": false
+      },
+      {
+        "time": 1.1,
+        "sample_id": "s0000",
+        "value": 0.0,
+        "mode": "idle",
+        "state": "NORMAL",
+        "gap_reset": false,
+        "watch_seconds": 0.0,
+        "new_recommendation": false
+      }
+    ],
+    "anomaly_transient": [
+      {
+        "time": 0.0,
+        "sample_id": "s0000",
+        "value": 0.0,
+        "mode": "idle",
+        "state": "NORMAL",
+        "gap_reset": false,
+        "watch_seconds": 0.0,
+        "new_recommendation": false
+      },
+      {
+        "time": 0.1,
+        "sample_id": "s0000",
+        "value": 0.0,
+        "mode": "idle",
+        "state": "NORMAL",
+        "gap_reset": false,
+        "watch_seconds": 0.0,
+        "new_recommendation": false
+      },
+      {
+        "time": 0.2,
+        "sample_id": "s0000",
+        "value": 0.0,
+        "mode": "idle",
+        "state": "NORMAL",
+        "gap_reset": false,
+        "watch_seconds": 0.0,
+        "new_recommendation": false
+      },
+      {
+        "time": 0.30000000000000004,
+        "sample_id": "s0012",
+        "value": 0.04818923071381413,
+        "mode": "idle",
+        "state": "WATCH",
+        "gap_reset": false,
+        "watch_seconds": 0.0,
+        "new_recommendation": false
+      },
+      {
+        "time": 0.4,
+        "sample_id": "s0000",
+        "value": 0.0,
+        "mode": "idle",
+        "state": "NORMAL",
+        "gap_reset": false,
+        "watch_seconds": 0.0,
+        "new_recommendation": false
+      },
+      {
+        "time": 0.5,
+        "sample_id": "s0000",
+        "value": 0.0,
+        "mode": "idle",
+        "state": "NORMAL",
+        "gap_reset": false,
+        "watch_seconds": 0.0,
+        "new_recommendation": false
+      },
+      {
+        "time": 0.6000000000000001,
+        "sample_id": "s0000",
+        "value": 0.0,
+        "mode": "idle",
+        "state": "NORMAL",
+        "gap_reset": false,
+        "watch_seconds": 0.0,
+        "new_recommendation": false
+      },
+      {
+        "time": 0.7000000000000001,
+        "sample_id": "s0000",
+        "value": 0.0,
+        "mode": "idle",
+        "state": "NORMAL",
+        "gap_reset": false,
+        "watch_seconds": 0.0,
+        "new_recommendation": false
+      },
+      {
+        "time": 0.8,
+        "sample_id": "s0000",
+        "value": 0.0,
+        "mode": "idle",
+        "state": "NORMAL",
+        "gap_reset": false,
+        "watch_seconds": 0.0,
+        "new_recommendation": false
+      },
+      {
+        "time": 0.9,
+        "sample_id": "s0000",
+        "value": 0.0,
+        "mode": "idle",
+        "state": "NORMAL",
+        "gap_reset": false,
+        "watch_seconds": 0.0,
+        "new_recommendation": false
+      },
+      {
+        "time": 1.0,
+        "sample_id": "s0000",
+        "value": 0.0,
+        "mode": "idle",
+        "state": "NORMAL",
+        "gap_reset": false,
+        "watch_seconds": 0.0,
+        "new_recommendation": false
+      },
+      {
+        "time": 1.1,
+        "sample_id": "s0000",
+        "value": 0.0,
+        "mode": "idle",
+        "state": "NORMAL",
+        "gap_reset": false,
+        "watch_seconds": 0.0,
+        "new_recommendation": false
+      }
+    ],
+    "anomaly_persistent": [
+      {
+        "time": 0.0,
+        "sample_id": "s0000",
+        "value": 0.0,
+        "mode": "idle",
+        "state": "NORMAL",
+        "gap_reset": false,
+        "watch_seconds": 0.0,
+        "new_recommendation": false
+      },
+      {
+        "time": 0.1,
+        "sample_id": "s0000",
+        "value": 0.0,
+        "mode": "idle",
+        "state": "NORMAL",
+        "gap_reset": false,
+        "watch_seconds": 0.0,
+        "new_recommendation": false
+      },
+      {
+        "time": 0.2,
+        "sample_id": "s0000",
+        "value": 0.0,
+        "mode": "idle",
+        "state": "NORMAL",
+        "gap_reset": false,
+        "watch_seconds": 0.0,
+        "new_recommendation": false
+      },
+      {
+        "time": 0.30000000000000004,
+        "sample_id": "s0012",
+        "value": 0.04818923071381413,
+        "mode": "idle",
+        "state": "WATCH",
+        "gap_reset": false,
+        "watch_seconds": 0.0,
+        "new_recommendation": false
+      },
+      {
+        "time": 0.4,
+        "sample_id": "s0012",
+        "value": 0.04818923071381413,
+        "mode": "idle",
+        "state": "WATCH",
+        "gap_reset": false,
+        "watch_seconds": 0.09999999999999998,
+        "new_recommendation": false
+      },
+      {
+        "time": 0.5,
+        "sample_id": "s0012",
+        "value": 0.04818923071381413,
+        "mode": "idle",
+        "state": "WATCH",
+        "gap_reset": false,
+        "watch_seconds": 0.19999999999999996,
+        "new_recommendation": false
+      },
+      {
+        "time": 0.6000000000000001,
+        "sample_id": "s0012",
+        "value": 0.04818923071381413,
+        "mode": "idle",
+        "state": "WATCH",
+        "gap_reset": false,
+        "watch_seconds": 0.30000000000000004,
+        "new_recommendation": false
+      },
+      {
+        "time": 0.7000000000000001,
+        "sample_id": "s0012",
+        "value": 0.04818923071381413,
+        "mode": "idle",
+        "state": "WATCH",
+        "gap_reset": false,
+        "watch_seconds": 0.4,
+        "new_recommendation": false
+      },
+      {
+        "time": 0.8,
+        "sample_id": "s0012",
+        "value": 0.04818923071381413,
+        "mode": "idle",
+        "state": "RECOVER_RECOMMENDED",
+        "gap_reset": false,
+        "watch_seconds": 0.5,
+        "new_recommendation": true
+      },
+      {
+        "time": 0.9,
+        "sample_id": "s0012",
+        "value": 0.04818923071381413,
+        "mode": "idle",
+        "state": "RECOVER_RECOMMENDED",
+        "gap_reset": false,
+        "watch_seconds": 0.6,
+        "new_recommendation": false
+      },
+      {
+        "time": 1.0,
+        "sample_id": "s0012",
+        "value": 0.04818923071381413,
+        "mode": "idle",
+        "state": "RECOVER_RECOMMENDED",
+        "gap_reset": false,
+        "watch_seconds": 0.7,
+        "new_recommendation": false
+      },
+      {
+        "time": 1.1,
+        "sample_id": "s0012",
+        "value": 0.04818923071381413,
+        "mode": "idle",
+        "state": "RECOVER_RECOMMENDED",
+        "gap_reset": false,
+        "watch_seconds": 0.8,
+        "new_recommendation": false
+      },
+      {
+        "time": 1.2000000000000002,
+        "sample_id": "s0012",
+        "value": 0.04818923071381413,
+        "mode": "idle",
+        "state": "RECOVER_RECOMMENDED",
+        "gap_reset": false,
+        "watch_seconds": 0.9000000000000001,
+        "new_recommendation": false
+      },
+      {
+        "time": 1.3,
+        "sample_id": "s0012",
+        "value": 0.04818923071381413,
+        "mode": "idle",
+        "state": "RECOVER_RECOMMENDED",
+        "gap_reset": false,
+        "watch_seconds": 1.0,
+        "new_recommendation": false
+      },
+      {
+        "time": 1.4000000000000001,
+        "sample_id": "s0012",
+        "value": 0.04818923071381413,
+        "mode": "idle",
+        "state": "RECOVER_RECOMMENDED",
+        "gap_reset": false,
+        "watch_seconds": 1.1,
+        "new_recommendation": false
+      }
+    ],
+    "gap_interrupts_anomaly": [
+      {
+        "time": 0.0,
+        "sample_id": "s0012",
+        "value": 0.04818923071381413,
+        "mode": "idle",
+        "state": "WATCH",
+        "gap_reset": false,
+        "watch_seconds": 0.0,
+        "new_recommendation": false
+      },
+      {
+        "time": 0.1,
+        "sample_id": "s0012",
+        "value": 0.04818923071381413,
+        "mode": "idle",
+        "state": "WATCH",
+        "gap_reset": false,
+        "watch_seconds": 0.1,
+        "new_recommendation": false
+      },
+      {
+        "time": 0.2,
+        "sample_id": "s0012",
+        "value": 0.04818923071381413,
+        "mode": "idle",
+        "state": "WATCH",
+        "gap_reset": false,
+        "watch_seconds": 0.2,
+        "new_recommendation": false
+      },
+      {
+        "time": 0.30000000000000004,
+        "sample_id": "s0012",
+        "value": 0.04818923071381413,
+        "mode": "idle",
+        "state": "WATCH",
+        "gap_reset": false,
+        "watch_seconds": 0.30000000000000004,
+        "new_recommendation": false
+      },
+      {
+        "time": 0.4,
+        "sample_id": null,
+        "value": null,
+        "mode": "idle",
+        "state": "UNKNOWN",
+        "gap_reset": false,
+        "watch_seconds": 0.0,
+        "new_recommendation": false
+      },
+      {
+        "time": 0.5,
+        "sample_id": "s0012",
+        "value": 0.04818923071381413,
+        "mode": "idle",
+        "state": "WATCH",
+        "gap_reset": false,
+        "watch_seconds": 0.0,
+        "new_recommendation": false
+      },
+      {
+        "time": 0.6000000000000001,
+        "sample_id": "s0012",
+        "value": 0.04818923071381413,
+        "mode": "idle",
+        "state": "WATCH",
+        "gap_reset": false,
+        "watch_seconds": 0.10000000000000009,
+        "new_recommendation": false
+      },
+      {
+        "time": 0.7000000000000001,
+        "sample_id": "s0012",
+        "value": 0.04818923071381413,
+        "mode": "idle",
+        "state": "WATCH",
+        "gap_reset": false,
+        "watch_seconds": 0.20000000000000007,
+        "new_recommendation": false
+      },
+      {
+        "time": 0.8,
+        "sample_id": "s0012",
+        "value": 0.04818923071381413,
+        "mode": "idle",
+        "state": "WATCH",
+        "gap_reset": false,
+        "watch_seconds": 0.30000000000000004,
+        "new_recommendation": false
+      }
+    ]
+  },
+  "scope": "Measured frontal still scores in software fixtures; no real video, calibrated threshold, prediction or recovery experiment"
+}

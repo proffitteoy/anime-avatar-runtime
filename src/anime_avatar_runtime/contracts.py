@@ -83,6 +83,7 @@ EventKind = Literal[
     "generation_cancelled",
     "runtime_paused",
     "runtime_stopped",
+    "observation_recorded",
 ]
 
 
@@ -109,19 +110,102 @@ class Observation(BaseModel):
     avatar_id: UUID | None = None
     run_id: UUID | None = None
     measured_at: AwareDatetime | None = None
+    state_revision: int | None = Field(default=None, ge=0)
+    identity_candidate_distance: float | None = Field(default=None, ge=0)
     identity_distance: float | None = Field(default=None, ge=0)
     geometry_distance: float | None = Field(default=None, ge=0)
     motion_distance: float | None = Field(default=None, ge=0)
     unavailable_reason: str | None = None
+    subject_status: Literal["single_face_proxy", "unverified", "ambiguous"] = "unverified"
+    subject_face_count: int | None = Field(default=None, ge=0)
+    subject_reason: str = "No subject or tracking evidence supplied"
 
     @model_validator(mode="after")
     def validate_measurement(self) -> Self:
         measured = any(
             value is not None
-            for value in (self.identity_distance, self.geometry_distance, self.motion_distance)
+            for value in (
+                self.identity_candidate_distance,
+                self.identity_distance,
+                self.geometry_distance,
+                self.motion_distance,
+            )
         )
         if measured and (self.measured_at is None or self.run_id is None or self.avatar_id is None):
             raise ValueError("Measured distances require avatar_id, run_id and measured_at")
         if not measured and not self.unavailable_reason:
             raise ValueError("Absent measurements require an unavailable_reason")
+        return self
+
+
+class ObservationRequest(BaseModel):
+    """Offline sampling and explicit research thresholds, not a recovery policy."""
+
+    model_config = ConfigDict(extra="forbid", frozen=True, allow_inf_nan=False)
+
+    sample_seconds: float = Field(default=1, gt=0)
+    max_samples: int = Field(default=120, ge=1, le=10000, strict=True)
+    identity_threshold: float | None = Field(default=None, gt=0)
+    geometry_threshold: float | None = Field(default=None, gt=0)
+    min_confidence: float = Field(default=0.3, gt=0, le=1)
+    face_confidence: float = Field(default=0.5, gt=0, le=1)
+
+
+class AnomalyRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True, allow_inf_nan=False)
+
+    identity_distance: float | None = Field(default=None, ge=0)
+    geometry_distance: float | None = Field(default=None, ge=0)
+    identity_threshold: float | None = Field(default=None, gt=0)
+    geometry_threshold: float | None = Field(default=None, gt=0)
+
+
+class AnomalyResult(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    status: Literal["anomaly", "within_thresholds", "unknown"]
+    identity: Literal["exceeded", "within", "unknown"]
+    geometry: Literal["exceeded", "within", "unknown"]
+    reasons: list[str]
+
+
+class ObservationSample(BaseModel):
+    """Time-aligned, independent signals with raw detections for review."""
+
+    model_config = ConfigDict(extra="forbid", frozen=True, allow_inf_nan=False)
+
+    frame_index: int = Field(ge=0)
+    timestamp_seconds: float = Field(ge=0)
+    input_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    observation: Observation
+    identity_status: str
+    geometry_status: str
+    identity_anchor: str | None = None
+    geometry_anchor: str | None = None
+    identity_elapsed_seconds: float = Field(ge=0)
+    geometry_elapsed_seconds: float = Field(ge=0)
+    expression_distance: float | None = Field(default=None, ge=0)
+    identity_feature: str | None = None
+    faces: list[dict[str, list[float] | list[list[float]]]] = Field(default_factory=list)
+    overlay: str | None = None
+    anomaly: AnomalyResult
+
+
+class ObservationResult(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True, allow_inf_nan=False)
+
+    schema_version: Literal[1] = 1
+    run_id: UUID
+    avatar_id: UUID
+    output: Path
+    sample_count: int = Field(ge=1)
+    truncated: bool
+    elapsed_seconds: float = Field(ge=0)
+    latest: ObservationSample
+
+    @model_validator(mode="after")
+    def validate_identity(self) -> Self:
+        observation = self.latest.observation
+        if observation.run_id != self.run_id or observation.avatar_id != self.avatar_id:
+            raise ValueError("Observation result does not belong to this run and avatar")
         return self

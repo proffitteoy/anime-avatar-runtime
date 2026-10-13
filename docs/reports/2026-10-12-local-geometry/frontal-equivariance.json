@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "diagnostic_only": true,
+  "data_hash": "0295b9676709b19cdd659576e2261de52573788ff15f276f5e8102da6206befc",
+  "probe_count": 3,
+  "rows": [
+    {
+      "sample_id": "s0001",
+      "transform": {
+        "kind": "similarity_rotation",
+        "degrees": -8
+      },
+      "structural_inverse_transform_error_rms": 0.014918637779030545,
+      "chin_inverse_transform_error": 0.009264464248637654,
+      "chin_after_complementary_fit": 0.008097280836468667
+    },
+    {
+      "sample_id": "s0002",
+      "transform": {
+        "kind": "similarity_rotation",
+        "degrees": 8
+      },
+      "structural_inverse_transform_error_rms": 0.0205211310036605,
+      "chin_inverse_transform_error": 0.005264682160481055,
+      "chin_after_complementary_fit": 0.021920405688630688
+    },
+    {
+      "sample_id": "s0003",
+      "transform": {
+        "kind": "similarity_scale",
+        "scale": 0.9
+      },
+      "structural_inverse_transform_error_rms": 0.009013820885444621,
+      "chin_inverse_transform_error": 0.0022656774440930247,
+      "chin_after_complementary_fit": 0.004559923441970065
+    }
+  ],
+  "protocol": "Known Pillow plane rotation/resize inverted with pixel-center convention; reference 512x512",
+  "scope": "Equivariance error includes resampling and reference/detector error; three controls do not estimate stochastic covariance or calibrated confidence"
+}

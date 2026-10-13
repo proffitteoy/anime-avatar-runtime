@@ -1,0 +1,3003 @@
+{
+  "schema_version": 1,
+  "diagnostic_only": true,
+  "new_real_cpu_feature_extraction": true,
+  "real_cpu_identity_metric_inference_on_saved_features": true,
+  "source": {
+    "page": "https://opengameart.org/content/headmugshot-packs-chibi-emotions",
+    "author": "eysselia",
+    "license": "CC0",
+    "independent_author_collections": 1,
+    "character_groups": 3,
+    "same_character_source_groups_each": 1
+  },
+  "human_reviewed_labels": 0,
+  "calibration_performed": false,
+  "formal_fpr": null,
+  "protocol": {
+    "reference": "Own Neutre filename preselected before model scores; diagnostic only",
+    "identity_comparison": "Each character compared only against its own reference; no cross-character pairs",
+    "selection": "23 frontal single-character complete-face portraits assistant-screened individually; not human ground truth",
+    "intrinsic_components": [
+      "chin_height",
+      "chin_lateral",
+      "left_side_height",
+      "right_side_height",
+      "left_side_lateral",
+      "right_side_lateral"
+    ],
+    "scores": "Raw, uncalibrated; no adopted thresholds",
+    "author_intent": "Filename metadata only; intended emotion is not a reviewed normal/anomaly label"
+  },
+  "implementation_hash": "c07e2998d2f95cb2ab6519260fc9d4dbd97ba89c165f70c2a02405b646cb6f38",
+  "summary_script_sha256": "b0ee5131a819fb4fcb7206a0064f972415a55226db00b0ccb1139d6c0e10fc93",
+  "geometry_script_sha256": "079744c585ad2939ab7caf76a0c8cc0992028aa0328ca70f2f159d13fb8d7f88",
+  "identity_metric_weights_sha256": "7e4646fdfbe369ad485b227ec47ac4092c98b8deef3af44e19fdbd8ba7bc25c1",
+  "models": {
+    "ccip_model": "ccip-caformer-24-randaug-pruned",
+    "ccip_code_commit": "46df848dc4d20ac93f4919a40e2636d5f7c19766",
+    "face_code_commit": "98a9fb480fa04bdd96acbe4d98da191a898267f3",
+    "files": {
+      "ccip_feature.onnx": {
+        "repo": "deepghs/ccip_onnx",
+        "revision": "eb2acdd29af1703388d3d0c04221add322bc9110",
+        "filename": "ccip-caformer-24-randaug-pruned/model_feat.onnx",
+        "sha256": "4ea118d16496274f4f6e08d3afc768cc592389e8f7f32f8732ce2215c228ac5f"
+      },
+      "ccip_metric.onnx": {
+        "repo": "deepghs/ccip_onnx",
+        "revision": "eb2acdd29af1703388d3d0c04221add322bc9110",
+        "filename": "ccip-caformer-24-randaug-pruned/model_metrics.onnx",
+        "sha256": "7e4646fdfbe369ad485b227ec47ac4092c98b8deef3af44e19fdbd8ba7bc25c1"
+      },
+      "yolov3.safetensors": {
+        "repo": "hysts/anime-face-detector-yolov3",
+        "revision": "afdd4226a79ae8bb81f334dbcffd34f8cc000c38",
+        "filename": "model.safetensors",
+        "sha256": "23bbc708146bcbc1c910f00fe152adbc70d7658d875a0121eaf4ee61d978b2c4"
+      },
+      "hrnetv2.safetensors": {
+        "repo": "hysts/anime-face-detector-hrnetv2",
+        "revision": "9b3435248b26aeb82e2a8578fe9d86d5d57158af",
+        "filename": "model.safetensors",
+        "sha256": "e71271376406a743c01528a0460637fcc06e72aeeea583f85007cc72dc8b7a4a"
+      }
+    }
+  },
+  "environment": {
+    "device": "cpu",
+    "python": "3.12.13",
+    "numpy": "1.26.4",
+    "metric_loader_threads": {
+      "intra": 2,
+      "inter": 1
+    }
+  },
+  "identity_load_seconds": 3.9690000000009604,
+  "elapsed_seconds": 3.9840000000003783,
+  "characters": [
+    {
+      "character_id": "eysselia-aranel",
+      "n_samples": 9,
+      "source_groups_in_this_character": 1,
+      "reference_id": "s0000",
+      "reference_intent": "Neutre",
+      "reference_trusted_anchor": false,
+      "archive_sha256": "145fce291c630d408596f4bf652fcc74d6f1340a75974e959ba9c5f1374ca406",
+      "data_hash": "de68c0d0334028300a2a97551ab1f59b03c79f105bdf2b6c740dba03ab7f1ee5",
+      "manifest_sha256": "f0f6f51d6083fbcb452bdc25b447f686cf6652928d9c62222376ecef10458488",
+      "extraction_sha256": "4da8347a6f03004654fe88022fdfd10218621b503724bdf49f72f87e0fab2bf0",
+      "diagnostics_sha256": "fa8bd7c88681c07a1487a56ad1f74c0a527be13aa119df4519f133212d129d14",
+      "models_hash": "062cb4e53ecb0686109cbbd7f884414f0376fbada659fe10c09e5be02e677f88",
+      "face_counts": {
+        "1": 9
+      },
+      "confidence_failure_samples": [
+        "s0000",
+        "s0001",
+        "s0002",
+        "s0003",
+        "s0004",
+        "s0005",
+        "s0006",
+        "s0007",
+        "s0008"
+      ],
+      "summary": {
+        "wls": {
+          "valid_samples": 0,
+          "unknown_samples": 9,
+          "min": null,
+          "max": null,
+          "max_sample_id": null,
+          "max_author_intent": null
+        },
+        "intrinsic_contour": {
+          "valid_samples": 8,
+          "unknown_samples": 1,
+          "min": 0.0,
+          "max": 0.023774478250217734,
+          "max_sample_id": "s0006",
+          "max_author_intent": "Oups"
+        },
+        "ccip_identity": {
+          "valid_samples": 9,
+          "unknown_samples": 0,
+          "min": 1.3070109616819536e-07,
+          "max": 0.048996701836586,
+          "max_sample_id": "s0005",
+          "max_author_intent": "Heu"
+        },
+        "left_eye": {
+          "valid_samples": 8,
+          "unknown_samples": 1,
+          "min": 1.060375460634674e-15,
+          "max": 0.16896338633255947,
+          "max_sample_id": "s0006",
+          "max_author_intent": "Oups"
+        },
+        "right_eye": {
+          "valid_samples": 8,
+          "unknown_samples": 1,
+          "min": 0.0,
+          "max": 0.1560485650365545,
+          "max_sample_id": "s0006",
+          "max_author_intent": "Oups"
+        },
+        "eye_spacing": {
+          "valid_samples": 8,
+          "unknown_samples": 1,
+          "min": 3.414045540047783e-16,
+          "max": 0.16439332697021172,
+          "max_sample_id": "s0006",
+          "max_author_intent": "Oups"
+        },
+        "nose": {
+          "valid_samples": 0,
+          "unknown_samples": 9,
+          "min": null,
+          "max": null,
+          "max_sample_id": null,
+          "max_author_intent": null
+        },
+        "mouth": {
+          "valid_samples": 8,
+          "unknown_samples": 1,
+          "min": 0.0,
+          "max": 0.23639411291465767,
+          "max_sample_id": "s0002",
+          "max_author_intent": "Angry2"
+        },
+        "contour": {
+          "valid_samples": 8,
+          "unknown_samples": 1,
+          "min": 6.966248206656069e-16,
+          "max": 0.10580326382680691,
+          "max_sample_id": "s0005",
+          "max_author_intent": "Heu"
+        }
+      },
+      "rows": [
+        {
+          "sample_id": "s0000",
+          "input_sha256": "7c7933cefcc930828e53f841c35c76c1fbfa554735488def2e7b66d6f57ef24a",
+          "author_intent": "Neutre",
+          "author_source_filename": "Aranel_Neutre.png",
+          "human_label": null,
+          "assistant_visual_screen": {
+            "frontal_single_complete_face": true,
+            "expression_note": null
+          },
+          "face_count": 1,
+          "legacy_face_status": "pose_unavailable",
+          "landmark_confidence_min": 0.1361924111843109,
+          "landmarks_below_0_3": 1,
+          "low_confidence_point_indices": [
+            23
+          ],
+          "nose_confidence": 0.1361924111843109,
+          "extraction_errors": {},
+          "wls": {
+            "value": null,
+            "status": "Legacy face/pose gate rejected current sample"
+          },
+          "single_local": {
+            "left_eye": {
+              "value": 1.060375460634674e-15,
+              "fit_cost": 9.231943537823103e-16,
+              "status": "valid",
+              "width_error": 4.57583736316354e-16,
+              "opening": 0.506177679598747
+            },
+            "right_eye": {
+              "value": 0.0,
+              "fit_cost": 0.0,
+              "status": "valid",
+              "width_error": 0.0,
+              "opening": 0.5154191429806866
+            },
+            "eye_spacing": {
+              "value": 3.414045540047783e-16,
+              "fit_cost": 2.3940628080724014e-16,
+              "status": "valid",
+              "center_relation_error": 0.0
+            },
+            "nose": {
+              "value": null,
+              "fit_cost": null,
+              "status": "Insufficient target points"
+            },
+            "mouth": {
+              "value": 0.0,
+              "fit_cost": 0.0,
+              "status": "valid",
+              "width_error": 0.0,
+              "opening": 0.02939598086604989
+            },
+            "contour": {
+              "value": 6.966248206656069e-16,
+              "fit_cost": 7.664530907075856e-17,
+              "status": "valid"
+            }
+          },
+          "intrinsic_local": {
+            "left_eye": {
+              "value": 1.060375460634674e-15,
+              "fit_cost": 9.231943537823103e-16,
+              "status": "valid",
+              "width_error": 4.57583736316354e-16,
+              "opening": 0.506177679598747
+            },
+            "right_eye": {
+              "value": 0.0,
+              "fit_cost": 0.0,
+              "status": "valid",
+              "width_error": 0.0,
+              "opening": 0.5154191429806866
+            },
+            "eye_spacing": {
+              "value": 3.414045540047783e-16,
+              "fit_cost": 2.3940628080724014e-16,
+              "status": "valid",
+              "center_relation_error": 0.0
+            },
+            "nose": {
+              "value": null,
+              "fit_cost": null,
+              "status": "Insufficient target points"
+            },
+            "mouth": {
+              "value": 0.0,
+              "fit_cost": 0.0,
+              "status": "valid",
+              "width_error": 0.0,
+              "opening": 0.02939598086604989
+            },
+            "contour": {
+              "value": 0.0,
+              "status": "valid",
+              "chin_height_error": 0.0,
+              "chin_lateral_error": 0.0
+            }
+          },
+          "intrinsic_component_absolute_errors": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "intrinsic_error": null,
+          "ccip_distance_to_own_neutral": 1.3070109616819536e-07,
+          "identity_error": null
+        },
+        {
+          "sample_id": "s0001",
+          "input_sha256": "602ba8014da18e705cdeeb28f8f071b0cfd29ff14d70b3140707ff1798290824",
+          "author_intent": "Angry",
+          "author_source_filename": "Aranel_Angry.png",
+          "human_label": null,
+          "assistant_visual_screen": {
+            "frontal_single_complete_face": true,
+            "expression_note": null
+          },
+          "face_count": 1,
+          "legacy_face_status": "pose_unavailable",
+          "landmark_confidence_min": 0.23440800607204437,
+          "landmarks_below_0_3": 1,
+          "low_confidence_point_indices": [
+            23
+          ],
+          "nose_confidence": 0.23440800607204437,
+          "extraction_errors": {},
+          "wls": {
+            "value": null,
+            "status": "Legacy face/pose gate rejected current sample"
+          },
+          "single_local": {
+            "left_eye": {
+              "value": 0.028305424569471854,
+              "fit_cost": 0.023589376982002204,
+              "status": "valid",
+              "width_error": 0.017552910521053552,
+              "opening": 0.47509955668604037
+            },
+            "right_eye": {
+              "value": 0.04392252927637813,
+              "fit_cost": 0.015148263851019457,
+              "status": "valid",
+              "width_error": 0.011447996830999348,
+              "opening": 0.47781438145963473
+            },
+            "eye_spacing": {
+              "value": 0.03794251365236832,
+              "fit_cost": 0.010263688474217224,
+              "status": "valid",
+              "center_relation_error": 0.023698090419940032
+            },
+            "nose": {
+              "value": null,
+              "fit_cost": null,
+              "status": "Insufficient target points"
+            },
+            "mouth": {
+              "value": 0.05346876189701193,
+              "fit_cost": 0.02351571258103334,
+              "status": "valid",
+              "width_error": 0.03952825595340367,
+              "opening": 0.02292322213469681
+            },
+            "contour": {
+              "value": 0.040258945864736356,
+              "fit_cost": 0.024503314481111222,
+              "status": "valid"
+            }
+          },
+          "intrinsic_local": {
+            "left_eye": {
+              "value": 0.028305424569471854,
+              "fit_cost": 0.023589376982002204,
+              "status": "valid",
+              "width_error": 0.017552910521053552,
+              "opening": 0.47509955668604037
+            },
+            "right_eye": {
+              "value": 0.04392252927637813,
+              "fit_cost": 0.015148263851019457,
+              "status": "valid",
+              "width_error": 0.011447996830999348,
+              "opening": 0.47781438145963473
+            },
+            "eye_spacing": {
+              "value": 0.03794251365236832,
+              "fit_cost": 0.010263688474217224,
+              "status": "valid",
+              "center_relation_error": 0.023698090419940032
+            },
+            "nose": {
+              "value": null,
+              "fit_cost": null,
+              "status": "Insufficient target points"
+            },
+            "mouth": {
+              "value": 0.05346876189701193,
+              "fit_cost": 0.02351571258103334,
+              "status": "valid",
+              "width_error": 0.03952825595340367,
+              "opening": 0.02292322213469681
+            },
+            "contour": {
+              "value": 0.006444952483015048,
+              "status": "valid",
+              "chin_height_error": 0.008778588694091871,
+              "chin_lateral_error": 0.006882882119380944
+            }
+          },
+          "intrinsic_component_absolute_errors": [
+            0.008778588694091871,
+            0.006882882119380944,
+            0.005214630453053204,
+            0.009471342476896516,
+            0.0014542439222626213,
+            0.002402761922993546
+          ],
+          "intrinsic_error": null,
+          "ccip_distance_to_own_neutral": 0.0060129365883767605,
+          "identity_error": null
+        },
+        {
+          "sample_id": "s0002",
+          "input_sha256": "43be0d53c1edcf29be91460acc7675d0595647483bc9ee71b85bb832a62bf8a7",
+          "author_intent": "Angry2",
+          "author_source_filename": "Aranel_Angry2.png",
+          "human_label": null,
+          "assistant_visual_screen": {
+            "frontal_single_complete_face": true,
+            "expression_note": null
+          },
+          "face_count": 1,
+          "legacy_face_status": "pose_unavailable",
+          "landmark_confidence_min": 0.21990954875946045,
+          "landmarks_below_0_3": 1,
+          "low_confidence_point_indices": [
+            23
+          ],
+          "nose_confidence": 0.21990954875946045,
+          "extraction_errors": {},
+          "wls": {
+            "value": null,
+            "status": "Legacy face/pose gate rejected current sample"
+          },
+          "single_local": {
+            "left_eye": {
+              "value": 0.04189908822025105,
+              "fit_cost": 0.031523550982309224,
+              "status": "valid",
+              "width_error": 0.00792833046525148,
+              "opening": 0.4548914467169291
+            },
+            "right_eye": {
+              "value": 0.0542980698281756,
+              "fit_cost": 0.024511648368172614,
+              "status": "valid",
+              "width_error": 0.007048422570991925,
+              "opening": 0.4566049378460581
+            },
+            "eye_spacing": {
+              "value": 0.04540578848897791,
+              "fit_cost": 0.02187890221253072,
+              "status": "valid",
+              "center_relation_error": 0.04570114297796153
+            },
+            "nose": {
+              "value": null,
+              "fit_cost": null,
+              "status": "Insufficient target points"
+            },
+            "mouth": {
+              "value": 0.23639411291465767,
+              "fit_cost": 0.032115945577543076,
+              "status": "valid",
+              "width_error": 0.12689326495265796,
+              "opening": 0.4307538832687354
+            },
+            "contour": {
+              "value": 0.05370389299701271,
+              "fit_cost": 0.0315504953155199,
+              "status": "valid"
+            }
+          },
+          "intrinsic_local": {
+            "left_eye": {
+              "value": 0.04189908822025105,
+              "fit_cost": 0.031523550982309224,
+              "status": "valid",
+              "width_error": 0.00792833046525148,
+              "opening": 0.4548914467169291
+            },
+            "right_eye": {
+              "value": 0.0542980698281756,
+              "fit_cost": 0.024511648368172614,
+              "status": "valid",
+              "width_error": 0.007048422570991925,
+              "opening": 0.4566049378460581
+            },
+            "eye_spacing": {
+              "value": 0.04540578848897791,
+              "fit_cost": 0.02187890221253072,
+              "status": "valid",
+              "center_relation_error": 0.04570114297796153
+            },
+            "nose": {
+              "value": null,
+              "fit_cost": null,
+              "status": "Insufficient target points"
+            },
+            "mouth": {
+              "value": 0.23639411291465767,
+              "fit_cost": 0.032115945577543076,
+              "status": "valid",
+              "width_error": 0.12689326495265796,
+              "opening": 0.4307538832687354
+            },
+            "contour": {
+              "value": 0.01104881231286348,
+              "status": "valid",
+              "chin_height_error": 0.0064458981100968815,
+              "chin_lateral_error": 0.008288285867655877
+            }
+          },
+          "intrinsic_component_absolute_errors": [
+            0.0064458981100968815,
+            0.008288285867655877,
+            0.00873423773246923,
+            0.017335005509588053,
+            0.005229920462508475,
+            0.014767221920546358
+          ],
+          "intrinsic_error": null,
+          "ccip_distance_to_own_neutral": 0.0074357809498906136,
+          "identity_error": null
+        },
+        {
+          "sample_id": "s0003",
+          "input_sha256": "f1e7d682edbd2e3cc2af268361fde04168e1f8d665f9b79b81730c2086c24f08",
+          "author_intent": "Happy",
+          "author_source_filename": "Aranel_Happy.png",
+          "human_label": null,
+          "assistant_visual_screen": {
+            "frontal_single_complete_face": true,
+            "expression_note": null
+          },
+          "face_count": 1,
+          "legacy_face_status": "pose_unavailable",
+          "landmark_confidence_min": 0.17350256443023682,
+          "landmarks_below_0_3": 1,
+          "low_confidence_point_indices": [
+            23
+          ],
+          "nose_confidence": 0.17350256443023682,
+          "extraction_errors": {},
+          "wls": {
+            "value": null,
+            "status": "Legacy face/pose gate rejected current sample"
+          },
+          "single_local": {
+            "left_eye": {
+              "value": 0.010892542472395616,
+              "fit_cost": 0.005788067163005422,
+              "status": "valid",
+              "width_error": 0.002126085899713287,
+              "opening": 0.513077080520647
+            },
+            "right_eye": {
+              "value": 0.00963903367358702,
+              "fit_cost": 0.006804274041251749,
+              "status": "valid",
+              "width_error": 0.00031831134952149887,
+              "opening": 0.5089588792760315
+            },
+            "eye_spacing": {
+              "value": 0.010866440320368275,
+              "fit_cost": 0.004164085889844792,
+              "status": "valid",
+              "center_relation_error": 0.007913296249663603
+            },
+            "nose": {
+              "value": null,
+              "fit_cost": null,
+              "status": "Insufficient target points"
+            },
+            "mouth": {
+              "value": 0.04332410350974145,
+              "fit_cost": 0.0071452019101263115,
+              "status": "valid",
+              "width_error": 0.041566057048447166,
+              "opening": 0.030868204635951572
+            },
+            "contour": {
+              "value": 0.012151823467497025,
+              "fit_cost": 0.007174536631253395,
+              "status": "valid"
+            }
+          },
+          "intrinsic_local": {
+            "left_eye": {
+              "value": 0.010892542472395616,
+              "fit_cost": 0.005788067163005422,
+              "status": "valid",
+              "width_error": 0.002126085899713287,
+              "opening": 0.513077080520647
+            },
+            "right_eye": {
+              "value": 0.00963903367358702,
+              "fit_cost": 0.006804274041251749,
+              "status": "valid",
+              "width_error": 0.00031831134952149887,
+              "opening": 0.5089588792760315
+            },
+            "eye_spacing": {
+              "value": 0.010866440320368275,
+              "fit_cost": 0.004164085889844792,
+              "status": "valid",
+              "center_relation_error": 0.007913296249663603
+            },
+            "nose": {
+              "value": null,
+              "fit_cost": null,
+              "status": "Insufficient target points"
+            },
+            "mouth": {
+              "value": 0.04332410350974145,
+              "fit_cost": 0.0071452019101263115,
+              "status": "valid",
+              "width_error": 0.041566057048447166,
+              "opening": 0.030868204635951572
+            },
+            "contour": {
+              "value": 0.0027932043798051726,
+              "status": "valid",
+              "chin_height_error": 0.0006832967419565517,
+              "chin_lateral_error": 0.004286098535881727
+            }
+          },
+          "intrinsic_component_absolute_errors": [
+            0.0006832967419565517,
+            0.004286098535881727,
+            0.0005057253566460029,
+            0.0028859640818326704,
+            0.00430997269429545,
+            0.0009022182129426737
+          ],
+          "intrinsic_error": null,
+          "ccip_distance_to_own_neutral": 0.0008501452393829823,
+          "identity_error": null
+        },
+        {
+          "sample_id": "s0004",
+          "input_sha256": "95fd9cf19329538f2873c3585512f2644cd56731a06c822d728de85647ebc481",
+          "author_intent": "Happy2",
+          "author_source_filename": "Aranel_Happy2.png",
+          "human_label": null,
+          "assistant_visual_screen": {
+            "frontal_single_complete_face": true,
+            "expression_note": null
+          },
+          "face_count": 1,
+          "legacy_face_status": "pose_unavailable",
+          "landmark_confidence_min": 0.12358012795448303,
+          "landmarks_below_0_3": 1,
+          "low_confidence_point_indices": [
+            23
+          ],
+          "nose_confidence": 0.12358012795448303,
+          "extraction_errors": {},
+          "wls": {
+            "value": null,
+            "status": "Legacy face/pose gate rejected current sample"
+          },
+          "single_local": {
+            "left_eye": {
+              "value": 0.01193937024429339,
+              "fit_cost": 0.005088027890274108,
+              "status": "valid",
+              "width_error": 0.005681746610179541,
+              "opening": 0.5094588841503003
+            },
+            "right_eye": {
+              "value": 0.005585273127941418,
+              "fit_cost": 0.007324350117941006,
+              "status": "valid",
+              "width_error": 0.004603175882685272,
+              "opening": 0.5125987378718802
+            },
+            "eye_spacing": {
+              "value": 0.011576211267908353,
+              "fit_cost": 0.004062392929616401,
+              "status": "valid",
+              "center_relation_error": 0.007011856498012438
+            },
+            "nose": {
+              "value": null,
+              "fit_cost": null,
+              "status": "Insufficient target points"
+            },
+            "mouth": {
+              "value": 0.10079247117759875,
+              "fit_cost": 0.006869581943620484,
+              "status": "valid",
+              "width_error": 0.03646243662653697,
+              "opening": 0.21714138608326633
+            },
+            "contour": {
+              "value": 0.009298158527457698,
+              "fit_cost": 0.006565003105326102,
+              "status": "valid"
+            }
+          },
+          "intrinsic_local": {
+            "left_eye": {
+              "value": 0.01193937024429339,
+              "fit_cost": 0.005088027890274108,
+              "status": "valid",
+              "width_error": 0.005681746610179541,
+              "opening": 0.5094588841503003
+            },
+            "right_eye": {
+              "value": 0.005585273127941418,
+              "fit_cost": 0.007324350117941006,
+              "status": "valid",
+              "width_error": 0.004603175882685272,
+              "opening": 0.5125987378718802
+            },
+            "eye_spacing": {
+              "value": 0.011576211267908353,
+              "fit_cost": 0.004062392929616401,
+              "status": "valid",
+              "center_relation_error": 0.007011856498012438
+            },
+            "nose": {
+              "value": null,
+              "fit_cost": null,
+              "status": "Insufficient target points"
+            },
+            "mouth": {
+              "value": 0.10079247117759875,
+              "fit_cost": 0.006869581943620484,
+              "status": "valid",
+              "width_error": 0.03646243662653697,
+              "opening": 0.21714138608326633
+            },
+            "contour": {
+              "value": 0.0019408514967843423,
+              "status": "valid",
+              "chin_height_error": 0.0004908840789749069,
+              "chin_lateral_error": 0.00270458218548489
+            }
+          },
+          "intrinsic_component_absolute_errors": [
+            0.0004908840789749069,
+            0.00270458218548489,
+            0.0018796503066151327,
+            0.00042628247442755285,
+            0.002713070664221384,
+            0.001992521208460718
+          ],
+          "intrinsic_error": null,
+          "ccip_distance_to_own_neutral": 0.001526294625364244,
+          "identity_error": null
+        },
+        {
+          "sample_id": "s0005",
+          "input_sha256": "68061ec8f4256045ed1225219d279d91f16d3f05f677bbf3d8ffd7467763ceff",
+          "author_intent": "Heu",
+          "author_source_filename": "Aranel_Heu.png",
+          "human_label": null,
+          "assistant_visual_screen": {
+            "frontal_single_complete_face": true,
+            "expression_note": "closed eyes and open mouth"
+          },
+          "face_count": 1,
+          "legacy_face_status": "pose_unavailable",
+          "landmark_confidence_min": 0.027004294097423553,
+          "landmarks_below_0_3": 1,
+          "low_confidence_point_indices": [
+            23
+          ],
+          "nose_confidence": 0.027004294097423553,
+          "extraction_errors": {},
+          "wls": {
+            "value": null,
+            "status": "Legacy face/pose gate rejected current sample"
+          },
+          "single_local": {
+            "left_eye": {
+              "value": 0.10908554124483648,
+              "fit_cost": 0.0517951159614782,
+              "status": "valid",
+              "width_error": 0.0784570793602398,
+              "opening": 0.013132039516747546
+            },
+            "right_eye": {
+              "value": 0.09676973759152095,
+              "fit_cost": 0.057558534554918356,
+              "status": "valid",
+              "width_error": 0.04193353183142755,
+              "opening": 0.011794243831459501
+            },
+            "eye_spacing": {
+              "value": 0.12437682233488187,
+              "fit_cost": 0.02083301822716826,
+              "status": "valid",
+              "center_relation_error": 0.013294113695065262
+            },
+            "nose": {
+              "value": null,
+              "fit_cost": null,
+              "status": "Insufficient target points"
+            },
+            "mouth": {
+              "value": 0.14890619906269736,
+              "fit_cost": 0.0626948071574789,
+              "status": "valid",
+              "width_error": 0.03703013714024695,
+              "opening": 0.24821206136228688
+            },
+            "contour": {
+              "value": 0.10580326382680691,
+              "fit_cost": 0.04227178227657612,
+              "status": "valid"
+            }
+          },
+          "intrinsic_local": {
+            "left_eye": {
+              "value": 0.10908554124483648,
+              "fit_cost": 0.0517951159614782,
+              "status": "valid",
+              "width_error": 0.0784570793602398,
+              "opening": 0.013132039516747546
+            },
+            "right_eye": {
+              "value": 0.09676973759152095,
+              "fit_cost": 0.057558534554918356,
+              "status": "valid",
+              "width_error": 0.04193353183142755,
+              "opening": 0.011794243831459501
+            },
+            "eye_spacing": {
+              "value": 0.12437682233488187,
+              "fit_cost": 0.02083301822716826,
+              "status": "valid",
+              "center_relation_error": 0.013294113695065262
+            },
+            "nose": {
+              "value": null,
+              "fit_cost": null,
+              "status": "Insufficient target points"
+            },
+            "mouth": {
+              "value": 0.14890619906269736,
+              "fit_cost": 0.0626948071574789,
+              "status": "valid",
+              "width_error": 0.03703013714024695,
+              "opening": 0.24821206136228688
+            },
+            "contour": {
+              "value": 0.01187959956155571,
+              "status": "valid",
+              "chin_height_error": 0.016487778544744702,
+              "chin_lateral_error": 0.006366213989513999
+            }
+          },
+          "intrinsic_component_absolute_errors": [
+            0.016487778544744702,
+            0.006366213989513999,
+            0.01191466528654439,
+            0.0046636726177528565,
+            0.006253850576697195,
+            0.018208625822533686
+          ],
+          "intrinsic_error": null,
+          "ccip_distance_to_own_neutral": 0.048996701836586,
+          "identity_error": null
+        },
+        {
+          "sample_id": "s0006",
+          "input_sha256": "003af13dca702bdb87c5dcecfb9cb4c754f929bec23b25d4f6235ec410b4d03d",
+          "author_intent": "Oups",
+          "author_source_filename": "Aranel_Oups.png",
+          "human_label": null,
+          "assistant_visual_screen": {
+            "frontal_single_complete_face": true,
+            "expression_note": "round stylized eyes and blue shading"
+          },
+          "face_count": 1,
+          "legacy_face_status": "pose_unavailable",
+          "landmark_confidence_min": 0.06718257814645767,
+          "landmarks_below_0_3": 1,
+          "low_confidence_point_indices": [
+            23
+          ],
+          "nose_confidence": 0.06718257814645767,
+          "extraction_errors": {},
+          "wls": {
+            "value": null,
+            "status": "Legacy face/pose gate rejected current sample"
+          },
+          "single_local": {
+            "left_eye": {
+              "value": 0.16896338633255947,
+              "fit_cost": 0.08640759688735211,
+              "status": "valid",
+              "width_error": 0.13681371246970725,
+              "opening": 0.5589860378417435
+            },
+            "right_eye": {
+              "value": 0.1560485650365545,
+              "fit_cost": 0.09287725429279582,
+              "status": "valid",
+              "width_error": 0.16645341606762268,
+              "opening": 0.557154877238276
+            },
+            "eye_spacing": {
+              "value": 0.16439332697021172,
+              "fit_cost": 0.04487840190574556,
+              "status": "valid",
+              "center_relation_error": 0.0313380146834967
+            },
+            "nose": {
+              "value": null,
+              "fit_cost": null,
+              "status": "Insufficient target points"
+            },
+            "mouth": {
+              "value": 0.1252199883170638,
+              "fit_cost": 0.10791066374014326,
+              "status": "valid",
+              "width_error": 0.2500036646571076,
+              "opening": 0.0090977929240855
+            },
+            "contour": {
+              "value": 0.06246556626893938,
+              "fit_cost": 0.15867112187418,
+              "status": "valid"
+            }
+          },
+          "intrinsic_local": {
+            "left_eye": {
+              "value": 0.16896338633255947,
+              "fit_cost": 0.08640759688735211,
+              "status": "valid",
+              "width_error": 0.13681371246970725,
+              "opening": 0.5589860378417435
+            },
+            "right_eye": {
+              "value": 0.1560485650365545,
+              "fit_cost": 0.09287725429279582,
+              "status": "valid",
+              "width_error": 0.16645341606762268,
+              "opening": 0.557154877238276
+            },
+            "eye_spacing": {
+              "value": 0.16439332697021172,
+              "fit_cost": 0.04487840190574556,
+              "status": "valid",
+              "center_relation_error": 0.0313380146834967
+            },
+            "nose": {
+              "value": null,
+              "fit_cost": null,
+              "status": "Insufficient target points"
+            },
+            "mouth": {
+              "value": 0.1252199883170638,
+              "fit_cost": 0.10791066374014326,
+              "status": "valid",
+              "width_error": 0.2500036646571076,
+              "opening": 0.0090977929240855
+            },
+            "contour": {
+              "value": 0.023774478250217734,
+              "status": "valid",
+              "chin_height_error": 0.010737072209332621,
+              "chin_lateral_error": 0.024439430664043187
+            }
+          },
+          "intrinsic_component_absolute_errors": [
+            0.010737072209332621,
+            0.024439430664043187,
+            0.008382448505149243,
+            0.035332057802249406,
+            0.00565950826623568,
+            0.03644358133212072
+          ],
+          "intrinsic_error": null,
+          "ccip_distance_to_own_neutral": 0.03538046032190323,
+          "identity_error": null
+        },
+        {
+          "sample_id": "s0007",
+          "input_sha256": "b280ecaa3e181650968f209a2f4a10d2d9092ee412f8cb8d0f02ae3704e5b4d2",
+          "author_intent": "Sad",
+          "author_source_filename": "Aranel_Sad.png",
+          "human_label": null,
+          "assistant_visual_screen": {
+            "frontal_single_complete_face": true,
+            "expression_note": null
+          },
+          "face_count": 1,
+          "legacy_face_status": "pose_unavailable",
+          "landmark_confidence_min": 0.20450419187545776,
+          "landmarks_below_0_3": 1,
+          "low_confidence_point_indices": [
+            23
+          ],
+          "nose_confidence": 0.20450419187545776,
+          "extraction_errors": {},
+          "wls": {
+            "value": null,
+            "status": "Legacy face/pose gate rejected current sample"
+          },
+          "single_local": {
+            "left_eye": {
+              "value": 0.01357274878943659,
+              "fit_cost": 0.009780689374093276,
+              "status": "valid",
+              "width_error": 0.011846389919605174,
+              "opening": 0.39758241760883434
+            },
+            "right_eye": {
+              "value": 0.013440875937017845,
+              "fit_cost": 0.010013937039872316,
+              "status": "valid",
+              "width_error": 0.007952124734523084,
+              "opening": 0.4027231540065097
+            },
+            "eye_spacing": {
+              "value": 0.018380196179149728,
+              "fit_cost": 0.007137653818260015,
+              "status": "valid",
+              "center_relation_error": 0.012516900417152954
+            },
+            "nose": {
+              "value": null,
+              "fit_cost": null,
+              "status": "Insufficient target points"
+            },
+            "mouth": {
+              "value": 0.014390619231113259,
+              "fit_cost": 0.010277599578138032,
+              "status": "valid",
+              "width_error": 0.02378478614771485,
+              "opening": 0.021645290478707828
+            },
+            "contour": {
+              "value": 0.01689702841974964,
+              "fit_cost": 0.005694129412170275,
+              "status": "valid"
+            }
+          },
+          "intrinsic_local": {
+            "left_eye": {
+              "value": 0.01357274878943659,
+              "fit_cost": 0.009780689374093276,
+              "status": "valid",
+              "width_error": 0.011846389919605174,
+              "opening": 0.39758241760883434
+            },
+            "right_eye": {
+              "value": 0.013440875937017845,
+              "fit_cost": 0.010013937039872316,
+              "status": "valid",
+              "width_error": 0.007952124734523084,
+              "opening": 0.4027231540065097
+            },
+            "eye_spacing": {
+              "value": 0.018380196179149728,
+              "fit_cost": 0.007137653818260015,
+              "status": "valid",
+              "center_relation_error": 0.012516900417152954
+            },
+            "nose": {
+              "value": null,
+              "fit_cost": null,
+              "status": "Insufficient target points"
+            },
+            "mouth": {
+              "value": 0.014390619231113259,
+              "fit_cost": 0.010277599578138032,
+              "status": "valid",
+              "width_error": 0.02378478614771485,
+              "opening": 0.021645290478707828
+            },
+            "contour": {
+              "value": 0.0034194485494140835,
+              "status": "valid",
+              "chin_height_error": 0.0033390656940299746,
+              "chin_lateral_error": 0.0005136777508807757
+            }
+          },
+          "intrinsic_component_absolute_errors": [
+            0.0033390656940299746,
+            0.0005136777508807757,
+            0.0033495643010573173,
+            0.001385456465091972,
+            0.006664056272622343,
+            0.0010926248777520797
+          ],
+          "intrinsic_error": null,
+          "ccip_distance_to_own_neutral": 0.002991944085806608,
+          "identity_error": null
+        },
+        {
+          "sample_id": "s0008",
+          "input_sha256": "d6702c9020b2ff6f1f6349e774a3027fa76233dc0a7049ddc4596d8320d9773d",
+          "author_intent": "Stuppeur",
+          "author_source_filename": "Aranel_Stuppeur.png",
+          "human_label": null,
+          "assistant_visual_screen": {
+            "frontal_single_complete_face": true,
+            "expression_note": "white oval eyes and extreme mouth opening"
+          },
+          "face_count": 1,
+          "legacy_face_status": "low_confidence_or_occlusion",
+          "landmark_confidence_min": 0.017032574862241745,
+          "landmarks_below_0_3": 19,
+          "low_confidence_point_indices": [
+            0,
+            1,
+            2,
+            4,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            14,
+            15,
+            16,
+            21,
+            23,
+            24,
+            25,
+            26,
+            27
+          ],
+          "nose_confidence": 0.07372859120368958,
+          "extraction_errors": {},
+          "wls": {
+            "value": null,
+            "status": "Legacy face/pose gate rejected current sample"
+          },
+          "single_local": {
+            "left_eye": {
+              "value": null,
+              "fit_cost": null,
+              "status": "Insufficient complementary fit points"
+            },
+            "right_eye": {
+              "value": null,
+              "fit_cost": null,
+              "status": "Insufficient complementary fit points"
+            },
+            "eye_spacing": {
+              "value": null,
+              "fit_cost": null,
+              "status": "Insufficient complementary fit points"
+            },
+            "nose": {
+              "value": null,
+              "fit_cost": null,
+              "status": "Insufficient complementary fit points"
+            },
+            "mouth": {
+              "value": null,
+              "fit_cost": null,
+              "status": "Insufficient complementary fit points"
+            },
+            "contour": {
+              "value": null,
+              "fit_cost": null,
+              "status": "Insufficient complementary fit points"
+            }
+          },
+          "intrinsic_local": {
+            "left_eye": {
+              "value": null,
+              "fit_cost": null,
+              "status": "Insufficient complementary fit points"
+            },
+            "right_eye": {
+              "value": null,
+              "fit_cost": null,
+              "status": "Insufficient complementary fit points"
+            },
+            "eye_spacing": {
+              "value": null,
+              "fit_cost": null,
+              "status": "Insufficient complementary fit points"
+            },
+            "nose": {
+              "value": null,
+              "fit_cost": null,
+              "status": "Insufficient complementary fit points"
+            },
+            "mouth": {
+              "value": null,
+              "fit_cost": null,
+              "status": "Insufficient complementary fit points"
+            },
+            "contour": {
+              "value": null,
+              "status": "All five contour points must be reliable"
+            }
+          },
+          "intrinsic_component_absolute_errors": null,
+          "intrinsic_error": "All five contour points must be reliable",
+          "ccip_distance_to_own_neutral": 0.04466843605041504,
+          "identity_error": null
+        }
+      ]
+    },
+    {
+      "character_id": "eysselia-awena",
+      "n_samples": 5,
+      "source_groups_in_this_character": 1,
+      "reference_id": "s0000",
+      "reference_intent": "Neutre",
+      "reference_trusted_anchor": false,
+      "archive_sha256": "be8a0db4b838ccb7fff5611a8bedfa5eccd4a61f33337e577bb42e15684b3f30",
+      "data_hash": "87051b34fc67b43fbc6b603603ba862dec5babcf88b1406b85dc52545030009e",
+      "manifest_sha256": "3c9855c6f63224c35a594afe842843af0d084d188066b9d10b3ccfa9a6695c2f",
+      "extraction_sha256": "c85e39f8b4ec0eb314f2c05ccd2827261642c56af6063b92df78ea98420a9905",
+      "diagnostics_sha256": "67a00db871c369a349d37cba491e309542a5bf9e5f1f31ee4e0f33d0c70c9cf4",
+      "models_hash": "062cb4e53ecb0686109cbbd7f884414f0376fbada659fe10c09e5be02e677f88",
+      "face_counts": {
+        "1": 5
+      },
+      "confidence_failure_samples": [
+        "s0000",
+        "s0001",
+        "s0002",
+        "s0003",
+        "s0004"
+      ],
+      "summary": {
+        "wls": {
+          "valid_samples": 0,
+          "unknown_samples": 5,
+          "min": null,
+          "max": null,
+          "max_sample_id": null,
+          "max_author_intent": null
+        },
+        "intrinsic_contour": {
+          "valid_samples": 5,
+          "unknown_samples": 0,
+          "min": 0.0,
+          "max": 0.02501921267945183,
+          "max_sample_id": "s0004",
+          "max_author_intent": "Sad"
+        },
+        "ccip_identity": {
+          "valid_samples": 5,
+          "unknown_samples": 0,
+          "min": 9.802582212614652e-08,
+          "max": 0.03174209967255592,
+          "max_sample_id": "s0002",
+          "max_author_intent": "Happy"
+        },
+        "left_eye": {
+          "valid_samples": 5,
+          "unknown_samples": 0,
+          "min": 5.207075217105357e-16,
+          "max": 0.10459355346697331,
+          "max_sample_id": "s0002",
+          "max_author_intent": "Happy"
+        },
+        "right_eye": {
+          "valid_samples": 5,
+          "unknown_samples": 0,
+          "min": 2.958754500177539e-16,
+          "max": 0.11264847030165827,
+          "max_sample_id": "s0002",
+          "max_author_intent": "Happy"
+        },
+        "eye_spacing": {
+          "valid_samples": 5,
+          "unknown_samples": 0,
+          "min": 1.5129887832366128e-16,
+          "max": 0.11923919630226046,
+          "max_sample_id": "s0002",
+          "max_author_intent": "Happy"
+        },
+        "nose": {
+          "valid_samples": 0,
+          "unknown_samples": 5,
+          "min": null,
+          "max": null,
+          "max_sample_id": null,
+          "max_author_intent": null
+        },
+        "mouth": {
+          "valid_samples": 5,
+          "unknown_samples": 0,
+          "min": 0.0,
+          "max": 0.1085302853559036,
+          "max_sample_id": "s0001",
+          "max_author_intent": "Angry"
+        },
+        "contour": {
+          "valid_samples": 5,
+          "unknown_samples": 0,
+          "min": 3.10311821416629e-16,
+          "max": 0.11313595813898279,
+          "max_sample_id": "s0002",
+          "max_author_intent": "Happy"
+        }
+      },
+      "rows": [
+        {
+          "sample_id": "s0000",
+          "input_sha256": "31de5a1819165130e53c4476b55de419edb77616de9bbd880695e56d727683be",
+          "author_intent": "Neutre",
+          "author_source_filename": "C_Neutre.png",
+          "human_label": null,
+          "assistant_visual_screen": {
+            "frontal_single_complete_face": true,
+            "expression_note": null
+          },
+          "face_count": 1,
+          "legacy_face_status": "pose_unavailable",
+          "landmark_confidence_min": 0.09939905256032944,
+          "landmarks_below_0_3": 1,
+          "low_confidence_point_indices": [
+            23
+          ],
+          "nose_confidence": 0.09939905256032944,
+          "extraction_errors": {},
+          "wls": {
+            "value": null,
+            "status": "Legacy face/pose gate rejected current sample"
+          },
+          "single_local": {
+            "left_eye": {
+              "value": 5.207075217105357e-16,
+              "fit_cost": 3.4042282049433293e-16,
+              "status": "valid",
+              "width_error": 2.958754500177539e-16,
+              "opening": 0.46398097591091286
+            },
+            "right_eye": {
+              "value": 2.958754500177539e-16,
+              "fit_cost": 4.3814680228794725e-16,
+              "status": "valid",
+              "width_error": 0.0,
+              "opening": 0.4590657968126282
+            },
+            "eye_spacing": {
+              "value": 1.5129887832366128e-16,
+              "fit_cost": 1.4706677007257339e-16,
+              "status": "valid",
+              "center_relation_error": 0.0
+            },
+            "nose": {
+              "value": null,
+              "fit_cost": null,
+              "status": "Insufficient target points"
+            },
+            "mouth": {
+              "value": 0.0,
+              "fit_cost": 2.1573577286713957e-16,
+              "status": "valid",
+              "width_error": 0.0,
+              "opening": 0.024852963407219895
+            },
+            "contour": {
+              "value": 3.10311821416629e-16,
+              "fit_cost": 1.5129887832366128e-16,
+              "status": "valid"
+            }
+          },
+          "intrinsic_local": {
+            "left_eye": {
+              "value": 5.207075217105357e-16,
+              "fit_cost": 3.4042282049433293e-16,
+              "status": "valid",
+              "width_error": 2.958754500177539e-16,
+              "opening": 0.46398097591091286
+            },
+            "right_eye": {
+              "value": 2.958754500177539e-16,
+              "fit_cost": 4.3814680228794725e-16,
+              "status": "valid",
+              "width_error": 0.0,
+              "opening": 0.4590657968126282
+            },
+            "eye_spacing": {
+              "value": 1.5129887832366128e-16,
+              "fit_cost": 1.4706677007257339e-16,
+              "status": "valid",
+              "center_relation_error": 0.0
+            },
+            "nose": {
+              "value": null,
+              "fit_cost": null,
+              "status": "Insufficient target points"
+            },
+            "mouth": {
+              "value": 0.0,
+              "fit_cost": 2.1573577286713957e-16,
+              "status": "valid",
+              "width_error": 0.0,
+              "opening": 0.024852963407219895
+            },
+            "contour": {
+              "value": 0.0,
+              "status": "valid",
+              "chin_height_error": 0.0,
+              "chin_lateral_error": 0.0
+            }
+          },
+          "intrinsic_component_absolute_errors": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "intrinsic_error": null,
+          "ccip_distance_to_own_neutral": 9.802582212614652e-08,
+          "identity_error": null
+        },
+        {
+          "sample_id": "s0001",
+          "input_sha256": "2668f6a6e972e9428dc02d6a1d91b88089868c0adb84861cfac9ee32a4e43da7",
+          "author_intent": "Angry",
+          "author_source_filename": "C_Angry.png",
+          "human_label": null,
+          "assistant_visual_screen": {
+            "frontal_single_complete_face": true,
+            "expression_note": null
+          },
+          "face_count": 1,
+          "legacy_face_status": "pose_unavailable",
+          "landmark_confidence_min": 0.09891603887081146,
+          "landmarks_below_0_3": 1,
+          "low_confidence_point_indices": [
+            23
+          ],
+          "nose_confidence": 0.09891603887081146,
+          "extraction_errors": {},
+          "wls": {
+            "value": null,
+            "status": "Legacy face/pose gate rejected current sample"
+          },
+          "single_local": {
+            "left_eye": {
+              "value": 0.02742797621414297,
+              "fit_cost": 0.013402452463188138,
+              "status": "valid",
+              "width_error": 0.034977651155161424,
+              "opening": 0.44517025197095206
+            },
+            "right_eye": {
+              "value": 0.029940407998358065,
+              "fit_cost": 0.0124752033529003,
+              "status": "valid",
+              "width_error": 0.026796896796830245,
+              "opening": 0.4444205610369211
+            },
+            "eye_spacing": {
+              "value": 0.02444100334700499,
+              "fit_cost": 0.006110024686879811,
+              "status": "valid",
+              "center_relation_error": 0.03535254959285732
+            },
+            "nose": {
+              "value": null,
+              "fit_cost": null,
+              "status": "Insufficient target points"
+            },
+            "mouth": {
+              "value": 0.1085302853559036,
+              "fit_cost": 0.016691955999206094,
+              "status": "valid",
+              "width_error": 0.14303652726472244,
+              "opening": 0.051027451936685835
+            },
+            "contour": {
+              "value": 0.01705577831774051,
+              "fit_cost": 0.02247717361788971,
+              "status": "valid"
+            }
+          },
+          "intrinsic_local": {
+            "left_eye": {
+              "value": 0.02742797621414297,
+              "fit_cost": 0.013402452463188138,
+              "status": "valid",
+              "width_error": 0.034977651155161424,
+              "opening": 0.44517025197095206
+            },
+            "right_eye": {
+              "value": 0.029940407998358065,
+              "fit_cost": 0.0124752033529003,
+              "status": "valid",
+              "width_error": 0.026796896796830245,
+              "opening": 0.4444205610369211
+            },
+            "eye_spacing": {
+              "value": 0.02444100334700499,
+              "fit_cost": 0.006110024686879811,
+              "status": "valid",
+              "center_relation_error": 0.03535254959285732
+            },
+            "nose": {
+              "value": null,
+              "fit_cost": null,
+              "status": "Insufficient target points"
+            },
+            "mouth": {
+              "value": 0.1085302853559036,
+              "fit_cost": 0.016691955999206094,
+              "status": "valid",
+              "width_error": 0.14303652726472244,
+              "opening": 0.051027451936685835
+            },
+            "contour": {
+              "value": 0.0034901514218818553,
+              "status": "valid",
+              "chin_height_error": 0.004246880210335147,
+              "chin_lateral_error": 0.0029824438910800726
+            }
+          },
+          "intrinsic_component_absolute_errors": [
+            0.004246880210335147,
+            0.0029824438910800726,
+            0.0033922409038507073,
+            0.003965807485480033,
+            0.0005386812214092096,
+            0.004316349589834012
+          ],
+          "intrinsic_error": null,
+          "ccip_distance_to_own_neutral": 0.00456297118216753,
+          "identity_error": null
+        },
+        {
+          "sample_id": "s0002",
+          "input_sha256": "cdea7046db3cc2f2c412fd0492f0a9d4bd545748e7d962d242c2df3dab0222c6",
+          "author_intent": "Happy",
+          "author_source_filename": "C_Happy.png",
+          "human_label": null,
+          "assistant_visual_screen": {
+            "frontal_single_complete_face": true,
+            "expression_note": "closed eyes"
+          },
+          "face_count": 1,
+          "legacy_face_status": "pose_unavailable",
+          "landmark_confidence_min": 0.046296682208776474,
+          "landmarks_below_0_3": 1,
+          "low_confidence_point_indices": [
+            23
+          ],
+          "nose_confidence": 0.046296682208776474,
+          "extraction_errors": {},
+          "wls": {
+            "value": null,
+            "status": "Legacy face/pose gate rejected current sample"
+          },
+          "single_local": {
+            "left_eye": {
+              "value": 0.10459355346697331,
+              "fit_cost": 0.0518522334156707,
+              "status": "valid",
+              "width_error": 0.07005855481891068,
+              "opening": 0.005680407241476008
+            },
+            "right_eye": {
+              "value": 0.11264847030165827,
+              "fit_cost": 0.04912287293383586,
+              "status": "valid",
+              "width_error": 0.05582896318960414,
+              "opening": 0.005939609321006545
+            },
+            "eye_spacing": {
+              "value": 0.11923919630226046,
+              "fit_cost": 0.007658473285395999,
+              "status": "valid",
+              "center_relation_error": 0.04217691326846263
+            },
+            "nose": {
+              "value": null,
+              "fit_cost": null,
+              "status": "Insufficient target points"
+            },
+            "mouth": {
+              "value": 0.06400558131751814,
+              "fit_cost": 0.061022627838176295,
+              "status": "valid",
+              "width_error": 0.08568681609762938,
+              "opening": 0.24159373841114237
+            },
+            "contour": {
+              "value": 0.11313595813898279,
+              "fit_cost": 0.0423102123307544,
+              "status": "valid"
+            }
+          },
+          "intrinsic_local": {
+            "left_eye": {
+              "value": 0.10459355346697331,
+              "fit_cost": 0.0518522334156707,
+              "status": "valid",
+              "width_error": 0.07005855481891068,
+              "opening": 0.005680407241476008
+            },
+            "right_eye": {
+              "value": 0.11264847030165827,
+              "fit_cost": 0.04912287293383586,
+              "status": "valid",
+              "width_error": 0.05582896318960414,
+              "opening": 0.005939609321006545
+            },
+            "eye_spacing": {
+              "value": 0.11923919630226046,
+              "fit_cost": 0.007658473285395999,
+              "status": "valid",
+              "center_relation_error": 0.04217691326846263
+            },
+            "nose": {
+              "value": null,
+              "fit_cost": null,
+              "status": "Insufficient target points"
+            },
+            "mouth": {
+              "value": 0.06400558131751814,
+              "fit_cost": 0.061022627838176295,
+              "status": "valid",
+              "width_error": 0.08568681609762938,
+              "opening": 0.24159373841114237
+            },
+            "contour": {
+              "value": 0.003970170719042113,
+              "status": "valid",
+              "chin_height_error": 0.006423798181538709,
+              "chin_lateral_error": 0.0005553642349276438
+            }
+          },
+          "intrinsic_component_absolute_errors": [
+            0.006423798181538709,
+            0.0005553642349276438,
+            0.00011338092142648692,
+            0.0016361372703048715,
+            0.004108259400800507,
+            0.005782069267534717
+          ],
+          "intrinsic_error": null,
+          "ccip_distance_to_own_neutral": 0.03174209967255592,
+          "identity_error": null
+        },
+        {
+          "sample_id": "s0003",
+          "input_sha256": "8b9dd241bf17d0146c9d711f474adb565503e6ee4638eec59d3b7ab441f52b13",
+          "author_intent": "Happy2",
+          "author_source_filename": "C_Happy2.png",
+          "human_label": null,
+          "assistant_visual_screen": {
+            "frontal_single_complete_face": true,
+            "expression_note": null
+          },
+          "face_count": 1,
+          "legacy_face_status": "pose_unavailable",
+          "landmark_confidence_min": 0.07778933644294739,
+          "landmarks_below_0_3": 1,
+          "low_confidence_point_indices": [
+            23
+          ],
+          "nose_confidence": 0.07778933644294739,
+          "extraction_errors": {},
+          "wls": {
+            "value": null,
+            "status": "Legacy face/pose gate rejected current sample"
+          },
+          "single_local": {
+            "left_eye": {
+              "value": 0.019407698655329153,
+              "fit_cost": 0.011725235679973571,
+              "status": "valid",
+              "width_error": 0.018668186484162824,
+              "opening": 0.43839107961856766
+            },
+            "right_eye": {
+              "value": 0.022029728191061092,
+              "fit_cost": 0.011025704240152437,
+              "status": "valid",
+              "width_error": 0.012134516193286357,
+              "opening": 0.44510373646429247
+            },
+            "eye_spacing": {
+              "value": 0.018728492080808606,
+              "fit_cost": 0.008080944307853485,
+              "status": "valid",
+              "center_relation_error": 0.012425956553789173
+            },
+            "nose": {
+              "value": null,
+              "fit_cost": null,
+              "status": "Insufficient target points"
+            },
+            "mouth": {
+              "value": 0.028217699940736227,
+              "fit_cost": 0.01342655331875433,
+              "status": "valid",
+              "width_error": 0.054284863804525574,
+              "opening": 0.03669917314578552
+            },
+            "contour": {
+              "value": 0.012594387170414516,
+              "fit_cost": 0.01680406999614283,
+              "status": "valid"
+            }
+          },
+          "intrinsic_local": {
+            "left_eye": {
+              "value": 0.019407698655329153,
+              "fit_cost": 0.011725235679973571,
+              "status": "valid",
+              "width_error": 0.018668186484162824,
+              "opening": 0.43839107961856766
+            },
+            "right_eye": {
+              "value": 0.022029728191061092,
+              "fit_cost": 0.011025704240152437,
+              "status": "valid",
+              "width_error": 0.012134516193286357,
+              "opening": 0.44510373646429247
+            },
+            "eye_spacing": {
+              "value": 0.018728492080808606,
+              "fit_cost": 0.008080944307853485,
+              "status": "valid",
+              "center_relation_error": 0.012425956553789173
+            },
+            "nose": {
+              "value": null,
+              "fit_cost": null,
+              "status": "Insufficient target points"
+            },
+            "mouth": {
+              "value": 0.028217699940736227,
+              "fit_cost": 0.01342655331875433,
+              "status": "valid",
+              "width_error": 0.054284863804525574,
+              "opening": 0.03669917314578552
+            },
+            "contour": {
+              "value": 0.0043914445919833525,
+              "status": "valid",
+              "chin_height_error": 0.0055981964193032585,
+              "chin_lateral_error": 0.0033637788833943733
+            }
+          },
+          "intrinsic_component_absolute_errors": [
+            0.0055981964193032585,
+            0.0033637788833943733,
+            0.0056580768931061565,
+            0.004757597445140094,
+            0.0009801846040654039,
+            0.004176670045016373
+          ],
+          "intrinsic_error": null,
+          "ccip_distance_to_own_neutral": 0.0012089197989553213,
+          "identity_error": null
+        },
+        {
+          "sample_id": "s0004",
+          "input_sha256": "a53112255f913217188283a77dda8d641bc9b99da6c6c9ad5506ad06c9ebb810",
+          "author_intent": "Sad",
+          "author_source_filename": "C_Sad.png",
+          "human_label": null,
+          "assistant_visual_screen": {
+            "frontal_single_complete_face": true,
+            "expression_note": "tears and lowered eyelids"
+          },
+          "face_count": 1,
+          "legacy_face_status": "pose_unavailable",
+          "landmark_confidence_min": 0.09548942744731903,
+          "landmarks_below_0_3": 1,
+          "low_confidence_point_indices": [
+            23
+          ],
+          "nose_confidence": 0.09548942744731903,
+          "extraction_errors": {},
+          "wls": {
+            "value": null,
+            "status": "Legacy face/pose gate rejected current sample"
+          },
+          "single_local": {
+            "left_eye": {
+              "value": 0.04597997784285445,
+              "fit_cost": 0.03789827852361942,
+              "status": "valid",
+              "width_error": 0.011174499850122572,
+              "opening": 0.3488222247344551
+            },
+            "right_eye": {
+              "value": 0.04366502021953064,
+              "fit_cost": 0.038744054120604846,
+              "status": "valid",
+              "width_error": 0.003039343965924737,
+              "opening": 0.3501054032531286
+            },
+            "eye_spacing": {
+              "value": 0.03982010623799567,
+              "fit_cost": 0.04070328032497511,
+              "status": "valid",
+              "center_relation_error": 0.03292951236478815
+            },
+            "nose": {
+              "value": null,
+              "fit_cost": null,
+              "status": "Insufficient target points"
+            },
+            "mouth": {
+              "value": 0.1072593283652457,
+              "fit_cost": 0.03803590698741575,
+              "status": "valid",
+              "width_error": 0.21362052525022565,
+              "opening": 0.13537456873932782
+            },
+            "contour": {
+              "value": 0.059409774720803055,
+              "fit_cost": 0.023095048305027736,
+              "status": "valid"
+            }
+          },
+          "intrinsic_local": {
+            "left_eye": {
+              "value": 0.04597997784285445,
+              "fit_cost": 0.03789827852361942,
+              "status": "valid",
+              "width_error": 0.011174499850122572,
+              "opening": 0.3488222247344551
+            },
+            "right_eye": {
+              "value": 0.04366502021953064,
+              "fit_cost": 0.038744054120604846,
+              "status": "valid",
+              "width_error": 0.003039343965924737,
+              "opening": 0.3501054032531286
+            },
+            "eye_spacing": {
+              "value": 0.03982010623799567,
+              "fit_cost": 0.04070328032497511,
+              "status": "valid",
+              "center_relation_error": 0.03292951236478815
+            },
+            "nose": {
+              "value": null,
+              "fit_cost": null,
+              "status": "Insufficient target points"
+            },
+            "mouth": {
+              "value": 0.1072593283652457,
+              "fit_cost": 0.03803590698741575,
+              "status": "valid",
+              "width_error": 0.21362052525022565,
+              "opening": 0.13537456873932782
+            },
+            "contour": {
+              "value": 0.02501921267945183,
+              "status": "valid",
+              "chin_height_error": 0.03461349093414917,
+              "chin_lateral_error": 0.003919689673087809
+            }
+          },
+          "intrinsic_component_absolute_errors": [
+            0.03461349093414917,
+            0.003919689673087809,
+            0.037796451701599565,
+            0.03252920571874102,
+            0.00721762338251597,
+            0.0018690167470511998
+          ],
+          "intrinsic_error": null,
+          "ccip_distance_to_own_neutral": 0.00829723197966814,
+          "identity_error": null
+        }
+      ]
+    },
+    {
+      "character_id": "eysselia-vivianne",
+      "n_samples": 9,
+      "source_groups_in_this_character": 1,
+      "reference_id": "s0000",
+      "reference_intent": "Neutre",
+      "reference_trusted_anchor": false,
+      "archive_sha256": "4f1c14de6b4087f4ded2e78907826e55c2ecba94ba5006a95bf9b14cd33eb14c",
+      "data_hash": "62a2b4258e3852a8331b10e78f822bae855b811905fdd59831b6cacb9a041ffd",
+      "manifest_sha256": "b8c3a0ef9b60287c898cc9b73d5e57704a8ab3daf0866e9a9a20f0e253f24a47",
+      "extraction_sha256": "86e630b85f713f3194da6089ed111e079887125827830c63f66f17c70038261b",
+      "diagnostics_sha256": "24a8bb748b3ed67b80211731b349c163e112c86c62df3f381e497b534b809540",
+      "models_hash": "062cb4e53ecb0686109cbbd7f884414f0376fbada659fe10c09e5be02e677f88",
+      "face_counts": {
+        "1": 9
+      },
+      "confidence_failure_samples": [
+        "s0000",
+        "s0001",
+        "s0002",
+        "s0003",
+        "s0004",
+        "s0005",
+        "s0006",
+        "s0007",
+        "s0008"
+      ],
+      "summary": {
+        "wls": {
+          "valid_samples": 0,
+          "unknown_samples": 9,
+          "min": null,
+          "max": null,
+          "max_sample_id": null,
+          "max_author_intent": null
+        },
+        "intrinsic_contour": {
+          "valid_samples": 8,
+          "unknown_samples": 1,
+          "min": 0.0,
+          "max": 0.017427453372377246,
+          "max_sample_id": "s0003",
+          "max_author_intent": "Sad"
+        },
+        "ccip_identity": {
+          "valid_samples": 9,
+          "unknown_samples": 0,
+          "min": 6.535054808409768e-08,
+          "max": 0.05609194189310074,
+          "max_sample_id": "s0001",
+          "max_author_intent": "Hein"
+        },
+        "left_eye": {
+          "valid_samples": 8,
+          "unknown_samples": 1,
+          "min": 0.0,
+          "max": 0.14502498817178533,
+          "max_sample_id": "s0008",
+          "max_author_intent": "Heu"
+        },
+        "right_eye": {
+          "valid_samples": 8,
+          "unknown_samples": 1,
+          "min": 1.0677928759497414e-15,
+          "max": 0.1626503858684294,
+          "max_sample_id": "s0007",
+          "max_author_intent": "Happy2"
+        },
+        "eye_spacing": {
+          "valid_samples": 8,
+          "unknown_samples": 1,
+          "min": 2.9722791229044973e-16,
+          "max": 0.14965668863488898,
+          "max_sample_id": "s0008",
+          "max_author_intent": "Heu"
+        },
+        "nose": {
+          "valid_samples": 0,
+          "unknown_samples": 9,
+          "min": null,
+          "max": null,
+          "max_sample_id": null,
+          "max_author_intent": null
+        },
+        "mouth": {
+          "valid_samples": 8,
+          "unknown_samples": 1,
+          "min": 5.765946190495588e-16,
+          "max": 0.16711228802205097,
+          "max_sample_id": "s0002",
+          "max_author_intent": "oups"
+        },
+        "contour": {
+          "valid_samples": 8,
+          "unknown_samples": 1,
+          "min": 4.463403618753776e-16,
+          "max": 0.14001639924009618,
+          "max_sample_id": "s0007",
+          "max_author_intent": "Happy2"
+        }
+      },
+      "rows": [
+        {
+          "sample_id": "s0000",
+          "input_sha256": "6ec0d55b7e30aae0de2a406e52593a204d74481cb55d34b7b50a5dd0a7a2441e",
+          "author_intent": "Neutre",
+          "author_source_filename": "Viviane_Neutre.png",
+          "human_label": null,
+          "assistant_visual_screen": {
+            "frontal_single_complete_face": true,
+            "expression_note": null
+          },
+          "face_count": 1,
+          "legacy_face_status": "pose_unavailable",
+          "landmark_confidence_min": 0.18006858229637146,
+          "landmarks_below_0_3": 1,
+          "low_confidence_point_indices": [
+            23
+          ],
+          "nose_confidence": 0.18006858229637146,
+          "extraction_errors": {},
+          "wls": {
+            "value": null,
+            "status": "Legacy face/pose gate rejected current sample"
+          },
+          "single_local": {
+            "left_eye": {
+              "value": 0.0,
+              "fit_cost": 0.0,
+              "status": "valid",
+              "width_error": 0.0,
+              "opening": 0.5482593065020901
+            },
+            "right_eye": {
+              "value": 1.0677928759497414e-15,
+              "fit_cost": 8.918013609988235e-16,
+              "status": "valid",
+              "width_error": 5.765946190495588e-16,
+              "opening": 0.5947189692534388
+            },
+            "eye_spacing": {
+              "value": 2.9722791229044973e-16,
+              "fit_cost": 1.4207347657434258e-16,
+              "status": "valid",
+              "center_relation_error": 0.0
+            },
+            "nose": {
+              "value": null,
+              "fit_cost": null,
+              "status": "Insufficient target points"
+            },
+            "mouth": {
+              "value": 5.765946190495588e-16,
+              "fit_cost": 4.161895822680255e-16,
+              "status": "valid",
+              "width_error": 0.0,
+              "opening": 0.04729705145763612
+            },
+            "contour": {
+              "value": 4.463403618753776e-16,
+              "fit_cost": 0.0,
+              "status": "valid"
+            }
+          },
+          "intrinsic_local": {
+            "left_eye": {
+              "value": 0.0,
+              "fit_cost": 0.0,
+              "status": "valid",
+              "width_error": 0.0,
+              "opening": 0.5482593065020901
+            },
+            "right_eye": {
+              "value": 1.0677928759497414e-15,
+              "fit_cost": 8.918013609988235e-16,
+              "status": "valid",
+              "width_error": 5.765946190495588e-16,
+              "opening": 0.5947189692534388
+            },
+            "eye_spacing": {
+              "value": 2.9722791229044973e-16,
+              "fit_cost": 1.4207347657434258e-16,
+              "status": "valid",
+              "center_relation_error": 0.0
+            },
+            "nose": {
+              "value": null,
+              "fit_cost": null,
+              "status": "Insufficient target points"
+            },
+            "mouth": {
+              "value": 5.765946190495588e-16,
+              "fit_cost": 4.161895822680255e-16,
+              "status": "valid",
+              "width_error": 0.0,
+              "opening": 0.04729705145763612
+            },
+            "contour": {
+              "value": 0.0,
+              "status": "valid",
+              "chin_height_error": 0.0,
+              "chin_lateral_error": 0.0
+            }
+          },
+          "intrinsic_component_absolute_errors": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "intrinsic_error": null,
+          "ccip_distance_to_own_neutral": 6.535054808409768e-08,
+          "identity_error": null
+        },
+        {
+          "sample_id": "s0001",
+          "input_sha256": "f8769e79014331ef4061ebf3399e2e09cd41374a49dd667db96c925cc9698832",
+          "author_intent": "Hein",
+          "author_source_filename": "Viviane_Hein.png",
+          "human_label": null,
+          "assistant_visual_screen": {
+            "frontal_single_complete_face": true,
+            "expression_note": "white oval eyes and extreme mouth opening"
+          },
+          "face_count": 1,
+          "legacy_face_status": "low_confidence_or_occlusion",
+          "landmark_confidence_min": 0.052398931235075,
+          "landmarks_below_0_3": 21,
+          "low_confidence_point_indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            9,
+            10,
+            11,
+            15,
+            16,
+            19,
+            20,
+            21,
+            23,
+            24,
+            25,
+            26,
+            27
+          ],
+          "nose_confidence": 0.052398931235075,
+          "extraction_errors": {},
+          "wls": {
+            "value": null,
+            "status": "Legacy face/pose gate rejected current sample"
+          },
+          "single_local": {
+            "left_eye": {
+              "value": null,
+              "fit_cost": null,
+              "status": "Insufficient complementary fit points"
+            },
+            "right_eye": {
+              "value": null,
+              "fit_cost": null,
+              "status": "Insufficient complementary fit points"
+            },
+            "eye_spacing": {
+              "value": null,
+              "fit_cost": null,
+              "status": "Insufficient complementary fit points"
+            },
+            "nose": {
+              "value": null,
+              "fit_cost": null,
+              "status": "Insufficient complementary fit points"
+            },
+            "mouth": {
+              "value": null,
+              "fit_cost": null,
+              "status": "Insufficient complementary fit points"
+            },
+            "contour": {
+              "value": null,
+              "fit_cost": null,
+              "status": "Insufficient complementary fit points"
+            }
+          },
+          "intrinsic_local": {
+            "left_eye": {
+              "value": null,
+              "fit_cost": null,
+              "status": "Insufficient complementary fit points"
+            },
+            "right_eye": {
+              "value": null,
+              "fit_cost": null,
+              "status": "Insufficient complementary fit points"
+            },
+            "eye_spacing": {
+              "value": null,
+              "fit_cost": null,
+              "status": "Insufficient complementary fit points"
+            },
+            "nose": {
+              "value": null,
+              "fit_cost": null,
+              "status": "Insufficient complementary fit points"
+            },
+            "mouth": {
+              "value": null,
+              "fit_cost": null,
+              "status": "Insufficient complementary fit points"
+            },
+            "contour": {
+              "value": null,
+              "status": "All five contour points must be reliable"
+            }
+          },
+          "intrinsic_component_absolute_errors": null,
+          "intrinsic_error": "All five contour points must be reliable",
+          "ccip_distance_to_own_neutral": 0.05609194189310074,
+          "identity_error": null
+        },
+        {
+          "sample_id": "s0002",
+          "input_sha256": "0962bf83e912fb64741fbaba90ee2f86c0d653069f942788c276f12afdd605a1",
+          "author_intent": "oups",
+          "author_source_filename": "Viviane_oups.png",
+          "human_label": null,
+          "assistant_visual_screen": {
+            "frontal_single_complete_face": true,
+            "expression_note": "closed eyes and open mouth"
+          },
+          "face_count": 1,
+          "legacy_face_status": "pose_unavailable",
+          "landmark_confidence_min": 0.04401262849569321,
+          "landmarks_below_0_3": 1,
+          "low_confidence_point_indices": [
+            23
+          ],
+          "nose_confidence": 0.04401262849569321,
+          "extraction_errors": {},
+          "wls": {
+            "value": null,
+            "status": "Legacy face/pose gate rejected current sample"
+          },
+          "single_local": {
+            "left_eye": {
+              "value": 0.09035983458642743,
+              "fit_cost": 0.04329051707738461,
+              "status": "valid",
+              "width_error": 0.06621668475047782,
+              "opening": 0.027033824149605975
+            },
+            "right_eye": {
+              "value": 0.1048027189491712,
+              "fit_cost": 0.03881445351475435,
+              "status": "valid",
+              "width_error": 0.044734046775738605,
+              "opening": 0.03480316133404269
+            },
+            "eye_spacing": {
+              "value": 0.09269497618355466,
+              "fit_cost": 0.01690460325660756,
+              "status": "valid",
+              "center_relation_error": 0.06299950057925056
+            },
+            "nose": {
+              "value": null,
+              "fit_cost": null,
+              "status": "Insufficient target points"
+            },
+            "mouth": {
+              "value": 0.16711228802205097,
+              "fit_cost": 0.052284208890408634,
+              "status": "valid",
+              "width_error": 0.0061872965137021365,
+              "opening": 0.3448509000753576
+            },
+            "contour": {
+              "value": 0.08769199946253885,
+              "fit_cost": 0.053153206662345354,
+              "status": "valid"
+            }
+          },
+          "intrinsic_local": {
+            "left_eye": {
+              "value": 0.09035983458642743,
+              "fit_cost": 0.04329051707738461,
+              "status": "valid",
+              "width_error": 0.06621668475047782,
+              "opening": 0.027033824149605975
+            },
+            "right_eye": {
+              "value": 0.1048027189491712,
+              "fit_cost": 0.03881445351475435,
+              "status": "valid",
+              "width_error": 0.044734046775738605,
+              "opening": 0.03480316133404269
+            },
+            "eye_spacing": {
+              "value": 0.09269497618355466,
+              "fit_cost": 0.01690460325660756,
+              "status": "valid",
+              "center_relation_error": 0.06299950057925056
+            },
+            "nose": {
+              "value": null,
+              "fit_cost": null,
+              "status": "Insufficient target points"
+            },
+            "mouth": {
+              "value": 0.16711228802205097,
+              "fit_cost": 0.052284208890408634,
+              "status": "valid",
+              "width_error": 0.0061872965137021365,
+              "opening": 0.3448509000753576
+            },
+            "contour": {
+              "value": 0.008317164275280162,
+              "status": "valid",
+              "chin_height_error": 0.005314954595181165,
+              "chin_lateral_error": 8.595515213315544e-05
+            }
+          },
+          "intrinsic_component_absolute_errors": [
+            0.005314954595181165,
+            8.595515213315544e-05,
+            0.00048175770838077003,
+            0.01866816468623017,
+            0.0040488414017554875,
+            0.004655063792967706
+          ],
+          "intrinsic_error": null,
+          "ccip_distance_to_own_neutral": 0.051935743540525436,
+          "identity_error": null
+        },
+        {
+          "sample_id": "s0003",
+          "input_sha256": "e92f90ab3365c190c8ef3cd6cb893cd475e05d12750db0190921c29e62eb48b0",
+          "author_intent": "Sad",
+          "author_source_filename": "Viviane_Sad.png",
+          "human_label": null,
+          "assistant_visual_screen": {
+            "frontal_single_complete_face": true,
+            "expression_note": null
+          },
+          "face_count": 1,
+          "legacy_face_status": "pose_unavailable",
+          "landmark_confidence_min": 0.1643732488155365,
+          "landmarks_below_0_3": 1,
+          "low_confidence_point_indices": [
+            23
+          ],
+          "nose_confidence": 0.1643732488155365,
+          "extraction_errors": {},
+          "wls": {
+            "value": null,
+            "status": "Legacy face/pose gate rejected current sample"
+          },
+          "single_local": {
+            "left_eye": {
+              "value": 0.0493057754275563,
+              "fit_cost": 0.030193094902442156,
+              "status": "valid",
+              "width_error": 0.01741988568239217,
+              "opening": 0.38373127312787186
+            },
+            "right_eye": {
+              "value": 0.041249208894305826,
+              "fit_cost": 0.03345789665584646,
+              "status": "valid",
+              "width_error": 0.022445964198646598,
+              "opening": 0.39114618563943676
+            },
+            "eye_spacing": {
+              "value": 0.04160768060239028,
+              "fit_cost": 0.02882275127960221,
+              "status": "valid",
+              "center_relation_error": 0.03942614770608616
+            },
+            "nose": {
+              "value": null,
+              "fit_cost": null,
+              "status": "Insufficient target points"
+            },
+            "mouth": {
+              "value": 0.060443555687528384,
+              "fit_cost": 0.03442293763031785,
+              "status": "valid",
+              "width_error": 0.031144469838529504,
+              "opening": 0.054669337453425296
+            },
+            "contour": {
+              "value": 0.03503205064712957,
+              "fit_cost": 0.03834020140502255,
+              "status": "valid"
+            }
+          },
+          "intrinsic_local": {
+            "left_eye": {
+              "value": 0.0493057754275563,
+              "fit_cost": 0.030193094902442156,
+              "status": "valid",
+              "width_error": 0.01741988568239217,
+              "opening": 0.38373127312787186
+            },
+            "right_eye": {
+              "value": 0.041249208894305826,
+              "fit_cost": 0.03345789665584646,
+              "status": "valid",
+              "width_error": 0.022445964198646598,
+              "opening": 0.39114618563943676
+            },
+            "eye_spacing": {
+              "value": 0.04160768060239028,
+              "fit_cost": 0.02882275127960221,
+              "status": "valid",
+              "center_relation_error": 0.03942614770608616
+            },
+            "nose": {
+              "value": null,
+              "fit_cost": null,
+              "status": "Insufficient target points"
+            },
+            "mouth": {
+              "value": 0.060443555687528384,
+              "fit_cost": 0.03442293763031785,
+              "status": "valid",
+              "width_error": 0.031144469838529504,
+              "opening": 0.054669337453425296
+            },
+            "contour": {
+              "value": 0.017427453372377246,
+              "status": "valid",
+              "chin_height_error": 0.021920834824368907,
+              "chin_lateral_error": 0.0058943647251106165
+            }
+          },
+          "intrinsic_component_absolute_errors": [
+            0.021920834824368907,
+            0.0058943647251106165,
+            0.021414763101762657,
+            0.027841686790443132,
+            0.008496580031096934,
+            0.0010424860199634844
+          ],
+          "intrinsic_error": null,
+          "ccip_distance_to_own_neutral": 0.005557606462389231,
+          "identity_error": null
+        },
+        {
+          "sample_id": "s0004",
+          "input_sha256": "f749ae02260b7834aafb7100b9a50b15486c8651d02e13ab7e5d3b106417695e",
+          "author_intent": "Angry",
+          "author_source_filename": "Vivianne_Angry.png",
+          "human_label": null,
+          "assistant_visual_screen": {
+            "frontal_single_complete_face": true,
+            "expression_note": null
+          },
+          "face_count": 1,
+          "legacy_face_status": "pose_unavailable",
+          "landmark_confidence_min": 0.19848093390464783,
+          "landmarks_below_0_3": 1,
+          "low_confidence_point_indices": [
+            23
+          ],
+          "nose_confidence": 0.19848093390464783,
+          "extraction_errors": {},
+          "wls": {
+            "value": null,
+            "status": "Legacy face/pose gate rejected current sample"
+          },
+          "single_local": {
+            "left_eye": {
+              "value": 0.016082240016222105,
+              "fit_cost": 0.011013180111700311,
+              "status": "valid",
+              "width_error": 0.0020494057097345626,
+              "opening": 0.48687852243602997
+            },
+            "right_eye": {
+              "value": 0.01959451210705789,
+              "fit_cost": 0.009695726737457562,
+              "status": "valid",
+              "width_error": 0.010516633999829515,
+              "opening": 0.5012853702477107
+            },
+            "eye_spacing": {
+              "value": 0.016685515347779248,
+              "fit_cost": 0.007678792935159793,
+              "status": "valid",
+              "center_relation_error": 0.019218273749306753
+            },
+            "nose": {
+              "value": null,
+              "fit_cost": null,
+              "status": "Insufficient target points"
+            },
+            "mouth": {
+              "value": 0.057684795474080335,
+              "fit_cost": 0.011917447926621721,
+              "status": "valid",
+              "width_error": 0.08396527992698864,
+              "opening": 0.05786899291733687
+            },
+            "contour": {
+              "value": 0.01809491757136229,
+              "fit_cost": 0.01307422932263627,
+              "status": "valid"
+            }
+          },
+          "intrinsic_local": {
+            "left_eye": {
+              "value": 0.016082240016222105,
+              "fit_cost": 0.011013180111700311,
+              "status": "valid",
+              "width_error": 0.0020494057097345626,
+              "opening": 0.48687852243602997
+            },
+            "right_eye": {
+              "value": 0.01959451210705789,
+              "fit_cost": 0.009695726737457562,
+              "status": "valid",
+              "width_error": 0.010516633999829515,
+              "opening": 0.5012853702477107
+            },
+            "eye_spacing": {
+              "value": 0.016685515347779248,
+              "fit_cost": 0.007678792935159793,
+              "status": "valid",
+              "center_relation_error": 0.019218273749306753
+            },
+            "nose": {
+              "value": null,
+              "fit_cost": null,
+              "status": "Insufficient target points"
+            },
+            "mouth": {
+              "value": 0.057684795474080335,
+              "fit_cost": 0.011917447926621721,
+              "status": "valid",
+              "width_error": 0.08396527992698864,
+              "opening": 0.05786899291733687
+            },
+            "contour": {
+              "value": 0.003456168012329962,
+              "status": "valid",
+              "chin_height_error": 0.0003590711036738359,
+              "chin_lateral_error": 0.0006055497743479151
+            }
+          },
+          "intrinsic_component_absolute_errors": [
+            0.0003590711036738359,
+            0.0006055497743479151,
+            0.0053045890301386955,
+            0.004346923393354296,
+            0.0036970136591567004,
+            0.0032361464162891096
+          ],
+          "intrinsic_error": null,
+          "ccip_distance_to_own_neutral": 0.005410469602793455,
+          "identity_error": null
+        },
+        {
+          "sample_id": "s0005",
+          "input_sha256": "0012735173617dbbdd7f30d8a15eec5bcbf44a16780bf28310e33042eb077fe6",
+          "author_intent": "Angry2",
+          "author_source_filename": "Vivianne_Angry2.png",
+          "human_label": null,
+          "assistant_visual_screen": {
+            "frontal_single_complete_face": true,
+            "expression_note": null
+          },
+          "face_count": 1,
+          "legacy_face_status": "pose_unavailable",
+          "landmark_confidence_min": 0.1195610761642456,
+          "landmarks_below_0_3": 1,
+          "low_confidence_point_indices": [
+            23
+          ],
+          "nose_confidence": 0.1195610761642456,
+          "extraction_errors": {},
+          "wls": {
+            "value": null,
+            "status": "Legacy face/pose gate rejected current sample"
+          },
+          "single_local": {
+            "left_eye": {
+              "value": 0.022145662564538485,
+              "fit_cost": 0.03158804146902246,
+              "status": "valid",
+              "width_error": 0.010725760447714738,
+              "opening": 0.4101751387348771
+            },
+            "right_eye": {
+              "value": 0.019197387592532065,
+              "fit_cost": 0.03157940597453682,
+              "status": "valid",
+              "width_error": 0.011646769654572857,
+              "opening": 0.4234968134083043
+            },
+            "eye_spacing": {
+              "value": 0.022989476090954954,
+              "fit_cost": 0.03532383899490234,
+              "status": "valid",
+              "center_relation_error": 0.02657081879878953
+            },
+            "nose": {
+              "value": null,
+              "fit_cost": null,
+              "status": "Insufficient target points"
+            },
+            "mouth": {
+              "value": 0.11433151791957395,
+              "fit_cost": 0.029150389619118405,
+              "status": "valid",
+              "width_error": 0.09364390873420303,
+              "opening": 0.3151159947865783
+            },
+            "contour": {
+              "value": 0.040279119298297084,
+              "fit_cost": 0.01312878396545003,
+              "status": "valid"
+            }
+          },
+          "intrinsic_local": {
+            "left_eye": {
+              "value": 0.022145662564538485,
+              "fit_cost": 0.03158804146902246,
+              "status": "valid",
+              "width_error": 0.010725760447714738,
+              "opening": 0.4101751387348771
+            },
+            "right_eye": {
+              "value": 0.019197387592532065,
+              "fit_cost": 0.03157940597453682,
+              "status": "valid",
+              "width_error": 0.011646769654572857,
+              "opening": 0.4234968134083043
+            },
+            "eye_spacing": {
+              "value": 0.022989476090954954,
+              "fit_cost": 0.03532383899490234,
+              "status": "valid",
+              "center_relation_error": 0.02657081879878953
+            },
+            "nose": {
+              "value": null,
+              "fit_cost": null,
+              "status": "Insufficient target points"
+            },
+            "mouth": {
+              "value": 0.11433151791957395,
+              "fit_cost": 0.029150389619118405,
+              "status": "valid",
+              "width_error": 0.09364390873420303,
+              "opening": 0.3151159947865783
+            },
+            "contour": {
+              "value": 0.016355925573885,
+              "status": "valid",
+              "chin_height_error": 0.005342445730957324,
+              "chin_lateral_error": 0.004936717536060342
+            }
+          },
+          "intrinsic_component_absolute_errors": [
+            0.005342445730957324,
+            0.004936717536060342,
+            0.0038485715736713555,
+            0.016811434838713002,
+            0.019647014388809836,
+            0.029474461538146146
+          ],
+          "intrinsic_error": null,
+          "ccip_distance_to_own_neutral": 0.005582145415246487,
+          "identity_error": null
+        },
+        {
+          "sample_id": "s0006",
+          "input_sha256": "87f0bd96210d3860ca5bc5720fbf37cc3d5d155cefae79351f9adab25c196ee8",
+          "author_intent": "Happy",
+          "author_source_filename": "Vivianne_Happy.png",
+          "human_label": null,
+          "assistant_visual_screen": {
+            "frontal_single_complete_face": true,
+            "expression_note": null
+          },
+          "face_count": 1,
+          "legacy_face_status": "pose_unavailable",
+          "landmark_confidence_min": 0.15240490436553955,
+          "landmarks_below_0_3": 1,
+          "low_confidence_point_indices": [
+            23
+          ],
+          "nose_confidence": 0.15240490436553955,
+          "extraction_errors": {},
+          "wls": {
+            "value": null,
+            "status": "Legacy face/pose gate rejected current sample"
+          },
+          "single_local": {
+            "left_eye": {
+              "value": 0.0038814373714872773,
+              "fit_cost": 0.005401505369820117,
+              "status": "valid",
+              "width_error": 0.006245409657433862,
+              "opening": 0.5482946523713079
+            },
+            "right_eye": {
+              "value": 0.00519480716371175,
+              "fit_cost": 0.005238508677939144,
+              "status": "valid",
+              "width_error": 0.0021619946028041655,
+              "opening": 0.5798180478097623
+            },
+            "eye_spacing": {
+              "value": 0.005751841206291864,
+              "fit_cost": 0.005542086346894054,
+              "status": "valid",
+              "center_relation_error": 0.0029504568119201216
+            },
+            "nose": {
+              "value": null,
+              "fit_cost": null,
+              "status": "Insufficient target points"
+            },
+            "mouth": {
+              "value": 0.019474275150410135,
+              "fit_cost": 0.005054407531523158,
+              "status": "valid",
+              "width_error": 0.005628333194916001,
+              "opening": 0.059555252689379924
+            },
+            "contour": {
+              "value": 0.007368706820355805,
+              "fit_cost": 0.0024044922072540237,
+              "status": "valid"
+            }
+          },
+          "intrinsic_local": {
+            "left_eye": {
+              "value": 0.0038814373714872773,
+              "fit_cost": 0.005401505369820117,
+              "status": "valid",
+              "width_error": 0.006245409657433862,
+              "opening": 0.5482946523713079
+            },
+            "right_eye": {
+              "value": 0.00519480716371175,
+              "fit_cost": 0.005238508677939144,
+              "status": "valid",
+              "width_error": 0.0021619946028041655,
+              "opening": 0.5798180478097623
+            },
+            "eye_spacing": {
+              "value": 0.005751841206291864,
+              "fit_cost": 0.005542086346894054,
+              "status": "valid",
+              "center_relation_error": 0.0029504568119201216
+            },
+            "nose": {
+              "value": null,
+              "fit_cost": null,
+              "status": "Insufficient target points"
+            },
+            "mouth": {
+              "value": 0.019474275150410135,
+              "fit_cost": 0.005054407531523158,
+              "status": "valid",
+              "width_error": 0.005628333194916001,
+              "opening": 0.059555252689379924
+            },
+            "contour": {
+              "value": 0.0032413495026347608,
+              "status": "valid",
+              "chin_height_error": 0.0021329283186635184,
+              "chin_lateral_error": 0.001840606351684937
+            }
+          },
+          "intrinsic_component_absolute_errors": [
+            0.0021329283186635184,
+            0.001840606351684937,
+            0.0072041762420887445,
+            0.0011847528316902833,
+            0.0008363822415802802,
+            0.001047632942236476
+          ],
+          "intrinsic_error": null,
+          "ccip_distance_to_own_neutral": 0.0006795476656407118,
+          "identity_error": null
+        },
+        {
+          "sample_id": "s0007",
+          "input_sha256": "98943a04199e7bb8a34fefae0ebc064ec26511271446764d165c482d028c9ee7",
+          "author_intent": "Happy2",
+          "author_source_filename": "Vivianne_Happy2.png",
+          "human_label": null,
+          "assistant_visual_screen": {
+            "frontal_single_complete_face": true,
+            "expression_note": "one-eye wink and open mouth"
+          },
+          "face_count": 1,
+          "legacy_face_status": "pose_unavailable",
+          "landmark_confidence_min": 0.2628192901611328,
+          "landmarks_below_0_3": 1,
+          "low_confidence_point_indices": [
+            23
+          ],
+          "nose_confidence": 0.2628192901611328,
+          "extraction_errors": {},
+          "wls": {
+            "value": null,
+            "status": "Legacy face/pose gate rejected current sample"
+          },
+          "single_local": {
+            "left_eye": {
+              "value": 0.0543256112441576,
+              "fit_cost": 0.06590004159212672,
+              "status": "valid",
+              "width_error": 0.01190587382659426,
+              "opening": 0.5709727678258594
+            },
+            "right_eye": {
+              "value": 0.1626503858684294,
+              "fit_cost": 0.01680562140463674,
+              "status": "valid",
+              "width_error": 0.059810814726654185,
+              "opening": 0.0069571101210560956
+            },
+            "eye_spacing": {
+              "value": 0.11079308239940916,
+              "fit_cost": 0.017569579222719522,
+              "status": "valid",
+              "center_relation_error": 0.15491219409091717
+            },
+            "nose": {
+              "value": null,
+              "fit_cost": null,
+              "status": "Insufficient target points"
+            },
+            "mouth": {
+              "value": 0.07495444692724593,
+              "fit_cost": 0.06188895762942389,
+              "status": "valid",
+              "width_error": 0.12106136555068536,
+              "opening": 0.3649375433492588
+            },
+            "contour": {
+              "value": 0.14001639924009618,
+              "fit_cost": 0.04095370557044707,
+              "status": "valid"
+            }
+          },
+          "intrinsic_local": {
+            "left_eye": {
+              "value": 0.0543256112441576,
+              "fit_cost": 0.06590004159212672,
+              "status": "valid",
+              "width_error": 0.01190587382659426,
+              "opening": 0.5709727678258594
+            },
+            "right_eye": {
+              "value": 0.1626503858684294,
+              "fit_cost": 0.01680562140463674,
+              "status": "valid",
+              "width_error": 0.059810814726654185,
+              "opening": 0.0069571101210560956
+            },
+            "eye_spacing": {
+              "value": 0.11079308239940916,
+              "fit_cost": 0.017569579222719522,
+              "status": "valid",
+              "center_relation_error": 0.15491219409091717
+            },
+            "nose": {
+              "value": null,
+              "fit_cost": null,
+              "status": "Insufficient target points"
+            },
+            "mouth": {
+              "value": 0.07495444692724593,
+              "fit_cost": 0.06188895762942389,
+              "status": "valid",
+              "width_error": 0.12106136555068536,
+              "opening": 0.3649375433492588
+            },
+            "contour": {
+              "value": 0.00979832250267692,
+              "status": "valid",
+              "chin_height_error": 0.010709067206530642,
+              "chin_lateral_error": 0.003883791095611544
+            }
+          },
+          "intrinsic_component_absolute_errors": [
+            0.010709067206530642,
+            0.003883791095611544,
+            0.006472654961277857,
+            0.018463384776062297,
+            0.007842672122154115,
+            0.0014055048339122744
+          ],
+          "intrinsic_error": null,
+          "ccip_distance_to_own_neutral": 0.0017598248086869717,
+          "identity_error": null
+        },
+        {
+          "sample_id": "s0008",
+          "input_sha256": "54fec88d3c4dd779441c025f15b22107f3c2126b68740a3adba4f1eab103d8fd",
+          "author_intent": "Heu",
+          "author_source_filename": "Vivianne_Heu.png",
+          "human_label": null,
+          "assistant_visual_screen": {
+            "frontal_single_complete_face": true,
+            "expression_note": "round stylized eyes and blue shading"
+          },
+          "face_count": 1,
+          "legacy_face_status": "pose_unavailable",
+          "landmark_confidence_min": 0.05444961413741112,
+          "landmarks_below_0_3": 1,
+          "low_confidence_point_indices": [
+            23
+          ],
+          "nose_confidence": 0.05444961413741112,
+          "extraction_errors": {},
+          "wls": {
+            "value": null,
+            "status": "Legacy face/pose gate rejected current sample"
+          },
+          "single_local": {
+            "left_eye": {
+              "value": 0.14502498817178533,
+              "fit_cost": 0.07733248846985312,
+              "status": "valid",
+              "width_error": 0.12056575343241324,
+              "opening": 0.536626851162837
+            },
+            "right_eye": {
+              "value": 0.14260273024188297,
+              "fit_cost": 0.07579841720745285,
+              "status": "valid",
+              "width_error": 0.11879556880660203,
+              "opening": 0.5397410980322712
+            },
+            "eye_spacing": {
+              "value": 0.14965668863488898,
+              "fit_cost": 0.01986049319062381,
+              "status": "valid",
+              "center_relation_error": 0.047863681245884436
+            },
+            "nose": {
+              "value": null,
+              "fit_cost": null,
+              "status": "Insufficient target points"
+            },
+            "mouth": {
+              "value": 0.027741912146124984,
+              "fit_cost": 0.09392641284976803,
+              "status": "valid",
+              "width_error": 0.051992503028859896,
+              "opening": 0.025107009451122014
+            },
+            "contour": {
+              "value": 0.11432471035311607,
+              "fit_cost": 0.12941356716389918,
+              "status": "valid"
+            }
+          },
+          "intrinsic_local": {
+            "left_eye": {
+              "value": 0.14502498817178533,
+              "fit_cost": 0.07733248846985312,
+              "status": "valid",
+              "width_error": 0.12056575343241324,
+              "opening": 0.536626851162837
+            },
+            "right_eye": {
+              "value": 0.14260273024188297,
+              "fit_cost": 0.07579841720745285,
+              "status": "valid",
+              "width_error": 0.11879556880660203,
+              "opening": 0.5397410980322712
+            },
+            "eye_spacing": {
+              "value": 0.14965668863488898,
+              "fit_cost": 0.01986049319062381,
+              "status": "valid",
+              "center_relation_error": 0.047863681245884436
+            },
+            "nose": {
+              "value": null,
+              "fit_cost": null,
+              "status": "Insufficient target points"
+            },
+            "mouth": {
+              "value": 0.027741912146124984,
+              "fit_cost": 0.09392641284976803,
+              "status": "valid",
+              "width_error": 0.051992503028859896,
+              "opening": 0.025107009451122014
+            },
+            "contour": {
+              "value": 0.011315548177394594,
+              "status": "valid",
+              "chin_height_error": 0.00407849791088144,
+              "chin_lateral_error": 0.012675016523644668
+            }
+          },
+          "intrinsic_component_absolute_errors": [
+            0.00407849791088144,
+            0.012675016523644668,
+            0.010116314741426824,
+            0.0016277016100958441,
+            0.021996282320578542,
+            0.0014607949343370397
+          ],
+          "intrinsic_error": null,
+          "ccip_distance_to_own_neutral": 0.04586876556277275,
+          "identity_error": null
+        }
+      ]
+    }
+  ],
+  "scope": "Unlabeled author-drawn expression diagnostic, not independent same-character calibration, real generated video, anomaly truth, GPU inference or recovery acceptance"
+}

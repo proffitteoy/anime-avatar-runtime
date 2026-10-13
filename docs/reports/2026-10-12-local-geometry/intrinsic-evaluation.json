@@ -1,0 +1,920 @@
+{
+  "schema_version": 1,
+  "stage": "independent_evaluation",
+  "character_id": "public-frontal-01",
+  "frozen_hash": "318a22a378fed21e57363810367c5cacdd90fbc620ee727c5145b30528711013",
+  "calibration_hash": "9969cad81c4bd34675005b9afea7ad96fc570715b3120e7dfd9032577c749f43",
+  "source_counts": {
+    "development": 1,
+    "calibration": 0,
+    "validation": 0
+  },
+  "summary": {
+    "wls": {
+      "normal_primary_sources": 0,
+      "valid_normal_sources": 0,
+      "false_positives": 0,
+      "fpr": null,
+      "fpr_upper95": null,
+      "normal_coverage": null,
+      "normal_unknown": 0,
+      "anomaly_samples": 0,
+      "anomaly_sources": 0,
+      "detected": 0,
+      "recall": null,
+      "anomaly_unknown_counted_missed": 0,
+      "region_coverage": {
+        "global": null
+      }
+    },
+    "single_local": {
+      "normal_primary_sources": 0,
+      "valid_normal_sources": 0,
+      "false_positives": 0,
+      "fpr": null,
+      "fpr_upper95": null,
+      "normal_coverage": null,
+      "normal_unknown": 0,
+      "anomaly_samples": 0,
+      "anomaly_sources": 0,
+      "detected": 0,
+      "recall": null,
+      "anomaly_unknown_counted_missed": 0,
+      "region_coverage": {
+        "left_eye": null,
+        "right_eye": null,
+        "eye_spacing": null,
+        "nose": null,
+        "mouth": null,
+        "contour": null
+      }
+    },
+    "pose_local": {
+      "normal_primary_sources": 0,
+      "valid_normal_sources": 0,
+      "false_positives": 0,
+      "fpr": null,
+      "fpr_upper95": null,
+      "normal_coverage": null,
+      "normal_unknown": 0,
+      "anomaly_samples": 0,
+      "anomaly_sources": 0,
+      "detected": 0,
+      "recall": null,
+      "anomaly_unknown_counted_missed": 0,
+      "region_coverage": {
+        "left_eye": null,
+        "right_eye": null,
+        "eye_spacing": null,
+        "nose": null,
+        "mouth": null,
+        "contour": null
+      }
+    },
+    "oracle": {
+      "normal_primary_sources": 0,
+      "valid_normal_sources": 0,
+      "false_positives": 0,
+      "fpr": null,
+      "fpr_upper95": null,
+      "normal_coverage": null,
+      "normal_unknown": 0,
+      "anomaly_samples": 0,
+      "anomaly_sources": 0,
+      "detected": 0,
+      "recall": null,
+      "anomaly_unknown_counted_missed": 0,
+      "region_coverage": {
+        "left_eye": null,
+        "right_eye": null,
+        "eye_spacing": null,
+        "nose": null,
+        "mouth": null,
+        "contour": null
+      }
+    },
+    "intrinsic_local": {
+      "normal_primary_sources": 0,
+      "valid_normal_sources": 0,
+      "false_positives": 0,
+      "fpr": null,
+      "fpr_upper95": null,
+      "normal_coverage": null,
+      "normal_unknown": 0,
+      "anomaly_samples": 0,
+      "anomaly_sources": 0,
+      "detected": 0,
+      "recall": null,
+      "anomaly_unknown_counted_missed": 0,
+      "region_coverage": {
+        "left_eye": null,
+        "right_eye": null,
+        "eye_spacing": null,
+        "nose": null,
+        "mouth": null,
+        "contour": null
+      }
+    }
+  },
+  "strata": {
+    "pose": {},
+    "severity": {},
+    "synthetic": {},
+    "parts": {
+      "left_eye": {
+        "wls": {
+          "normal_primary_sources": 0,
+          "valid_normal_sources": 0,
+          "false_positives": 0,
+          "fpr": null,
+          "fpr_upper95": null,
+          "normal_coverage": null,
+          "normal_unknown": 0,
+          "anomaly_samples": 0,
+          "anomaly_sources": 0,
+          "detected": 0,
+          "recall": null,
+          "anomaly_unknown_counted_missed": 0,
+          "region_coverage": {
+            "global": null
+          }
+        },
+        "single_local": {
+          "normal_primary_sources": 0,
+          "valid_normal_sources": 0,
+          "false_positives": 0,
+          "fpr": null,
+          "fpr_upper95": null,
+          "normal_coverage": null,
+          "normal_unknown": 0,
+          "anomaly_samples": 0,
+          "anomaly_sources": 0,
+          "detected": 0,
+          "recall": null,
+          "anomaly_unknown_counted_missed": 0,
+          "region_coverage": {
+            "left_eye": null,
+            "right_eye": null,
+            "eye_spacing": null,
+            "nose": null,
+            "mouth": null,
+            "contour": null
+          }
+        },
+        "pose_local": {
+          "normal_primary_sources": 0,
+          "valid_normal_sources": 0,
+          "false_positives": 0,
+          "fpr": null,
+          "fpr_upper95": null,
+          "normal_coverage": null,
+          "normal_unknown": 0,
+          "anomaly_samples": 0,
+          "anomaly_sources": 0,
+          "detected": 0,
+          "recall": null,
+          "anomaly_unknown_counted_missed": 0,
+          "region_coverage": {
+            "left_eye": null,
+            "right_eye": null,
+            "eye_spacing": null,
+            "nose": null,
+            "mouth": null,
+            "contour": null
+          }
+        },
+        "oracle": {
+          "normal_primary_sources": 0,
+          "valid_normal_sources": 0,
+          "false_positives": 0,
+          "fpr": null,
+          "fpr_upper95": null,
+          "normal_coverage": null,
+          "normal_unknown": 0,
+          "anomaly_samples": 0,
+          "anomaly_sources": 0,
+          "detected": 0,
+          "recall": null,
+          "anomaly_unknown_counted_missed": 0,
+          "region_coverage": {
+            "left_eye": null,
+            "right_eye": null,
+            "eye_spacing": null,
+            "nose": null,
+            "mouth": null,
+            "contour": null
+          }
+        },
+        "intrinsic_local": {
+          "normal_primary_sources": 0,
+          "valid_normal_sources": 0,
+          "false_positives": 0,
+          "fpr": null,
+          "fpr_upper95": null,
+          "normal_coverage": null,
+          "normal_unknown": 0,
+          "anomaly_samples": 0,
+          "anomaly_sources": 0,
+          "detected": 0,
+          "recall": null,
+          "anomaly_unknown_counted_missed": 0,
+          "region_coverage": {
+            "left_eye": null,
+            "right_eye": null,
+            "eye_spacing": null,
+            "nose": null,
+            "mouth": null,
+            "contour": null
+          }
+        }
+      },
+      "right_eye": {
+        "wls": {
+          "normal_primary_sources": 0,
+          "valid_normal_sources": 0,
+          "false_positives": 0,
+          "fpr": null,
+          "fpr_upper95": null,
+          "normal_coverage": null,
+          "normal_unknown": 0,
+          "anomaly_samples": 0,
+          "anomaly_sources": 0,
+          "detected": 0,
+          "recall": null,
+          "anomaly_unknown_counted_missed": 0,
+          "region_coverage": {
+            "global": null
+          }
+        },
+        "single_local": {
+          "normal_primary_sources": 0,
+          "valid_normal_sources": 0,
+          "false_positives": 0,
+          "fpr": null,
+          "fpr_upper95": null,
+          "normal_coverage": null,
+          "normal_unknown": 0,
+          "anomaly_samples": 0,
+          "anomaly_sources": 0,
+          "detected": 0,
+          "recall": null,
+          "anomaly_unknown_counted_missed": 0,
+          "region_coverage": {
+            "left_eye": null,
+            "right_eye": null,
+            "eye_spacing": null,
+            "nose": null,
+            "mouth": null,
+            "contour": null
+          }
+        },
+        "pose_local": {
+          "normal_primary_sources": 0,
+          "valid_normal_sources": 0,
+          "false_positives": 0,
+          "fpr": null,
+          "fpr_upper95": null,
+          "normal_coverage": null,
+          "normal_unknown": 0,
+          "anomaly_samples": 0,
+          "anomaly_sources": 0,
+          "detected": 0,
+          "recall": null,
+          "anomaly_unknown_counted_missed": 0,
+          "region_coverage": {
+            "left_eye": null,
+            "right_eye": null,
+            "eye_spacing": null,
+            "nose": null,
+            "mouth": null,
+            "contour": null
+          }
+        },
+        "oracle": {
+          "normal_primary_sources": 0,
+          "valid_normal_sources": 0,
+          "false_positives": 0,
+          "fpr": null,
+          "fpr_upper95": null,
+          "normal_coverage": null,
+          "normal_unknown": 0,
+          "anomaly_samples": 0,
+          "anomaly_sources": 0,
+          "detected": 0,
+          "recall": null,
+          "anomaly_unknown_counted_missed": 0,
+          "region_coverage": {
+            "left_eye": null,
+            "right_eye": null,
+            "eye_spacing": null,
+            "nose": null,
+            "mouth": null,
+            "contour": null
+          }
+        },
+        "intrinsic_local": {
+          "normal_primary_sources": 0,
+          "valid_normal_sources": 0,
+          "false_positives": 0,
+          "fpr": null,
+          "fpr_upper95": null,
+          "normal_coverage": null,
+          "normal_unknown": 0,
+          "anomaly_samples": 0,
+          "anomaly_sources": 0,
+          "detected": 0,
+          "recall": null,
+          "anomaly_unknown_counted_missed": 0,
+          "region_coverage": {
+            "left_eye": null,
+            "right_eye": null,
+            "eye_spacing": null,
+            "nose": null,
+            "mouth": null,
+            "contour": null
+          }
+        }
+      },
+      "eye_spacing": {
+        "wls": {
+          "normal_primary_sources": 0,
+          "valid_normal_sources": 0,
+          "false_positives": 0,
+          "fpr": null,
+          "fpr_upper95": null,
+          "normal_coverage": null,
+          "normal_unknown": 0,
+          "anomaly_samples": 0,
+          "anomaly_sources": 0,
+          "detected": 0,
+          "recall": null,
+          "anomaly_unknown_counted_missed": 0,
+          "region_coverage": {
+            "global": null
+          }
+        },
+        "single_local": {
+          "normal_primary_sources": 0,
+          "valid_normal_sources": 0,
+          "false_positives": 0,
+          "fpr": null,
+          "fpr_upper95": null,
+          "normal_coverage": null,
+          "normal_unknown": 0,
+          "anomaly_samples": 0,
+          "anomaly_sources": 0,
+          "detected": 0,
+          "recall": null,
+          "anomaly_unknown_counted_missed": 0,
+          "region_coverage": {
+            "left_eye": null,
+            "right_eye": null,
+            "eye_spacing": null,
+            "nose": null,
+            "mouth": null,
+            "contour": null
+          }
+        },
+        "pose_local": {
+          "normal_primary_sources": 0,
+          "valid_normal_sources": 0,
+          "false_positives": 0,
+          "fpr": null,
+          "fpr_upper95": null,
+          "normal_coverage": null,
+          "normal_unknown": 0,
+          "anomaly_samples": 0,
+          "anomaly_sources": 0,
+          "detected": 0,
+          "recall": null,
+          "anomaly_unknown_counted_missed": 0,
+          "region_coverage": {
+            "left_eye": null,
+            "right_eye": null,
+            "eye_spacing": null,
+            "nose": null,
+            "mouth": null,
+            "contour": null
+          }
+        },
+        "oracle": {
+          "normal_primary_sources": 0,
+          "valid_normal_sources": 0,
+          "false_positives": 0,
+          "fpr": null,
+          "fpr_upper95": null,
+          "normal_coverage": null,
+          "normal_unknown": 0,
+          "anomaly_samples": 0,
+          "anomaly_sources": 0,
+          "detected": 0,
+          "recall": null,
+          "anomaly_unknown_counted_missed": 0,
+          "region_coverage": {
+            "left_eye": null,
+            "right_eye": null,
+            "eye_spacing": null,
+            "nose": null,
+            "mouth": null,
+            "contour": null
+          }
+        },
+        "intrinsic_local": {
+          "normal_primary_sources": 0,
+          "valid_normal_sources": 0,
+          "false_positives": 0,
+          "fpr": null,
+          "fpr_upper95": null,
+          "normal_coverage": null,
+          "normal_unknown": 0,
+          "anomaly_samples": 0,
+          "anomaly_sources": 0,
+          "detected": 0,
+          "recall": null,
+          "anomaly_unknown_counted_missed": 0,
+          "region_coverage": {
+            "left_eye": null,
+            "right_eye": null,
+            "eye_spacing": null,
+            "nose": null,
+            "mouth": null,
+            "contour": null
+          }
+        }
+      },
+      "nose": {
+        "wls": {
+          "normal_primary_sources": 0,
+          "valid_normal_sources": 0,
+          "false_positives": 0,
+          "fpr": null,
+          "fpr_upper95": null,
+          "normal_coverage": null,
+          "normal_unknown": 0,
+          "anomaly_samples": 0,
+          "anomaly_sources": 0,
+          "detected": 0,
+          "recall": null,
+          "anomaly_unknown_counted_missed": 0,
+          "region_coverage": {
+            "global": null
+          }
+        },
+        "single_local": {
+          "normal_primary_sources": 0,
+          "valid_normal_sources": 0,
+          "false_positives": 0,
+          "fpr": null,
+          "fpr_upper95": null,
+          "normal_coverage": null,
+          "normal_unknown": 0,
+          "anomaly_samples": 0,
+          "anomaly_sources": 0,
+          "detected": 0,
+          "recall": null,
+          "anomaly_unknown_counted_missed": 0,
+          "region_coverage": {
+            "left_eye": null,
+            "right_eye": null,
+            "eye_spacing": null,
+            "nose": null,
+            "mouth": null,
+            "contour": null
+          }
+        },
+        "pose_local": {
+          "normal_primary_sources": 0,
+          "valid_normal_sources": 0,
+          "false_positives": 0,
+          "fpr": null,
+          "fpr_upper95": null,
+          "normal_coverage": null,
+          "normal_unknown": 0,
+          "anomaly_samples": 0,
+          "anomaly_sources": 0,
+          "detected": 0,
+          "recall": null,
+          "anomaly_unknown_counted_missed": 0,
+          "region_coverage": {
+            "left_eye": null,
+            "right_eye": null,
+            "eye_spacing": null,
+            "nose": null,
+            "mouth": null,
+            "contour": null
+          }
+        },
+        "oracle": {
+          "normal_primary_sources": 0,
+          "valid_normal_sources": 0,
+          "false_positives": 0,
+          "fpr": null,
+          "fpr_upper95": null,
+          "normal_coverage": null,
+          "normal_unknown": 0,
+          "anomaly_samples": 0,
+          "anomaly_sources": 0,
+          "detected": 0,
+          "recall": null,
+          "anomaly_unknown_counted_missed": 0,
+          "region_coverage": {
+            "left_eye": null,
+            "right_eye": null,
+            "eye_spacing": null,
+            "nose": null,
+            "mouth": null,
+            "contour": null
+          }
+        },
+        "intrinsic_local": {
+          "normal_primary_sources": 0,
+          "valid_normal_sources": 0,
+          "false_positives": 0,
+          "fpr": null,
+          "fpr_upper95": null,
+          "normal_coverage": null,
+          "normal_unknown": 0,
+          "anomaly_samples": 0,
+          "anomaly_sources": 0,
+          "detected": 0,
+          "recall": null,
+          "anomaly_unknown_counted_missed": 0,
+          "region_coverage": {
+            "left_eye": null,
+            "right_eye": null,
+            "eye_spacing": null,
+            "nose": null,
+            "mouth": null,
+            "contour": null
+          }
+        }
+      },
+      "mouth": {
+        "wls": {
+          "normal_primary_sources": 0,
+          "valid_normal_sources": 0,
+          "false_positives": 0,
+          "fpr": null,
+          "fpr_upper95": null,
+          "normal_coverage": null,
+          "normal_unknown": 0,
+          "anomaly_samples": 0,
+          "anomaly_sources": 0,
+          "detected": 0,
+          "recall": null,
+          "anomaly_unknown_counted_missed": 0,
+          "region_coverage": {
+            "global": null
+          }
+        },
+        "single_local": {
+          "normal_primary_sources": 0,
+          "valid_normal_sources": 0,
+          "false_positives": 0,
+          "fpr": null,
+          "fpr_upper95": null,
+          "normal_coverage": null,
+          "normal_unknown": 0,
+          "anomaly_samples": 0,
+          "anomaly_sources": 0,
+          "detected": 0,
+          "recall": null,
+          "anomaly_unknown_counted_missed": 0,
+          "region_coverage": {
+            "left_eye": null,
+            "right_eye": null,
+            "eye_spacing": null,
+            "nose": null,
+            "mouth": null,
+            "contour": null
+          }
+        },
+        "pose_local": {
+          "normal_primary_sources": 0,
+          "valid_normal_sources": 0,
+          "false_positives": 0,
+          "fpr": null,
+          "fpr_upper95": null,
+          "normal_coverage": null,
+          "normal_unknown": 0,
+          "anomaly_samples": 0,
+          "anomaly_sources": 0,
+          "detected": 0,
+          "recall": null,
+          "anomaly_unknown_counted_missed": 0,
+          "region_coverage": {
+            "left_eye": null,
+            "right_eye": null,
+            "eye_spacing": null,
+            "nose": null,
+            "mouth": null,
+            "contour": null
+          }
+        },
+        "oracle": {
+          "normal_primary_sources": 0,
+          "valid_normal_sources": 0,
+          "false_positives": 0,
+          "fpr": null,
+          "fpr_upper95": null,
+          "normal_coverage": null,
+          "normal_unknown": 0,
+          "anomaly_samples": 0,
+          "anomaly_sources": 0,
+          "detected": 0,
+          "recall": null,
+          "anomaly_unknown_counted_missed": 0,
+          "region_coverage": {
+            "left_eye": null,
+            "right_eye": null,
+            "eye_spacing": null,
+            "nose": null,
+            "mouth": null,
+            "contour": null
+          }
+        },
+        "intrinsic_local": {
+          "normal_primary_sources": 0,
+          "valid_normal_sources": 0,
+          "false_positives": 0,
+          "fpr": null,
+          "fpr_upper95": null,
+          "normal_coverage": null,
+          "normal_unknown": 0,
+          "anomaly_samples": 0,
+          "anomaly_sources": 0,
+          "detected": 0,
+          "recall": null,
+          "anomaly_unknown_counted_missed": 0,
+          "region_coverage": {
+            "left_eye": null,
+            "right_eye": null,
+            "eye_spacing": null,
+            "nose": null,
+            "mouth": null,
+            "contour": null
+          }
+        }
+      },
+      "contour": {
+        "wls": {
+          "normal_primary_sources": 0,
+          "valid_normal_sources": 0,
+          "false_positives": 0,
+          "fpr": null,
+          "fpr_upper95": null,
+          "normal_coverage": null,
+          "normal_unknown": 0,
+          "anomaly_samples": 0,
+          "anomaly_sources": 0,
+          "detected": 0,
+          "recall": null,
+          "anomaly_unknown_counted_missed": 0,
+          "region_coverage": {
+            "global": null
+          }
+        },
+        "single_local": {
+          "normal_primary_sources": 0,
+          "valid_normal_sources": 0,
+          "false_positives": 0,
+          "fpr": null,
+          "fpr_upper95": null,
+          "normal_coverage": null,
+          "normal_unknown": 0,
+          "anomaly_samples": 0,
+          "anomaly_sources": 0,
+          "detected": 0,
+          "recall": null,
+          "anomaly_unknown_counted_missed": 0,
+          "region_coverage": {
+            "left_eye": null,
+            "right_eye": null,
+            "eye_spacing": null,
+            "nose": null,
+            "mouth": null,
+            "contour": null
+          }
+        },
+        "pose_local": {
+          "normal_primary_sources": 0,
+          "valid_normal_sources": 0,
+          "false_positives": 0,
+          "fpr": null,
+          "fpr_upper95": null,
+          "normal_coverage": null,
+          "normal_unknown": 0,
+          "anomaly_samples": 0,
+          "anomaly_sources": 0,
+          "detected": 0,
+          "recall": null,
+          "anomaly_unknown_counted_missed": 0,
+          "region_coverage": {
+            "left_eye": null,
+            "right_eye": null,
+            "eye_spacing": null,
+            "nose": null,
+            "mouth": null,
+            "contour": null
+          }
+        },
+        "oracle": {
+          "normal_primary_sources": 0,
+          "valid_normal_sources": 0,
+          "false_positives": 0,
+          "fpr": null,
+          "fpr_upper95": null,
+          "normal_coverage": null,
+          "normal_unknown": 0,
+          "anomaly_samples": 0,
+          "anomaly_sources": 0,
+          "detected": 0,
+          "recall": null,
+          "anomaly_unknown_counted_missed": 0,
+          "region_coverage": {
+            "left_eye": null,
+            "right_eye": null,
+            "eye_spacing": null,
+            "nose": null,
+            "mouth": null,
+            "contour": null
+          }
+        },
+        "intrinsic_local": {
+          "normal_primary_sources": 0,
+          "valid_normal_sources": 0,
+          "false_positives": 0,
+          "fpr": null,
+          "fpr_upper95": null,
+          "normal_coverage": null,
+          "normal_unknown": 0,
+          "anomaly_samples": 0,
+          "anomaly_sources": 0,
+          "detected": 0,
+          "recall": null,
+          "anomaly_unknown_counted_missed": 0,
+          "region_coverage": {
+            "left_eye": null,
+            "right_eye": null,
+            "eye_spacing": null,
+            "nose": null,
+            "mouth": null,
+            "contour": null
+          }
+        }
+      }
+    },
+    "strength": {}
+  },
+  "adoption": {
+    "single_local": {
+      "adopt": false,
+      "selected_before_calibration": false,
+      "status": "not_accepted",
+      "bootstrap_all": {
+        "status": "insufficient_independent_anomaly_sources",
+        "n_sources": 0,
+        "interval95": null
+      },
+      "bootstrap_real_anomalies": {
+        "status": "insufficient_independent_anomaly_sources",
+        "n_sources": 0,
+        "interval95": null
+      },
+      "requirements": "FPR upper95 <=5%; coverage>=80%; calibrated WLS comparator; positive paired source interval on human-reviewed anomalies; synthetic and real evidence reported separately"
+    },
+    "pose_local": {
+      "adopt": false,
+      "selected_before_calibration": false,
+      "status": "not_accepted",
+      "bootstrap_all": {
+        "status": "insufficient_independent_anomaly_sources",
+        "n_sources": 0,
+        "interval95": null
+      },
+      "bootstrap_real_anomalies": {
+        "status": "insufficient_independent_anomaly_sources",
+        "n_sources": 0,
+        "interval95": null
+      },
+      "requirements": "FPR upper95 <=5%; coverage>=80%; calibrated WLS comparator; positive paired source interval on human-reviewed anomalies; synthetic and real evidence reported separately"
+    },
+    "intrinsic_local": {
+      "adopt": false,
+      "selected_before_calibration": true,
+      "status": "not_accepted",
+      "bootstrap_all": {
+        "status": "insufficient_independent_anomaly_sources",
+        "n_sources": 0,
+        "interval95": null
+      },
+      "bootstrap_real_anomalies": {
+        "status": "insufficient_independent_anomaly_sources",
+        "n_sources": 0,
+        "interval95": null
+      },
+      "requirements": "FPR upper95 <=5%; coverage>=80%; calibrated WLS comparator; positive paired source interval on human-reviewed anomalies; synthetic and real evidence reported separately"
+    }
+  },
+  "rows": [],
+  "exclusions": [
+    {
+      "sample_id": "s0000",
+      "split": "development",
+      "review_status": "confirmed",
+      "label": "normal",
+      "reason": "Not validation or not human-reviewed in-scope idle sample"
+    },
+    {
+      "sample_id": "s0001",
+      "split": "development",
+      "review_status": "confirmed",
+      "label": "normal",
+      "reason": "Not validation or not human-reviewed in-scope idle sample"
+    },
+    {
+      "sample_id": "s0002",
+      "split": "development",
+      "review_status": "confirmed",
+      "label": "normal",
+      "reason": "Not validation or not human-reviewed in-scope idle sample"
+    },
+    {
+      "sample_id": "s0003",
+      "split": "development",
+      "review_status": "confirmed",
+      "label": "normal",
+      "reason": "Not validation or not human-reviewed in-scope idle sample"
+    },
+    {
+      "sample_id": "s0004",
+      "split": "development",
+      "review_status": "confirmed",
+      "label": "normal",
+      "reason": "Not validation or not human-reviewed in-scope idle sample"
+    },
+    {
+      "sample_id": "s0005",
+      "split": "development",
+      "review_status": "confirmed",
+      "label": "normal",
+      "reason": "Not validation or not human-reviewed in-scope idle sample"
+    },
+    {
+      "sample_id": "s0006",
+      "split": "development",
+      "review_status": "confirmed",
+      "label": "geometry_anomaly",
+      "reason": "Not validation or not human-reviewed in-scope idle sample"
+    },
+    {
+      "sample_id": "s0007",
+      "split": "development",
+      "review_status": "confirmed",
+      "label": "normal",
+      "reason": "Not validation or not human-reviewed in-scope idle sample"
+    },
+    {
+      "sample_id": "s0008",
+      "split": "development",
+      "review_status": "confirmed",
+      "label": "normal",
+      "reason": "Not validation or not human-reviewed in-scope idle sample"
+    },
+    {
+      "sample_id": "s0009",
+      "split": "development",
+      "review_status": "confirmed",
+      "label": "geometry_anomaly",
+      "reason": "Not validation or not human-reviewed in-scope idle sample"
+    },
+    {
+      "sample_id": "s0010",
+      "split": "development",
+      "review_status": "confirmed",
+      "label": "normal",
+      "reason": "Not validation or not human-reviewed in-scope idle sample"
+    },
+    {
+      "sample_id": "s0011",
+      "split": "development",
+      "review_status": "confirmed",
+      "label": "geometry_anomaly",
+      "reason": "Not validation or not human-reviewed in-scope idle sample"
+    },
+    {
+      "sample_id": "s0012",
+      "split": "development",
+      "review_status": "confirmed",
+      "label": "geometry_anomaly",
+      "reason": "Not validation or not human-reviewed in-scope idle sample"
+    }
+  ],
+  "human_review_counts": {
+    "pending_human": 0,
+    "disagreement": 0,
+    "confirmed": 13,
+    "adjudicated": 0
+  },
+  "scope": "Single character idle; statistical FPR on supported observations, complete geometry coverage reported separately; no Runtime/recovery integration"
+}

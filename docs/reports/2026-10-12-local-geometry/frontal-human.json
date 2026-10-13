@@ -1,0 +1,2317 @@
+{
+  "schema_version": 1,
+  "record_type": "Human-reviewed single-source descriptive geometry pilot; no statistical acceptance",
+  "data_hash": "0295b9676709b19cdd659576e2261de52573788ff15f276f5e8102da6206befc",
+  "character_id": "public-frontal-01",
+  "model_hash": "062cb4e53ecb0686109cbbd7f884414f0376fbada659fe10c09e5be02e677f88",
+  "counts": {
+    "samples": 13,
+    "normal": 9,
+    "geometry_anomaly": 4,
+    "uncertain": 0,
+    "pending_human": 0,
+    "reviewers": 1,
+    "independent_sources": 1,
+    "approved_normal_original_references": 1,
+    "approved_normal_derived_excluded_from_references": 8
+  },
+  "human_severity": {
+    "none": 9,
+    "severe": 1,
+    "mild": 2,
+    "moderate": 1
+  },
+  "human_parts": {
+    "left_eye": 1,
+    "right_eye": 1,
+    "eye_spacing": 1,
+    "mouth": 1,
+    "contour": 2
+  },
+  "wls_ranges_excluding_reference_self_comparison": {
+    "normal": [
+      0.008380395742640729,
+      0.040598097112440536
+    ],
+    "anomaly": [
+      0.03623016941652915,
+      0.06308985511375544
+    ]
+  },
+  "contour_alignment_diagnostic": {
+    "s0005": {
+      "chin_before_alignment": 0.003466981528138809,
+      "chin_after_alignment": 0.08320179241347014,
+      "complementary_fit_cost": 0.039028587708518074
+    },
+    "s0011": {
+      "chin_before_alignment": 0.12492974368399362,
+      "chin_after_alignment": 0.13937616874566686,
+      "complementary_fit_cost": 0.00787221860751332
+    },
+    "s0012": {
+      "chin_before_alignment": 0.21721977007938226,
+      "chin_after_alignment": 0.22564565402819559,
+      "complementary_fit_cost": 0.008761026226144083
+    }
+  },
+  "frozen_metadata": {
+    "schema_version": 1,
+    "stage": "frozen_development",
+    "character_id": "public-frontal-01",
+    "data_hash": "0295b9676709b19cdd659576e2261de52573788ff15f276f5e8102da6206befc",
+    "labels_hash": "7739882cd9ae354afe5c4a3303f8a3b237dffcb26c6ca4e0c212bfd68e50c0a8",
+    "extraction_hash": "9dd6762286976f34cbe65fcfd9d6af60490e69e792a95440f509c86645da375f",
+    "model_hash": "062cb4e53ecb0686109cbbd7f884414f0376fbada659fe10c09e5be02e677f88",
+    "implementation_hash": "6be7e1755eba8b7b1a67128cc15c4c1bb8250d21c10e3855bdd4a3dc9cc1dc12",
+    "policy": {
+      "min_confidence": 0.3,
+      "mad_floor": 1e-06,
+      "min_development": 20,
+      "min_calibration": 39,
+      "alpha": 0.05,
+      "coverage_target": 0.8,
+      "bootstrap_repeats": 2000,
+      "seed": 42
+    },
+    "candidate_variant": "pose_local",
+    "splits": {
+      "still_image_source": "development"
+    },
+    "artifact_hash": "3fe13c75bfe35d88b3679bb11823e11995e712045a27f15f81b0543599f1ffa4",
+    "references": {
+      "front": {
+        "sample_id": "s0000",
+        "source_id": "still_image_source",
+        "input_sha256": "61a1ba5b1c37b8cc650af140aa7df276a9aad97e59ce1e6051092daf3fc7dce6"
+      }
+    },
+    "normalizer_count": 0,
+    "pose_gate_count": 0,
+    "metadata_only": true
+  },
+  "scope": "Descriptive same-source synthetic deformations; human parts are not inferred from the transform",
+  "rows": [
+    {
+      "sample_id": "s0000",
+      "parent_id": null,
+      "primary": true,
+      "transform": null,
+      "human": {
+        "label": "normal",
+        "pose": "front",
+        "mode": "idle",
+        "occlusion": "none",
+        "severity": "none",
+        "parts": [],
+        "approve_anchor": true,
+        "review_status": "confirmed"
+      },
+      "metrics": {
+        "wls": {
+          "global": {
+            "value": 2.4173698494135653e-16,
+            "expression": 4.142698482422626e-16,
+            "status": "valid"
+          }
+        },
+        "single_local": {
+          "left_eye": {
+            "value": 8.676301778195949e-16,
+            "fit_cost": 5.110136233727124e-16,
+            "status": "valid",
+            "width_error": 3.406145986037953e-16,
+            "opening": 0.31331631130244075
+          },
+          "right_eye": {
+            "value": 8.362525661477589e-16,
+            "fit_cost": 5.214292315007225e-16,
+            "status": "valid",
+            "width_error": 6.812291972075906e-16,
+            "opening": 0.3288209995695273
+          },
+          "eye_spacing": {
+            "value": 1.6171007978071119e-15,
+            "fit_cost": 1.1507869215942809e-15,
+            "status": "valid",
+            "center_relation_error": 1.3624583944151813e-15
+          },
+          "nose": {
+            "value": 0.0,
+            "fit_cost": 1.1182067527734226e-16,
+            "status": "valid"
+          },
+          "mouth": {
+            "value": 0.0,
+            "fit_cost": 2.4173698494135653e-16,
+            "status": "valid",
+            "width_error": 0.0,
+            "opening": 0.009450278598961451
+          },
+          "contour": {
+            "value": 9.676874327153648e-16,
+            "fit_cost": 4.576191606610767e-16,
+            "status": "valid"
+          }
+        },
+        "pose_local": {
+          "left_eye": {
+            "value": null,
+            "fit_cost": 5.110136233727124e-16,
+            "status": "Uncalibrated or incomplete pose bank",
+            "width_error": 3.406145986037953e-16,
+            "opening": 0.31331631130244075,
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 8.676301778195949e-16,
+            "gap": null
+          },
+          "right_eye": {
+            "value": null,
+            "fit_cost": 5.214292315007225e-16,
+            "status": "Uncalibrated or incomplete pose bank",
+            "width_error": 6.812291972075906e-16,
+            "opening": 0.3288209995695273,
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 8.362525661477589e-16,
+            "gap": null
+          },
+          "eye_spacing": {
+            "value": null,
+            "fit_cost": 1.1507869215942809e-15,
+            "status": "Uncalibrated or incomplete pose bank",
+            "center_relation_error": 1.3624583944151813e-15,
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 1.6171007978071119e-15,
+            "gap": null
+          },
+          "nose": {
+            "value": null,
+            "fit_cost": 1.1182067527734226e-16,
+            "status": "Uncalibrated or incomplete pose bank",
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.0,
+            "gap": null
+          },
+          "mouth": {
+            "value": null,
+            "fit_cost": 2.4173698494135653e-16,
+            "status": "Uncalibrated or incomplete pose bank",
+            "width_error": 0.0,
+            "opening": 0.009450278598961451,
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.0,
+            "gap": null
+          },
+          "contour": {
+            "value": null,
+            "fit_cost": 4.576191606610767e-16,
+            "status": "Uncalibrated or incomplete pose bank",
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 9.676874327153648e-16,
+            "gap": null
+          }
+        },
+        "oracle": {
+          "left_eye": {
+            "value": 8.676301778195949e-16,
+            "fit_cost": 5.110136233727124e-16,
+            "status": "valid",
+            "width_error": 3.406145986037953e-16,
+            "opening": 0.31331631130244075
+          },
+          "right_eye": {
+            "value": 8.362525661477589e-16,
+            "fit_cost": 5.214292315007225e-16,
+            "status": "valid",
+            "width_error": 6.812291972075906e-16,
+            "opening": 0.3288209995695273
+          },
+          "eye_spacing": {
+            "value": 1.6171007978071119e-15,
+            "fit_cost": 1.1507869215942809e-15,
+            "status": "valid",
+            "center_relation_error": 1.3624583944151813e-15
+          },
+          "nose": {
+            "value": 0.0,
+            "fit_cost": 1.1182067527734226e-16,
+            "status": "valid"
+          },
+          "mouth": {
+            "value": 0.0,
+            "fit_cost": 2.4173698494135653e-16,
+            "status": "valid",
+            "width_error": 0.0,
+            "opening": 0.009450278598961451
+          },
+          "contour": {
+            "value": 9.676874327153648e-16,
+            "fit_cost": 4.576191606610767e-16,
+            "status": "valid"
+          }
+        }
+      }
+    },
+    {
+      "sample_id": "s0001",
+      "parent_id": "s0000",
+      "primary": false,
+      "transform": {
+        "kind": "similarity_rotation",
+        "degrees": -8
+      },
+      "human": {
+        "label": "normal",
+        "pose": "front",
+        "mode": "idle",
+        "occlusion": "none",
+        "severity": "none",
+        "parts": [],
+        "approve_anchor": true,
+        "review_status": "confirmed"
+      },
+      "metrics": {
+        "wls": {
+          "global": {
+            "value": 0.010314873787889551,
+            "expression": 0.012634201919266548,
+            "status": "valid"
+          }
+        },
+        "single_local": {
+          "left_eye": {
+            "value": 0.014518440625382604,
+            "fit_cost": 0.009332282070045505,
+            "status": "valid",
+            "width_error": 0.020408066560432567,
+            "opening": 0.3244935395638294
+          },
+          "right_eye": {
+            "value": 0.01984597027078098,
+            "fit_cost": 0.007286240757893644,
+            "status": "valid",
+            "width_error": 0.03283303632483689,
+            "opening": 0.34066563187392573
+          },
+          "eye_spacing": {
+            "value": 0.018249451074411165,
+            "fit_cost": 0.002603763080912238,
+            "status": "valid",
+            "center_relation_error": 0.00752615893285128
+          },
+          "nose": {
+            "value": 0.004028075842877852,
+            "fit_cost": 0.010791610219022767,
+            "status": "valid"
+          },
+          "mouth": {
+            "value": 0.0064401316864968585,
+            "fit_cost": 0.010305274851017225,
+            "status": "valid",
+            "width_error": 0.010092114641302455,
+            "opening": 0.011480413765853155
+          },
+          "contour": {
+            "value": 0.011859298191682596,
+            "fit_cost": 0.012385330189723997,
+            "status": "valid"
+          }
+        },
+        "pose_local": {
+          "left_eye": {
+            "value": null,
+            "fit_cost": 0.009332282070045505,
+            "status": "Uncalibrated or incomplete pose bank",
+            "width_error": 0.020408066560432567,
+            "opening": 0.3244935395638294,
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.014518440625382604,
+            "gap": null
+          },
+          "right_eye": {
+            "value": null,
+            "fit_cost": 0.007286240757893644,
+            "status": "Uncalibrated or incomplete pose bank",
+            "width_error": 0.03283303632483689,
+            "opening": 0.34066563187392573,
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.01984597027078098,
+            "gap": null
+          },
+          "eye_spacing": {
+            "value": null,
+            "fit_cost": 0.002603763080912238,
+            "status": "Uncalibrated or incomplete pose bank",
+            "center_relation_error": 0.00752615893285128,
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.018249451074411165,
+            "gap": null
+          },
+          "nose": {
+            "value": null,
+            "fit_cost": 0.010791610219022767,
+            "status": "Uncalibrated or incomplete pose bank",
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.004028075842877852,
+            "gap": null
+          },
+          "mouth": {
+            "value": null,
+            "fit_cost": 0.010305274851017225,
+            "status": "Uncalibrated or incomplete pose bank",
+            "width_error": 0.010092114641302455,
+            "opening": 0.011480413765853155,
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.0064401316864968585,
+            "gap": null
+          },
+          "contour": {
+            "value": null,
+            "fit_cost": 0.012385330189723997,
+            "status": "Uncalibrated or incomplete pose bank",
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.011859298191682596,
+            "gap": null
+          }
+        },
+        "oracle": {
+          "left_eye": {
+            "value": 0.014518440625382604,
+            "fit_cost": 0.009332282070045505,
+            "status": "valid",
+            "width_error": 0.020408066560432567,
+            "opening": 0.3244935395638294
+          },
+          "right_eye": {
+            "value": 0.01984597027078098,
+            "fit_cost": 0.007286240757893644,
+            "status": "valid",
+            "width_error": 0.03283303632483689,
+            "opening": 0.34066563187392573
+          },
+          "eye_spacing": {
+            "value": 0.018249451074411165,
+            "fit_cost": 0.002603763080912238,
+            "status": "valid",
+            "center_relation_error": 0.00752615893285128
+          },
+          "nose": {
+            "value": 0.004028075842877852,
+            "fit_cost": 0.010791610219022767,
+            "status": "valid"
+          },
+          "mouth": {
+            "value": 0.0064401316864968585,
+            "fit_cost": 0.010305274851017225,
+            "status": "valid",
+            "width_error": 0.010092114641302455,
+            "opening": 0.011480413765853155
+          },
+          "contour": {
+            "value": 0.011859298191682596,
+            "fit_cost": 0.012385330189723997,
+            "status": "valid"
+          }
+        }
+      }
+    },
+    {
+      "sample_id": "s0002",
+      "parent_id": "s0000",
+      "primary": false,
+      "transform": {
+        "kind": "similarity_rotation",
+        "degrees": 8
+      },
+      "human": {
+        "label": "normal",
+        "pose": "front",
+        "mode": "idle",
+        "occlusion": "none",
+        "severity": "none",
+        "parts": [],
+        "approve_anchor": true,
+        "review_status": "confirmed"
+      },
+      "metrics": {
+        "wls": {
+          "global": {
+            "value": 0.014582046485634366,
+            "expression": 0.01811492523215134,
+            "status": "valid"
+          }
+        },
+        "single_local": {
+          "left_eye": {
+            "value": 0.02553906851626231,
+            "fit_cost": 0.011170334634357166,
+            "status": "valid",
+            "width_error": 0.04129002163027268,
+            "opening": 0.32111655741911793
+          },
+          "right_eye": {
+            "value": 0.012221228749176036,
+            "fit_cost": 0.015371410591781964,
+            "status": "valid",
+            "width_error": 0.012228272771260736,
+            "opening": 0.33677415643918507
+          },
+          "eye_spacing": {
+            "value": 0.018508614654568295,
+            "fit_cost": 0.0119066686655343,
+            "status": "valid",
+            "center_relation_error": 0.01788112831282991
+          },
+          "nose": {
+            "value": 0.001131140888113036,
+            "fit_cost": 0.015322545975853565,
+            "status": "valid"
+          },
+          "mouth": {
+            "value": 0.009919265174862217,
+            "fit_cost": 0.014526890305496993,
+            "status": "valid",
+            "width_error": 0.012622446528027863,
+            "opening": 0.0034086364151968453
+          },
+          "contour": {
+            "value": 0.01910951266488608,
+            "fit_cost": 0.014364018995432494,
+            "status": "valid"
+          }
+        },
+        "pose_local": {
+          "left_eye": {
+            "value": null,
+            "fit_cost": 0.011170334634357166,
+            "status": "Uncalibrated or incomplete pose bank",
+            "width_error": 0.04129002163027268,
+            "opening": 0.32111655741911793,
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.02553906851626231,
+            "gap": null
+          },
+          "right_eye": {
+            "value": null,
+            "fit_cost": 0.015371410591781964,
+            "status": "Uncalibrated or incomplete pose bank",
+            "width_error": 0.012228272771260736,
+            "opening": 0.33677415643918507,
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.012221228749176036,
+            "gap": null
+          },
+          "eye_spacing": {
+            "value": null,
+            "fit_cost": 0.0119066686655343,
+            "status": "Uncalibrated or incomplete pose bank",
+            "center_relation_error": 0.01788112831282991,
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.018508614654568295,
+            "gap": null
+          },
+          "nose": {
+            "value": null,
+            "fit_cost": 0.015322545975853565,
+            "status": "Uncalibrated or incomplete pose bank",
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.001131140888113036,
+            "gap": null
+          },
+          "mouth": {
+            "value": null,
+            "fit_cost": 0.014526890305496993,
+            "status": "Uncalibrated or incomplete pose bank",
+            "width_error": 0.012622446528027863,
+            "opening": 0.0034086364151968453,
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.009919265174862217,
+            "gap": null
+          },
+          "contour": {
+            "value": null,
+            "fit_cost": 0.014364018995432494,
+            "status": "Uncalibrated or incomplete pose bank",
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.01910951266488608,
+            "gap": null
+          }
+        },
+        "oracle": {
+          "left_eye": {
+            "value": 0.02553906851626231,
+            "fit_cost": 0.011170334634357166,
+            "status": "valid",
+            "width_error": 0.04129002163027268,
+            "opening": 0.32111655741911793
+          },
+          "right_eye": {
+            "value": 0.012221228749176036,
+            "fit_cost": 0.015371410591781964,
+            "status": "valid",
+            "width_error": 0.012228272771260736,
+            "opening": 0.33677415643918507
+          },
+          "eye_spacing": {
+            "value": 0.018508614654568295,
+            "fit_cost": 0.0119066686655343,
+            "status": "valid",
+            "center_relation_error": 0.01788112831282991
+          },
+          "nose": {
+            "value": 0.001131140888113036,
+            "fit_cost": 0.015322545975853565,
+            "status": "valid"
+          },
+          "mouth": {
+            "value": 0.009919265174862217,
+            "fit_cost": 0.014526890305496993,
+            "status": "valid",
+            "width_error": 0.012622446528027863,
+            "opening": 0.0034086364151968453
+          },
+          "contour": {
+            "value": 0.01910951266488608,
+            "fit_cost": 0.014364018995432494,
+            "status": "valid"
+          }
+        }
+      }
+    },
+    {
+      "sample_id": "s0003",
+      "parent_id": "s0000",
+      "primary": false,
+      "transform": {
+        "kind": "similarity_scale",
+        "scale": 0.9
+      },
+      "human": {
+        "label": "normal",
+        "pose": "front",
+        "mode": "idle",
+        "occlusion": "none",
+        "severity": "none",
+        "parts": [],
+        "approve_anchor": true,
+        "review_status": "confirmed"
+      },
+      "metrics": {
+        "wls": {
+          "global": {
+            "value": 0.008380395742640729,
+            "expression": 0.006634803642879819,
+            "status": "valid"
+          }
+        },
+        "single_local": {
+          "left_eye": {
+            "value": 0.00913018246046503,
+            "fit_cost": 0.008610637068127864,
+            "status": "valid",
+            "width_error": 0.0035640638716637274,
+            "opening": 0.32083510363954143
+          },
+          "right_eye": {
+            "value": 0.014873368852981713,
+            "fit_cost": 0.006689189285221606,
+            "status": "valid",
+            "width_error": 0.021467356579431687,
+            "opening": 0.3265805618657913
+          },
+          "eye_spacing": {
+            "value": 0.015062364957838347,
+            "fit_cost": 0.005352354770867226,
+            "status": "valid",
+            "center_relation_error": 0.0071102446661689194
+          },
+          "nose": {
+            "value": 0.0039697019013930175,
+            "fit_cost": 0.008735334573787343,
+            "status": "valid"
+          },
+          "mouth": {
+            "value": 0.0033774550721168565,
+            "fit_cost": 0.008385156092464182,
+            "status": "valid",
+            "width_error": 0.002268083483436773,
+            "opening": 0.014119505465510333
+          },
+          "contour": {
+            "value": 0.012295027055533026,
+            "fit_cost": 0.006510351449655904,
+            "status": "valid"
+          }
+        },
+        "pose_local": {
+          "left_eye": {
+            "value": null,
+            "fit_cost": 0.008610637068127864,
+            "status": "Uncalibrated or incomplete pose bank",
+            "width_error": 0.0035640638716637274,
+            "opening": 0.32083510363954143,
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.00913018246046503,
+            "gap": null
+          },
+          "right_eye": {
+            "value": null,
+            "fit_cost": 0.006689189285221606,
+            "status": "Uncalibrated or incomplete pose bank",
+            "width_error": 0.021467356579431687,
+            "opening": 0.3265805618657913,
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.014873368852981713,
+            "gap": null
+          },
+          "eye_spacing": {
+            "value": null,
+            "fit_cost": 0.005352354770867226,
+            "status": "Uncalibrated or incomplete pose bank",
+            "center_relation_error": 0.0071102446661689194,
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.015062364957838347,
+            "gap": null
+          },
+          "nose": {
+            "value": null,
+            "fit_cost": 0.008735334573787343,
+            "status": "Uncalibrated or incomplete pose bank",
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.0039697019013930175,
+            "gap": null
+          },
+          "mouth": {
+            "value": null,
+            "fit_cost": 0.008385156092464182,
+            "status": "Uncalibrated or incomplete pose bank",
+            "width_error": 0.002268083483436773,
+            "opening": 0.014119505465510333,
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.0033774550721168565,
+            "gap": null
+          },
+          "contour": {
+            "value": null,
+            "fit_cost": 0.006510351449655904,
+            "status": "Uncalibrated or incomplete pose bank",
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.012295027055533026,
+            "gap": null
+          }
+        },
+        "oracle": {
+          "left_eye": {
+            "value": 0.00913018246046503,
+            "fit_cost": 0.008610637068127864,
+            "status": "valid",
+            "width_error": 0.0035640638716637274,
+            "opening": 0.32083510363954143
+          },
+          "right_eye": {
+            "value": 0.014873368852981713,
+            "fit_cost": 0.006689189285221606,
+            "status": "valid",
+            "width_error": 0.021467356579431687,
+            "opening": 0.3265805618657913
+          },
+          "eye_spacing": {
+            "value": 0.015062364957838347,
+            "fit_cost": 0.005352354770867226,
+            "status": "valid",
+            "center_relation_error": 0.0071102446661689194
+          },
+          "nose": {
+            "value": 0.0039697019013930175,
+            "fit_cost": 0.008735334573787343,
+            "status": "valid"
+          },
+          "mouth": {
+            "value": 0.0033774550721168565,
+            "fit_cost": 0.008385156092464182,
+            "status": "valid",
+            "width_error": 0.002268083483436773,
+            "opening": 0.014119505465510333
+          },
+          "contour": {
+            "value": 0.012295027055533026,
+            "fit_cost": 0.006510351449655904,
+            "status": "valid"
+          }
+        }
+      }
+    },
+    {
+      "sample_id": "s0004",
+      "parent_id": "s0000",
+      "primary": false,
+      "transform": {
+        "kind": "eye_spacing",
+        "strength": 0.05,
+        "method": "inverse_compact_elliptic_displacement"
+      },
+      "human": {
+        "label": "normal",
+        "pose": "front",
+        "mode": "idle",
+        "occlusion": "none",
+        "severity": "none",
+        "parts": [],
+        "approve_anchor": true,
+        "review_status": "confirmed"
+      },
+      "metrics": {
+        "wls": {
+          "global": {
+            "value": 0.02275644206063749,
+            "expression": 0.022471347979141142,
+            "status": "valid"
+          }
+        },
+        "single_local": {
+          "left_eye": {
+            "value": 0.04827051298735595,
+            "fit_cost": 0.016331099101225408,
+            "status": "valid",
+            "width_error": 0.0071573102344908955,
+            "opening": 0.3136997891760131
+          },
+          "right_eye": {
+            "value": 0.03760189954870561,
+            "fit_cost": 0.01942102460725454,
+            "status": "valid",
+            "width_error": 0.03964621991000163,
+            "opening": 0.33132867824264606
+          },
+          "eye_spacing": {
+            "value": 0.037038863452192636,
+            "fit_cost": 0.011547879900895335,
+            "status": "valid",
+            "center_relation_error": 0.06513719930303914
+          },
+          "nose": {
+            "value": 0.0034255079944375947,
+            "fit_cost": 0.023964918597736914,
+            "status": "valid"
+          },
+          "mouth": {
+            "value": 0.007374550749837647,
+            "fit_cost": 0.022747932275922447,
+            "status": "valid",
+            "width_error": 0.008083187503133589,
+            "opening": 0.009384935937886167
+          },
+          "contour": {
+            "value": 0.04031704459393235,
+            "fit_cost": 0.0219882131393736,
+            "status": "valid"
+          }
+        },
+        "pose_local": {
+          "left_eye": {
+            "value": null,
+            "fit_cost": 0.016331099101225408,
+            "status": "Uncalibrated or incomplete pose bank",
+            "width_error": 0.0071573102344908955,
+            "opening": 0.3136997891760131,
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.04827051298735595,
+            "gap": null
+          },
+          "right_eye": {
+            "value": null,
+            "fit_cost": 0.01942102460725454,
+            "status": "Uncalibrated or incomplete pose bank",
+            "width_error": 0.03964621991000163,
+            "opening": 0.33132867824264606,
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.03760189954870561,
+            "gap": null
+          },
+          "eye_spacing": {
+            "value": null,
+            "fit_cost": 0.011547879900895335,
+            "status": "Uncalibrated or incomplete pose bank",
+            "center_relation_error": 0.06513719930303914,
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.037038863452192636,
+            "gap": null
+          },
+          "nose": {
+            "value": null,
+            "fit_cost": 0.023964918597736914,
+            "status": "Uncalibrated or incomplete pose bank",
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.0034255079944375947,
+            "gap": null
+          },
+          "mouth": {
+            "value": null,
+            "fit_cost": 0.022747932275922447,
+            "status": "Uncalibrated or incomplete pose bank",
+            "width_error": 0.008083187503133589,
+            "opening": 0.009384935937886167,
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.007374550749837647,
+            "gap": null
+          },
+          "contour": {
+            "value": null,
+            "fit_cost": 0.0219882131393736,
+            "status": "Uncalibrated or incomplete pose bank",
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.04031704459393235,
+            "gap": null
+          }
+        },
+        "oracle": {
+          "left_eye": {
+            "value": 0.04827051298735595,
+            "fit_cost": 0.016331099101225408,
+            "status": "valid",
+            "width_error": 0.0071573102344908955,
+            "opening": 0.3136997891760131
+          },
+          "right_eye": {
+            "value": 0.03760189954870561,
+            "fit_cost": 0.01942102460725454,
+            "status": "valid",
+            "width_error": 0.03964621991000163,
+            "opening": 0.33132867824264606
+          },
+          "eye_spacing": {
+            "value": 0.037038863452192636,
+            "fit_cost": 0.011547879900895335,
+            "status": "valid",
+            "center_relation_error": 0.06513719930303914
+          },
+          "nose": {
+            "value": 0.0034255079944375947,
+            "fit_cost": 0.023964918597736914,
+            "status": "valid"
+          },
+          "mouth": {
+            "value": 0.007374550749837647,
+            "fit_cost": 0.022747932275922447,
+            "status": "valid",
+            "width_error": 0.008083187503133589,
+            "opening": 0.009384935937886167
+          },
+          "contour": {
+            "value": 0.04031704459393235,
+            "fit_cost": 0.0219882131393736,
+            "status": "valid"
+          }
+        }
+      }
+    },
+    {
+      "sample_id": "s0005",
+      "parent_id": "s0000",
+      "primary": false,
+      "transform": {
+        "kind": "eye_spacing",
+        "strength": 0.1,
+        "method": "inverse_compact_elliptic_displacement"
+      },
+      "human": {
+        "label": "normal",
+        "pose": "front",
+        "mode": "idle",
+        "occlusion": "none",
+        "severity": "none",
+        "parts": [],
+        "approve_anchor": true,
+        "review_status": "confirmed"
+      },
+      "metrics": {
+        "wls": {
+          "global": {
+            "value": 0.040598097112440536,
+            "expression": 0.04425820011532114,
+            "status": "valid"
+          }
+        },
+        "single_local": {
+          "left_eye": {
+            "value": 0.0882325257828767,
+            "fit_cost": 0.028148913787778767,
+            "status": "valid",
+            "width_error": 0.01673826194229207,
+            "opening": 0.30879263188562456
+          },
+          "right_eye": {
+            "value": 0.07063794584047248,
+            "fit_cost": 0.034058979052164734,
+            "status": "valid",
+            "width_error": 0.061520848971235276,
+            "opening": 0.3195848097816054
+          },
+          "eye_spacing": {
+            "value": 0.06804835041741376,
+            "fit_cost": 0.017643967613675957,
+            "status": "valid",
+            "center_relation_error": 0.12481382611307312
+          },
+          "nose": {
+            "value": 0.004972741143055014,
+            "fit_cost": 0.04285898597454326,
+            "status": "valid"
+          },
+          "mouth": {
+            "value": 0.013062127306911961,
+            "fit_cost": 0.04065583321597992,
+            "status": "valid",
+            "width_error": 0.02224798012748105,
+            "opening": 0.015227762715468815
+          },
+          "contour": {
+            "value": 0.07383006469465876,
+            "fit_cost": 0.039028587708518074,
+            "status": "valid"
+          }
+        },
+        "pose_local": {
+          "left_eye": {
+            "value": null,
+            "fit_cost": 0.028148913787778767,
+            "status": "Uncalibrated or incomplete pose bank",
+            "width_error": 0.01673826194229207,
+            "opening": 0.30879263188562456,
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.0882325257828767,
+            "gap": null
+          },
+          "right_eye": {
+            "value": null,
+            "fit_cost": 0.034058979052164734,
+            "status": "Uncalibrated or incomplete pose bank",
+            "width_error": 0.061520848971235276,
+            "opening": 0.3195848097816054,
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.07063794584047248,
+            "gap": null
+          },
+          "eye_spacing": {
+            "value": null,
+            "fit_cost": 0.017643967613675957,
+            "status": "Uncalibrated or incomplete pose bank",
+            "center_relation_error": 0.12481382611307312,
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.06804835041741376,
+            "gap": null
+          },
+          "nose": {
+            "value": null,
+            "fit_cost": 0.04285898597454326,
+            "status": "Uncalibrated or incomplete pose bank",
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.004972741143055014,
+            "gap": null
+          },
+          "mouth": {
+            "value": null,
+            "fit_cost": 0.04065583321597992,
+            "status": "Uncalibrated or incomplete pose bank",
+            "width_error": 0.02224798012748105,
+            "opening": 0.015227762715468815,
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.013062127306911961,
+            "gap": null
+          },
+          "contour": {
+            "value": null,
+            "fit_cost": 0.039028587708518074,
+            "status": "Uncalibrated or incomplete pose bank",
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.07383006469465876,
+            "gap": null
+          }
+        },
+        "oracle": {
+          "left_eye": {
+            "value": 0.0882325257828767,
+            "fit_cost": 0.028148913787778767,
+            "status": "valid",
+            "width_error": 0.01673826194229207,
+            "opening": 0.30879263188562456
+          },
+          "right_eye": {
+            "value": 0.07063794584047248,
+            "fit_cost": 0.034058979052164734,
+            "status": "valid",
+            "width_error": 0.061520848971235276,
+            "opening": 0.3195848097816054
+          },
+          "eye_spacing": {
+            "value": 0.06804835041741376,
+            "fit_cost": 0.017643967613675957,
+            "status": "valid",
+            "center_relation_error": 0.12481382611307312
+          },
+          "nose": {
+            "value": 0.004972741143055014,
+            "fit_cost": 0.04285898597454326,
+            "status": "valid"
+          },
+          "mouth": {
+            "value": 0.013062127306911961,
+            "fit_cost": 0.04065583321597992,
+            "status": "valid",
+            "width_error": 0.02224798012748105,
+            "opening": 0.015227762715468815
+          },
+          "contour": {
+            "value": 0.07383006469465876,
+            "fit_cost": 0.039028587708518074,
+            "status": "valid"
+          }
+        }
+      }
+    },
+    {
+      "sample_id": "s0006",
+      "parent_id": "s0000",
+      "primary": false,
+      "transform": {
+        "kind": "eye_spacing",
+        "strength": 0.2,
+        "method": "inverse_compact_elliptic_displacement"
+      },
+      "human": {
+        "label": "geometry_anomaly",
+        "pose": "front",
+        "mode": "idle",
+        "occlusion": "none",
+        "severity": "severe",
+        "parts": [
+          "left_eye",
+          "right_eye",
+          "eye_spacing"
+        ],
+        "approve_anchor": false,
+        "review_status": "confirmed"
+      },
+      "metrics": {
+        "wls": {
+          "global": {
+            "value": 0.05973827982100679,
+            "expression": 0.07608735489493816,
+            "status": "valid"
+          }
+        },
+        "single_local": {
+          "left_eye": {
+            "value": 0.11701972147027052,
+            "fit_cost": 0.04577113222890632,
+            "status": "valid",
+            "width_error": 0.03746799103589356,
+            "opening": 0.26097546415983086
+          },
+          "right_eye": {
+            "value": 0.1087217164942993,
+            "fit_cost": 0.04841339167229297,
+            "status": "valid",
+            "width_error": 0.0832062677556443,
+            "opening": 0.3180619325820697
+          },
+          "eye_spacing": {
+            "value": 0.10314254668577176,
+            "fit_cost": 0.025167530127726087,
+            "status": "valid",
+            "center_relation_error": 0.18148908772989228
+          },
+          "nose": {
+            "value": 0.02359490517347414,
+            "fit_cost": 0.062471442240327316,
+            "status": "valid"
+          },
+          "mouth": {
+            "value": 0.01949469962882813,
+            "fit_cost": 0.059701351666659186,
+            "status": "valid",
+            "width_error": 0.03831377878737814,
+            "opening": 0.012048118847577362
+          },
+          "contour": {
+            "value": 0.10309446059596779,
+            "fit_cost": 0.058336794659578986,
+            "status": "valid"
+          }
+        },
+        "pose_local": {
+          "left_eye": {
+            "value": null,
+            "fit_cost": 0.04577113222890632,
+            "status": "Uncalibrated or incomplete pose bank",
+            "width_error": 0.03746799103589356,
+            "opening": 0.26097546415983086,
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.11701972147027052,
+            "gap": null
+          },
+          "right_eye": {
+            "value": null,
+            "fit_cost": 0.04841339167229297,
+            "status": "Uncalibrated or incomplete pose bank",
+            "width_error": 0.0832062677556443,
+            "opening": 0.3180619325820697,
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.1087217164942993,
+            "gap": null
+          },
+          "eye_spacing": {
+            "value": null,
+            "fit_cost": 0.025167530127726087,
+            "status": "Uncalibrated or incomplete pose bank",
+            "center_relation_error": 0.18148908772989228,
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.10314254668577176,
+            "gap": null
+          },
+          "nose": {
+            "value": null,
+            "fit_cost": 0.062471442240327316,
+            "status": "Uncalibrated or incomplete pose bank",
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.02359490517347414,
+            "gap": null
+          },
+          "mouth": {
+            "value": null,
+            "fit_cost": 0.059701351666659186,
+            "status": "Uncalibrated or incomplete pose bank",
+            "width_error": 0.03831377878737814,
+            "opening": 0.012048118847577362,
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.01949469962882813,
+            "gap": null
+          },
+          "contour": {
+            "value": null,
+            "fit_cost": 0.058336794659578986,
+            "status": "Uncalibrated or incomplete pose bank",
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.10309446059596779,
+            "gap": null
+          }
+        },
+        "oracle": {
+          "left_eye": {
+            "value": 0.11701972147027052,
+            "fit_cost": 0.04577113222890632,
+            "status": "valid",
+            "width_error": 0.03746799103589356,
+            "opening": 0.26097546415983086
+          },
+          "right_eye": {
+            "value": 0.1087217164942993,
+            "fit_cost": 0.04841339167229297,
+            "status": "valid",
+            "width_error": 0.0832062677556443,
+            "opening": 0.3180619325820697
+          },
+          "eye_spacing": {
+            "value": 0.10314254668577176,
+            "fit_cost": 0.025167530127726087,
+            "status": "valid",
+            "center_relation_error": 0.18148908772989228
+          },
+          "nose": {
+            "value": 0.02359490517347414,
+            "fit_cost": 0.062471442240327316,
+            "status": "valid"
+          },
+          "mouth": {
+            "value": 0.01949469962882813,
+            "fit_cost": 0.059701351666659186,
+            "status": "valid",
+            "width_error": 0.03831377878737814,
+            "opening": 0.012048118847577362
+          },
+          "contour": {
+            "value": 0.10309446059596779,
+            "fit_cost": 0.058336794659578986,
+            "status": "valid"
+          }
+        }
+      }
+    },
+    {
+      "sample_id": "s0007",
+      "parent_id": "s0000",
+      "primary": false,
+      "transform": {
+        "kind": "nose_mouth",
+        "strength": 0.05,
+        "method": "inverse_compact_elliptic_displacement"
+      },
+      "human": {
+        "label": "normal",
+        "pose": "front",
+        "mode": "idle",
+        "occlusion": "none",
+        "severity": "none",
+        "parts": [],
+        "approve_anchor": true,
+        "review_status": "confirmed"
+      },
+      "metrics": {
+        "wls": {
+          "global": {
+            "value": 0.008948536240529282,
+            "expression": 0.02207606013557262,
+            "status": "valid"
+          }
+        },
+        "single_local": {
+          "left_eye": {
+            "value": 0.006473447408172295,
+            "fit_cost": 0.00963771610832059,
+            "status": "valid",
+            "width_error": 0.0007085928805281359,
+            "opening": 0.31434200623614633
+          },
+          "right_eye": {
+            "value": 0.007131436159943006,
+            "fit_cost": 0.009542460590176967,
+            "status": "valid",
+            "width_error": 0.0030484822773290798,
+            "opening": 0.32976334998639695
+          },
+          "eye_spacing": {
+            "value": 0.005854834004580658,
+            "fit_cost": 0.010703171349780488,
+            "status": "valid",
+            "center_relation_error": 0.00837126989369782
+          },
+          "nose": {
+            "value": 0.026762991918504127,
+            "fit_cost": 0.004204737493732515,
+            "status": "valid"
+          },
+          "mouth": {
+            "value": 0.045894841839588925,
+            "fit_cost": 0.008945110564951314,
+            "status": "valid",
+            "width_error": 0.014536841506054506,
+            "opening": 0.005430490024777977
+          },
+          "contour": {
+            "value": 0.007165215187107063,
+            "fit_cost": 0.011179151780041485,
+            "status": "valid"
+          }
+        },
+        "pose_local": {
+          "left_eye": {
+            "value": null,
+            "fit_cost": 0.00963771610832059,
+            "status": "Uncalibrated or incomplete pose bank",
+            "width_error": 0.0007085928805281359,
+            "opening": 0.31434200623614633,
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.006473447408172295,
+            "gap": null
+          },
+          "right_eye": {
+            "value": null,
+            "fit_cost": 0.009542460590176967,
+            "status": "Uncalibrated or incomplete pose bank",
+            "width_error": 0.0030484822773290798,
+            "opening": 0.32976334998639695,
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.007131436159943006,
+            "gap": null
+          },
+          "eye_spacing": {
+            "value": null,
+            "fit_cost": 0.010703171349780488,
+            "status": "Uncalibrated or incomplete pose bank",
+            "center_relation_error": 0.00837126989369782,
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.005854834004580658,
+            "gap": null
+          },
+          "nose": {
+            "value": null,
+            "fit_cost": 0.004204737493732515,
+            "status": "Uncalibrated or incomplete pose bank",
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.026762991918504127,
+            "gap": null
+          },
+          "mouth": {
+            "value": null,
+            "fit_cost": 0.008945110564951314,
+            "status": "Uncalibrated or incomplete pose bank",
+            "width_error": 0.014536841506054506,
+            "opening": 0.005430490024777977,
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.045894841839588925,
+            "gap": null
+          },
+          "contour": {
+            "value": null,
+            "fit_cost": 0.011179151780041485,
+            "status": "Uncalibrated or incomplete pose bank",
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.007165215187107063,
+            "gap": null
+          }
+        },
+        "oracle": {
+          "left_eye": {
+            "value": 0.006473447408172295,
+            "fit_cost": 0.00963771610832059,
+            "status": "valid",
+            "width_error": 0.0007085928805281359,
+            "opening": 0.31434200623614633
+          },
+          "right_eye": {
+            "value": 0.007131436159943006,
+            "fit_cost": 0.009542460590176967,
+            "status": "valid",
+            "width_error": 0.0030484822773290798,
+            "opening": 0.32976334998639695
+          },
+          "eye_spacing": {
+            "value": 0.005854834004580658,
+            "fit_cost": 0.010703171349780488,
+            "status": "valid",
+            "center_relation_error": 0.00837126989369782
+          },
+          "nose": {
+            "value": 0.026762991918504127,
+            "fit_cost": 0.004204737493732515,
+            "status": "valid"
+          },
+          "mouth": {
+            "value": 0.045894841839588925,
+            "fit_cost": 0.008945110564951314,
+            "status": "valid",
+            "width_error": 0.014536841506054506,
+            "opening": 0.005430490024777977
+          },
+          "contour": {
+            "value": 0.007165215187107063,
+            "fit_cost": 0.011179151780041485,
+            "status": "valid"
+          }
+        }
+      }
+    },
+    {
+      "sample_id": "s0008",
+      "parent_id": "s0000",
+      "primary": false,
+      "transform": {
+        "kind": "nose_mouth",
+        "strength": 0.1,
+        "method": "inverse_compact_elliptic_displacement"
+      },
+      "human": {
+        "label": "normal",
+        "pose": "front",
+        "mode": "idle",
+        "occlusion": "none",
+        "severity": "none",
+        "parts": [],
+        "approve_anchor": true,
+        "review_status": "confirmed"
+      },
+      "metrics": {
+        "wls": {
+          "global": {
+            "value": 0.016792439902012166,
+            "expression": 0.046048131226716325,
+            "status": "valid"
+          }
+        },
+        "single_local": {
+          "left_eye": {
+            "value": 0.010758339043200057,
+            "fit_cost": 0.018246660287022678,
+            "status": "valid",
+            "width_error": 0.002061750893577874,
+            "opening": 0.3144148998117483
+          },
+          "right_eye": {
+            "value": 0.013178795119619122,
+            "fit_cost": 0.017977375414471582,
+            "status": "valid",
+            "width_error": 0.0004122172476783784,
+            "opening": 0.3292234810149814
+          },
+          "eye_spacing": {
+            "value": 0.010146977764364332,
+            "fit_cost": 0.02036710161068216,
+            "status": "valid",
+            "center_relation_error": 0.01434113031573178
+          },
+          "nose": {
+            "value": 0.05061256912632791,
+            "fit_cost": 0.00760442477173347,
+            "status": "valid"
+          },
+          "mouth": {
+            "value": 0.09520695456875963,
+            "fit_cost": 0.01678508209614611,
+            "status": "valid",
+            "width_error": 0.054554805730653126,
+            "opening": 0.008577823663987412
+          },
+          "contour": {
+            "value": 0.013748891377543523,
+            "fit_cost": 0.02081536725578172,
+            "status": "valid"
+          }
+        },
+        "pose_local": {
+          "left_eye": {
+            "value": null,
+            "fit_cost": 0.018246660287022678,
+            "status": "Uncalibrated or incomplete pose bank",
+            "width_error": 0.002061750893577874,
+            "opening": 0.3144148998117483,
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.010758339043200057,
+            "gap": null
+          },
+          "right_eye": {
+            "value": null,
+            "fit_cost": 0.017977375414471582,
+            "status": "Uncalibrated or incomplete pose bank",
+            "width_error": 0.0004122172476783784,
+            "opening": 0.3292234810149814,
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.013178795119619122,
+            "gap": null
+          },
+          "eye_spacing": {
+            "value": null,
+            "fit_cost": 0.02036710161068216,
+            "status": "Uncalibrated or incomplete pose bank",
+            "center_relation_error": 0.01434113031573178,
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.010146977764364332,
+            "gap": null
+          },
+          "nose": {
+            "value": null,
+            "fit_cost": 0.00760442477173347,
+            "status": "Uncalibrated or incomplete pose bank",
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.05061256912632791,
+            "gap": null
+          },
+          "mouth": {
+            "value": null,
+            "fit_cost": 0.01678508209614611,
+            "status": "Uncalibrated or incomplete pose bank",
+            "width_error": 0.054554805730653126,
+            "opening": 0.008577823663987412,
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.09520695456875963,
+            "gap": null
+          },
+          "contour": {
+            "value": null,
+            "fit_cost": 0.02081536725578172,
+            "status": "Uncalibrated or incomplete pose bank",
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.013748891377543523,
+            "gap": null
+          }
+        },
+        "oracle": {
+          "left_eye": {
+            "value": 0.010758339043200057,
+            "fit_cost": 0.018246660287022678,
+            "status": "valid",
+            "width_error": 0.002061750893577874,
+            "opening": 0.3144148998117483
+          },
+          "right_eye": {
+            "value": 0.013178795119619122,
+            "fit_cost": 0.017977375414471582,
+            "status": "valid",
+            "width_error": 0.0004122172476783784,
+            "opening": 0.3292234810149814
+          },
+          "eye_spacing": {
+            "value": 0.010146977764364332,
+            "fit_cost": 0.02036710161068216,
+            "status": "valid",
+            "center_relation_error": 0.01434113031573178
+          },
+          "nose": {
+            "value": 0.05061256912632791,
+            "fit_cost": 0.00760442477173347,
+            "status": "valid"
+          },
+          "mouth": {
+            "value": 0.09520695456875963,
+            "fit_cost": 0.01678508209614611,
+            "status": "valid",
+            "width_error": 0.054554805730653126,
+            "opening": 0.008577823663987412
+          },
+          "contour": {
+            "value": 0.013748891377543523,
+            "fit_cost": 0.02081536725578172,
+            "status": "valid"
+          }
+        }
+      }
+    },
+    {
+      "sample_id": "s0009",
+      "parent_id": "s0000",
+      "primary": false,
+      "transform": {
+        "kind": "nose_mouth",
+        "strength": 0.2,
+        "method": "inverse_compact_elliptic_displacement"
+      },
+      "human": {
+        "label": "geometry_anomaly",
+        "pose": "front",
+        "mode": "idle",
+        "occlusion": "none",
+        "severity": "mild",
+        "parts": [
+          "mouth"
+        ],
+        "approve_anchor": false,
+        "review_status": "confirmed"
+      },
+      "metrics": {
+        "wls": {
+          "global": {
+            "value": 0.03623016941652915,
+            "expression": 0.09324699880085856,
+            "status": "valid"
+          }
+        },
+        "single_local": {
+          "left_eye": {
+            "value": 0.01745810485260311,
+            "fit_cost": 0.03983507345784807,
+            "status": "valid",
+            "width_error": 0.004270799709172978,
+            "opening": 0.315749852354607
+          },
+          "right_eye": {
+            "value": 0.024457852289057735,
+            "fit_cost": 0.03916652979690751,
+            "status": "valid",
+            "width_error": 0.010556858127102503,
+            "opening": 0.32568950468697483
+          },
+          "eye_spacing": {
+            "value": 0.019675763563320098,
+            "fit_cost": 0.044674063039072565,
+            "status": "valid",
+            "center_relation_error": 0.01759255094005294
+          },
+          "nose": {
+            "value": 0.11468581378118263,
+            "fit_cost": 0.011705209163235005,
+            "status": "valid"
+          },
+          "mouth": {
+            "value": 0.2071718650660613,
+            "fit_cost": 0.03618063670328268,
+            "status": "valid",
+            "width_error": 0.1722833887647512,
+            "opening": 0.010485411217441426
+          },
+          "contour": {
+            "value": 0.029703166131208315,
+            "fit_cost": 0.04615124288272707,
+            "status": "valid"
+          }
+        },
+        "pose_local": {
+          "left_eye": {
+            "value": null,
+            "fit_cost": 0.03983507345784807,
+            "status": "Uncalibrated or incomplete pose bank",
+            "width_error": 0.004270799709172978,
+            "opening": 0.315749852354607,
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.01745810485260311,
+            "gap": null
+          },
+          "right_eye": {
+            "value": null,
+            "fit_cost": 0.03916652979690751,
+            "status": "Uncalibrated or incomplete pose bank",
+            "width_error": 0.010556858127102503,
+            "opening": 0.32568950468697483,
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.024457852289057735,
+            "gap": null
+          },
+          "eye_spacing": {
+            "value": null,
+            "fit_cost": 0.044674063039072565,
+            "status": "Uncalibrated or incomplete pose bank",
+            "center_relation_error": 0.01759255094005294,
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.019675763563320098,
+            "gap": null
+          },
+          "nose": {
+            "value": null,
+            "fit_cost": 0.011705209163235005,
+            "status": "Uncalibrated or incomplete pose bank",
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.11468581378118263,
+            "gap": null
+          },
+          "mouth": {
+            "value": null,
+            "fit_cost": 0.03618063670328268,
+            "status": "Uncalibrated or incomplete pose bank",
+            "width_error": 0.1722833887647512,
+            "opening": 0.010485411217441426,
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.2071718650660613,
+            "gap": null
+          },
+          "contour": {
+            "value": null,
+            "fit_cost": 0.04615124288272707,
+            "status": "Uncalibrated or incomplete pose bank",
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.029703166131208315,
+            "gap": null
+          }
+        },
+        "oracle": {
+          "left_eye": {
+            "value": 0.01745810485260311,
+            "fit_cost": 0.03983507345784807,
+            "status": "valid",
+            "width_error": 0.004270799709172978,
+            "opening": 0.315749852354607
+          },
+          "right_eye": {
+            "value": 0.024457852289057735,
+            "fit_cost": 0.03916652979690751,
+            "status": "valid",
+            "width_error": 0.010556858127102503,
+            "opening": 0.32568950468697483
+          },
+          "eye_spacing": {
+            "value": 0.019675763563320098,
+            "fit_cost": 0.044674063039072565,
+            "status": "valid",
+            "center_relation_error": 0.01759255094005294
+          },
+          "nose": {
+            "value": 0.11468581378118263,
+            "fit_cost": 0.011705209163235005,
+            "status": "valid"
+          },
+          "mouth": {
+            "value": 0.2071718650660613,
+            "fit_cost": 0.03618063670328268,
+            "status": "valid",
+            "width_error": 0.1722833887647512,
+            "opening": 0.010485411217441426
+          },
+          "contour": {
+            "value": 0.029703166131208315,
+            "fit_cost": 0.04615124288272707,
+            "status": "valid"
+          }
+        }
+      }
+    },
+    {
+      "sample_id": "s0010",
+      "parent_id": "s0000",
+      "primary": false,
+      "transform": {
+        "kind": "chin",
+        "strength": 0.05,
+        "method": "inverse_compact_elliptic_displacement"
+      },
+      "human": {
+        "label": "normal",
+        "pose": "front",
+        "mode": "idle",
+        "occlusion": "none",
+        "severity": "none",
+        "parts": [],
+        "approve_anchor": true,
+        "review_status": "confirmed"
+      },
+      "metrics": {
+        "wls": {
+          "global": {
+            "value": 0.022446408533565363,
+            "expression": 0.012538210984438187,
+            "status": "valid"
+          }
+        },
+        "single_local": {
+          "left_eye": {
+            "value": 0.017339636083481786,
+            "fit_cost": 0.02402511420000714,
+            "status": "valid",
+            "width_error": 0.012900626490578358,
+            "opening": 0.30789025272836873
+          },
+          "right_eye": {
+            "value": 0.0217015521854941,
+            "fit_cost": 0.023331608724421533,
+            "status": "valid",
+            "width_error": 0.020198323517174054,
+            "opening": 0.3333237662645273
+          },
+          "eye_spacing": {
+            "value": 0.01749236292862374,
+            "fit_cost": 0.025962182380737074,
+            "status": "valid",
+            "center_relation_error": 0.02861013101103335
+          },
+          "nose": {
+            "value": 0.0038533820501093093,
+            "fit_cost": 0.023603940089277225,
+            "status": "valid"
+          },
+          "mouth": {
+            "value": 0.010169787819956021,
+            "fit_cost": 0.022428089416620525,
+            "status": "valid",
+            "width_error": 0.003770949074110678,
+            "opening": 0.008273316767926671
+          },
+          "contour": {
+            "value": 0.03799582529698319,
+            "fit_cost": 0.00596279635845633,
+            "status": "valid"
+          }
+        },
+        "pose_local": {
+          "left_eye": {
+            "value": null,
+            "fit_cost": 0.02402511420000714,
+            "status": "Uncalibrated or incomplete pose bank",
+            "width_error": 0.012900626490578358,
+            "opening": 0.30789025272836873,
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.017339636083481786,
+            "gap": null
+          },
+          "right_eye": {
+            "value": null,
+            "fit_cost": 0.023331608724421533,
+            "status": "Uncalibrated or incomplete pose bank",
+            "width_error": 0.020198323517174054,
+            "opening": 0.3333237662645273,
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.0217015521854941,
+            "gap": null
+          },
+          "eye_spacing": {
+            "value": null,
+            "fit_cost": 0.025962182380737074,
+            "status": "Uncalibrated or incomplete pose bank",
+            "center_relation_error": 0.02861013101103335,
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.01749236292862374,
+            "gap": null
+          },
+          "nose": {
+            "value": null,
+            "fit_cost": 0.023603940089277225,
+            "status": "Uncalibrated or incomplete pose bank",
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.0038533820501093093,
+            "gap": null
+          },
+          "mouth": {
+            "value": null,
+            "fit_cost": 0.022428089416620525,
+            "status": "Uncalibrated or incomplete pose bank",
+            "width_error": 0.003770949074110678,
+            "opening": 0.008273316767926671,
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.010169787819956021,
+            "gap": null
+          },
+          "contour": {
+            "value": null,
+            "fit_cost": 0.00596279635845633,
+            "status": "Uncalibrated or incomplete pose bank",
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.03799582529698319,
+            "gap": null
+          }
+        },
+        "oracle": {
+          "left_eye": {
+            "value": 0.017339636083481786,
+            "fit_cost": 0.02402511420000714,
+            "status": "valid",
+            "width_error": 0.012900626490578358,
+            "opening": 0.30789025272836873
+          },
+          "right_eye": {
+            "value": 0.0217015521854941,
+            "fit_cost": 0.023331608724421533,
+            "status": "valid",
+            "width_error": 0.020198323517174054,
+            "opening": 0.3333237662645273
+          },
+          "eye_spacing": {
+            "value": 0.01749236292862374,
+            "fit_cost": 0.025962182380737074,
+            "status": "valid",
+            "center_relation_error": 0.02861013101103335
+          },
+          "nose": {
+            "value": 0.0038533820501093093,
+            "fit_cost": 0.023603940089277225,
+            "status": "valid"
+          },
+          "mouth": {
+            "value": 0.010169787819956021,
+            "fit_cost": 0.022428089416620525,
+            "status": "valid",
+            "width_error": 0.003770949074110678,
+            "opening": 0.008273316767926671
+          },
+          "contour": {
+            "value": 0.03799582529698319,
+            "fit_cost": 0.00596279635845633,
+            "status": "valid"
+          }
+        }
+      }
+    },
+    {
+      "sample_id": "s0011",
+      "parent_id": "s0000",
+      "primary": false,
+      "transform": {
+        "kind": "chin",
+        "strength": 0.1,
+        "method": "inverse_compact_elliptic_displacement"
+      },
+      "human": {
+        "label": "geometry_anomaly",
+        "pose": "front",
+        "mode": "idle",
+        "occlusion": "none",
+        "severity": "mild",
+        "parts": [
+          "contour"
+        ],
+        "approve_anchor": false,
+        "review_status": "confirmed"
+      },
+      "metrics": {
+        "wls": {
+          "global": {
+            "value": 0.03887171218573656,
+            "expression": 0.01572472526091035,
+            "status": "valid"
+          }
+        },
+        "single_local": {
+          "left_eye": {
+            "value": 0.019754444096238753,
+            "fit_cost": 0.04257446628201371,
+            "status": "valid",
+            "width_error": 0.009515180730795852,
+            "opening": 0.312110663201633
+          },
+          "right_eye": {
+            "value": 0.0301855547935898,
+            "fit_cost": 0.041359586658902776,
+            "status": "valid",
+            "width_error": 0.038330679845410776,
+            "opening": 0.3323924879590399
+          },
+          "eye_spacing": {
+            "value": 0.022651749229261695,
+            "fit_cost": 0.04698390844216316,
+            "status": "valid",
+            "center_relation_error": 0.03117762751835166
+          },
+          "nose": {
+            "value": 0.013245658101307138,
+            "fit_cost": 0.0407381332018968,
+            "status": "valid"
+          },
+          "mouth": {
+            "value": 0.01472035878463569,
+            "fit_cost": 0.038846972511813974,
+            "status": "valid",
+            "width_error": 0.007781216492035476,
+            "opening": 0.002944709837601785
+          },
+          "contour": {
+            "value": 0.06294885098206572,
+            "fit_cost": 0.00787221860751332,
+            "status": "valid"
+          }
+        },
+        "pose_local": {
+          "left_eye": {
+            "value": null,
+            "fit_cost": 0.04257446628201371,
+            "status": "Uncalibrated or incomplete pose bank",
+            "width_error": 0.009515180730795852,
+            "opening": 0.312110663201633,
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.019754444096238753,
+            "gap": null
+          },
+          "right_eye": {
+            "value": null,
+            "fit_cost": 0.041359586658902776,
+            "status": "Uncalibrated or incomplete pose bank",
+            "width_error": 0.038330679845410776,
+            "opening": 0.3323924879590399,
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.0301855547935898,
+            "gap": null
+          },
+          "eye_spacing": {
+            "value": null,
+            "fit_cost": 0.04698390844216316,
+            "status": "Uncalibrated or incomplete pose bank",
+            "center_relation_error": 0.03117762751835166,
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.022651749229261695,
+            "gap": null
+          },
+          "nose": {
+            "value": null,
+            "fit_cost": 0.0407381332018968,
+            "status": "Uncalibrated or incomplete pose bank",
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.013245658101307138,
+            "gap": null
+          },
+          "mouth": {
+            "value": null,
+            "fit_cost": 0.038846972511813974,
+            "status": "Uncalibrated or incomplete pose bank",
+            "width_error": 0.007781216492035476,
+            "opening": 0.002944709837601785,
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.01472035878463569,
+            "gap": null
+          },
+          "contour": {
+            "value": null,
+            "fit_cost": 0.00787221860751332,
+            "status": "Uncalibrated or incomplete pose bank",
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.06294885098206572,
+            "gap": null
+          }
+        },
+        "oracle": {
+          "left_eye": {
+            "value": 0.019754444096238753,
+            "fit_cost": 0.04257446628201371,
+            "status": "valid",
+            "width_error": 0.009515180730795852,
+            "opening": 0.312110663201633
+          },
+          "right_eye": {
+            "value": 0.0301855547935898,
+            "fit_cost": 0.041359586658902776,
+            "status": "valid",
+            "width_error": 0.038330679845410776,
+            "opening": 0.3323924879590399
+          },
+          "eye_spacing": {
+            "value": 0.022651749229261695,
+            "fit_cost": 0.04698390844216316,
+            "status": "valid",
+            "center_relation_error": 0.03117762751835166
+          },
+          "nose": {
+            "value": 0.013245658101307138,
+            "fit_cost": 0.0407381332018968,
+            "status": "valid"
+          },
+          "mouth": {
+            "value": 0.01472035878463569,
+            "fit_cost": 0.038846972511813974,
+            "status": "valid",
+            "width_error": 0.007781216492035476,
+            "opening": 0.002944709837601785
+          },
+          "contour": {
+            "value": 0.06294885098206572,
+            "fit_cost": 0.00787221860751332,
+            "status": "valid"
+          }
+        }
+      }
+    },
+    {
+      "sample_id": "s0012",
+      "parent_id": "s0000",
+      "primary": false,
+      "transform": {
+        "kind": "chin",
+        "strength": 0.2,
+        "method": "inverse_compact_elliptic_displacement"
+      },
+      "human": {
+        "label": "geometry_anomaly",
+        "pose": "front",
+        "mode": "idle",
+        "occlusion": "none",
+        "severity": "moderate",
+        "parts": [
+          "contour"
+        ],
+        "approve_anchor": false,
+        "review_status": "confirmed"
+      },
+      "metrics": {
+        "wls": {
+          "global": {
+            "value": 0.06308985511375544,
+            "expression": 0.02975441230400278,
+            "status": "valid"
+          }
+        },
+        "single_local": {
+          "left_eye": {
+            "value": 0.050175637660968705,
+            "fit_cost": 0.0675020240796327,
+            "status": "valid",
+            "width_error": 0.02843080367869527,
+            "opening": 0.31187994451937495
+          },
+          "right_eye": {
+            "value": 0.04390215510542289,
+            "fit_cost": 0.06810305719410509,
+            "status": "valid",
+            "width_error": 0.02331392198331406,
+            "opening": 0.3263996567540363
+          },
+          "eye_spacing": {
+            "value": 0.04321444735490494,
+            "fit_cost": 0.07561277838642752,
+            "status": "valid",
+            "center_relation_error": 0.04005853993493565
+          },
+          "nose": {
+            "value": 0.017409379708551852,
+            "fit_cost": 0.06631665879744228,
+            "status": "valid"
+          },
+          "mouth": {
+            "value": 0.03423552303768554,
+            "fit_cost": 0.06308808068198526,
+            "status": "valid",
+            "width_error": 0.006460602319842164,
+            "opening": 0.0018874048706312842
+          },
+          "contour": {
+            "value": 0.10407720700061945,
+            "fit_cost": 0.008761026226144083,
+            "status": "valid"
+          }
+        },
+        "pose_local": {
+          "left_eye": {
+            "value": null,
+            "fit_cost": 0.0675020240796327,
+            "status": "Uncalibrated or incomplete pose bank",
+            "width_error": 0.02843080367869527,
+            "opening": 0.31187994451937495,
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.050175637660968705,
+            "gap": null
+          },
+          "right_eye": {
+            "value": null,
+            "fit_cost": 0.06810305719410509,
+            "status": "Uncalibrated or incomplete pose bank",
+            "width_error": 0.02331392198331406,
+            "opening": 0.3263996567540363,
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.04390215510542289,
+            "gap": null
+          },
+          "eye_spacing": {
+            "value": null,
+            "fit_cost": 0.07561277838642752,
+            "status": "Uncalibrated or incomplete pose bank",
+            "center_relation_error": 0.04005853993493565,
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.04321444735490494,
+            "gap": null
+          },
+          "nose": {
+            "value": null,
+            "fit_cost": 0.06631665879744228,
+            "status": "Uncalibrated or incomplete pose bank",
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.017409379708551852,
+            "gap": null
+          },
+          "mouth": {
+            "value": null,
+            "fit_cost": 0.06308808068198526,
+            "status": "Uncalibrated or incomplete pose bank",
+            "width_error": 0.006460602319842164,
+            "opening": 0.0018874048706312842,
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.03423552303768554,
+            "gap": null
+          },
+          "contour": {
+            "value": null,
+            "fit_cost": 0.008761026226144083,
+            "status": "Uncalibrated or incomplete pose bank",
+            "matched_pose": "front",
+            "reference_id": "s0000",
+            "raw_value": 0.10407720700061945,
+            "gap": null
+          }
+        },
+        "oracle": {
+          "left_eye": {
+            "value": 0.050175637660968705,
+            "fit_cost": 0.0675020240796327,
+            "status": "valid",
+            "width_error": 0.02843080367869527,
+            "opening": 0.31187994451937495
+          },
+          "right_eye": {
+            "value": 0.04390215510542289,
+            "fit_cost": 0.06810305719410509,
+            "status": "valid",
+            "width_error": 0.02331392198331406,
+            "opening": 0.3263996567540363
+          },
+          "eye_spacing": {
+            "value": 0.04321444735490494,
+            "fit_cost": 0.07561277838642752,
+            "status": "valid",
+            "center_relation_error": 0.04005853993493565
+          },
+          "nose": {
+            "value": 0.017409379708551852,
+            "fit_cost": 0.06631665879744228,
+            "status": "valid"
+          },
+          "mouth": {
+            "value": 0.03423552303768554,
+            "fit_cost": 0.06308808068198526,
+            "status": "valid",
+            "width_error": 0.006460602319842164,
+            "opening": 0.0018874048706312842
+          },
+          "contour": {
+            "value": 0.10407720700061945,
+            "fit_cost": 0.008761026226144083,
+            "status": "valid"
+          }
+        }
+      }
+    }
+  ],
+  "private_record_sha256": {
+    "dataset-front-v1\\annotations-human-v1.json": "1c5da7ef81113259154a655c3020cf035d7ae88b48f0d0794b8303aaccf8b658",
+    "dataset-front-v1\\reviewed-human-v1.json": "adc8e64f7a0334345477e62b8ad7ae493b74cb2026f2525a2f6684d1f8de9ed7",
+    "frozen-front-human-v1\\frozen.json": "e849b70363bbd9bebe79d16fc74d480b5a30f793c9001bf6ce0c85d411d07d87",
+    "calibration-front-human-v1\\calibration.json": "d9897cc3c1f67b5d3f62b165eef83cebd76d13cd3cf4a0cfee94b075db24d303",
+    "evaluation-front-human-v1\\evaluation.json": "7a5037811d4e21ac325f64c0063856bf93e95ca7c5fced58464a5547d1ba1c5d",
+    "diagnostics-front-human-v1\\diagnostics.json": "d462225ef2e97d54653b84a7ce13187c585393a1c0a699d54777907f865ccc63"
+  }
+}

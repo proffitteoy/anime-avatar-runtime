@@ -30,8 +30,8 @@
 
 | 组件 | 固定依据 | 许可与集成注意 | 当前用途 |
 | --- | --- | --- | --- |
-| [deepghs/imgutils](https://github.com/deepghs/imgutils/blob/46df848dc4d20ac93f4919a40e2636d5f7c19766/imgutils/metrics/ccip.py) / CCIP | ccip_extract_feature、ccip_difference；默认 ccip-caformer-24-randaug-pruned | [库代码 MIT](https://github.com/deepghs/imgutils/blob/46df848dc4d20ac93f4919a40e2636d5f7c19766/LICENSE)，deepghs/ccip_onnx 模型卡标注 OpenRAIL；不能把库许可套到权重上。ONNX 路线支持先做 CPU 身份观测 | 已选身份模型与 API，下一步接入；其默认分类阈值不直接等同长期漂移阈值 |
-| [hysts/anime-face-detector](https://github.com/hysts/anime-face-detector/blob/98a9fb480fa04bdd96acbe4d98da191a898267f3/README.md) | [pyproject 0.1.0](https://github.com/hysts/anime-face-detector/blob/98a9fb480fa04bdd96acbe4d98da191a898267f3/pyproject.toml) 要求 Python ≥ 3.12；28 点 HRNetV2 + YOLOv3/Faster R-CNN | 主代码 MIT，内含 Apache-2.0 派生代码；新版已去除 OpenMMLab 运行依赖，不能照旧版 mmcv 配置安装 | 已选几何模型；初期只评估近正脸适用范围，尚未接入 |
+| [deepghs/imgutils](https://github.com/deepghs/imgutils/blob/46df848dc4d20ac93f4919a40e2636d5f7c19766/imgutils/metrics/ccip.py) / CCIP | ccip_extract_feature、ccip_difference；默认 ccip-caformer-24-randaug-pruned | [库代码 MIT](https://github.com/deepghs/imgutils/blob/46df848dc4d20ac93f4919a40e2636d5f7c19766/LICENSE)，deepghs/ccip_onnx 模型卡标注 OpenRAIL；不能把库许可套到权重上。ONNX 路线支持先做 CPU 身份观测 | 固定源码/权重已接入，真实 CPU 样例已执行；默认分类阈值不直接等同长期漂移阈值，见 [观测说明](./observers.md) |
+| [hysts/anime-face-detector](https://github.com/hysts/anime-face-detector/blob/98a9fb480fa04bdd96acbe4d98da191a898267f3/README.md) | [pyproject 0.1.0](https://github.com/hysts/anime-face-detector/blob/98a9fb480fa04bdd96acbe4d98da191a898267f3/pyproject.toml) 要求 Python ≥ 3.12；28 点 HRNetV2 + YOLOv3/Faster R-CNN | 主代码 MIT，内含 Apache-2.0 派生代码；新版已去除 OpenMMLab 运行依赖，不能照旧版 mmcv 配置安装 | 固定源码/权重已接入，真实 CPU 对齐/叠图已执行；保留近正脸与置信度限制，见 [观测说明](./observers.md) |
 | [GMFlow](https://github.com/haofeixu/gmflow/blob/b5123431164d01ec14526a1c3d22218aecb62024/README.md) | 光流与双向一致性；官方 main.py 支持图像目录推理 | [代码 Apache-2.0](https://github.com/haofeixu/gmflow/blob/b5123431164d01ec14526a1c3d22218aecb62024/LICENSE)；官方基线 Python 3.8、Torch 1.9、CUDA 10.2，现代环境兼容需验证 | 已选运动信号来源；不能把光流幅值直接当异常 |
 | [DRBA](https://github.com/routineLife1/DRBA/blob/d93e9128f4859df702d08aa9e860f1ea4691f483/README.md) | infer.py 支持 rife / gmfss / gmfss_union；输入输出视频与目标 FPS | [包装代码 MIT](https://github.com/routineLife1/DRBA/blob/d93e9128f4859df702d08aa9e860f1ea4691f483/LICENSE)，底层模型许可另核；CuPy 是上游可选加速 | 后续低成本时间连续性修复；不能修复身份语义错误 |
 | [ToonCrafter](https://github.com/Doubiiu/ToonCrafter/blob/b0c47ff339c5e5ec45b84d0c6587850f242d41ef/README.md) | 两帧卡通插值，官方 512×320、最多 16 帧 | [代码 Apache-2.0](https://github.com/Doubiiu/ToonCrafter/blob/b0c47ff339c5e5ec45b84d0c6587850f242d41ef/LICENSE)；Python 3.8.5，官方约 24–27 GB，社区优化规格不等于原版。权重独立条款仍需核验 | 后续到 Anchor 的生成式过渡；成功率尚未验证 |
@@ -67,5 +67,13 @@
 
 已完成公开源码和依赖核对、模型元数据核对、控制工程安装和验证。Git 直接 clone 遇到连接重置/超时；通过 GitHub 连接器读取官方源码，缓存了生成入口并核对 Git blob SHA（990ef610af1798b09aaba53d96201bc716f9d731），用于实际参数对照。没有把缓存入口冒充完整可运行的模型仓库。
 
-模型权重未下载，CUDA 推理、Observer 模型加载、长期运行、恢复质量及吞吐未验证。下一步按 [模型环境说明](./backend-setup.md) 在目标 NVIDIA 机器完成生成基线，不阻塞当前控制工程的使用。
+上述为初始调研记录，当时模型权重未下载。2026-10-12 已下载固定 CCIP、YOLOv3、HRNetV2 权重并完成真实 CPU 身份/几何观测；新版权重来源、SHA-256、模型卡许可、独立环境和失败样例见 [观测实现与实测](./observers.md)。CUDA 生成、长期运行、恢复质量及串行吞吐仍未验证；按 [模型环境说明](./backend-setup.md) 在目标 NVIDIA 机器完成生成基线。
+
+## 正脸光流诊断补充（2026-10-12）
+
+沿用原选型的GMFlow，不改变Runtime或控制环境依赖。已核对固定提交 `b5123431164d01ec14526a1c3d22218aecb62024` 中的 `gmflow/` 九个Python文件及LICENSE，逐文件Git blob与下载字节一致；本地为经核验的模型源码子集，不冒充完整Git checkout。源码使用Apache-2.0。
+
+权重取自作者后续官方 [UniMatch MODEL_ZOO](https://github.com/autonomousvision/unimatch/blob/master/MODEL_ZOO.md) 的 [GMFlow-scale1-things单文件链接](https://s3.eu-central-1.amazonaws.com/avg-projects/unimatch/pretrained/gmflow-scale1-things-e9887eda.pth)。本次读取的模型表Git blob为 `0872cd5a59231d0cd66893313d5ccfd5179704ca`；权重18,768,907字节，SHA-256为 `e9887eda6165e0813c03f35998d6af86e265aafce2e3349af93d691a59696088`。未核验独立权重许可声明，不把源码许可套到权重上，权重不分发到仓库。
+
+独立模型环境现有Python 3.12.13 / Torch 2.5.1+cpu即可运行；`torch.load(..., weights_only=True, map_location="cpu")` 与严格state_dict加载均通过，不依赖原main.py中的CUDA checkpoint位置。源码放 `vendor/gmflow`，权重与11条文件来源／哈希记录放 `models/gmflow`，均被忽略。未修改上游文件或控制锁文件。13对已人工标注正脸图完成CPU双向推理；这不是视频测速、动漫光流精度、GPU生成或异常检出验收。运行命令见 [局部研究流程](./local-geometry-calibration.md#正脸光流时序回放与统计预算)，数值见 [实验报告](./reports/2026-10-12-local-geometry/README.md#11-正脸图对的真实gmflow测量)。
 

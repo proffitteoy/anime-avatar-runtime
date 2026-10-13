@@ -1,0 +1,189 @@
+{
+  "schema_version": 1,
+  "record_type": "Incomplete human entry and assistant visual quality audit; no human anomaly ground truth",
+  "data_hash": "3a89c8103d5275531c15879af264093b0ac81480e550b8b0b6499bd5d8a7a6c4",
+  "record_status": "user_confirmed_incomplete_classification",
+  "dataset_use": "regression_and_low_quality_input_stress_test_only",
+  "excluded_uses": [
+    "primary_training",
+    "formal_threshold_calibration",
+    "detection_accuracy_acceptance"
+  ],
+  "counts": {
+    "samples": 62,
+    "reviewers": 1,
+    "labels": {
+      "uncertain": 62
+    },
+    "poses": {
+      "unknown": 62
+    },
+    "modes": {
+      "unknown": 62
+    },
+    "occlusion": {
+      "unknown": 62
+    },
+    "severity": {
+      "unknown": 61,
+      "none": 1
+    },
+    "parts": {
+      "right_eye": 12,
+      "nose": 1,
+      "left_eye": 1
+    },
+    "anchor_checks": 50,
+    "anchor_checks_original": 7,
+    "anchor_checks_derived": 43,
+    "eligible_confirmed_normal_anchors": 0
+  },
+  "visual_audit": {
+    "kind": "assistant",
+    "originals_inspected": 8,
+    "representative_warps_inspected": [
+      "s0004",
+      "s0007",
+      "s0010"
+    ],
+    "limitations": [
+      "Visible grid dithering and colored bands",
+      "Fixed crop changes face size and composition across head motion",
+      "Gaussian warps also distort nearby hair, hat and background",
+      "Only one independent source; no usable human classification"
+    ]
+  },
+  "source_counts": {
+    "development": 1,
+    "calibration": 0,
+    "validation": 0
+  },
+  "frozen_hash": "96cda94e64d031d80376fae1ad72d08f272b4dbc3499593db477b6c65b0f32be",
+  "calibration_hash": "186d8af70aae041fa43a53e1d36becd7ecf3394a7587049e40e6d05936c0b0d8",
+  "summary": {
+    "wls": {
+      "normal_primary_sources": 0,
+      "valid_normal_sources": 0,
+      "false_positives": 0,
+      "fpr": null,
+      "fpr_upper95": null,
+      "normal_coverage": null,
+      "normal_unknown": 0,
+      "anomaly_samples": 0,
+      "anomaly_sources": 0,
+      "detected": 0,
+      "recall": null,
+      "anomaly_unknown_counted_missed": 0,
+      "region_coverage": {
+        "global": null
+      }
+    },
+    "single_local": {
+      "normal_primary_sources": 0,
+      "valid_normal_sources": 0,
+      "false_positives": 0,
+      "fpr": null,
+      "fpr_upper95": null,
+      "normal_coverage": null,
+      "normal_unknown": 0,
+      "anomaly_samples": 0,
+      "anomaly_sources": 0,
+      "detected": 0,
+      "recall": null,
+      "anomaly_unknown_counted_missed": 0,
+      "region_coverage": {
+        "left_eye": null,
+        "right_eye": null,
+        "eye_spacing": null,
+        "nose": null,
+        "mouth": null,
+        "contour": null
+      }
+    },
+    "pose_local": {
+      "normal_primary_sources": 0,
+      "valid_normal_sources": 0,
+      "false_positives": 0,
+      "fpr": null,
+      "fpr_upper95": null,
+      "normal_coverage": null,
+      "normal_unknown": 0,
+      "anomaly_samples": 0,
+      "anomaly_sources": 0,
+      "detected": 0,
+      "recall": null,
+      "anomaly_unknown_counted_missed": 0,
+      "region_coverage": {
+        "left_eye": null,
+        "right_eye": null,
+        "eye_spacing": null,
+        "nose": null,
+        "mouth": null,
+        "contour": null
+      }
+    },
+    "oracle": {
+      "normal_primary_sources": 0,
+      "valid_normal_sources": 0,
+      "false_positives": 0,
+      "fpr": null,
+      "fpr_upper95": null,
+      "normal_coverage": null,
+      "normal_unknown": 0,
+      "anomaly_samples": 0,
+      "anomaly_sources": 0,
+      "detected": 0,
+      "recall": null,
+      "anomaly_unknown_counted_missed": 0,
+      "region_coverage": {
+        "left_eye": null,
+        "right_eye": null,
+        "eye_spacing": null,
+        "nose": null,
+        "mouth": null,
+        "contour": null
+      }
+    }
+  },
+  "adoption": {
+    "single_local": {
+      "adopt": false,
+      "selected_before_calibration": false,
+      "status": "not_accepted",
+      "bootstrap_all": {
+        "status": "insufficient_independent_anomaly_sources",
+        "n_sources": 0,
+        "interval95": null
+      },
+      "bootstrap_real_anomalies": {
+        "status": "insufficient_independent_anomaly_sources",
+        "n_sources": 0,
+        "interval95": null
+      },
+      "requirements": "FPR upper95 <=5%; coverage>=80%; calibrated WLS comparator; positive paired source interval on human-reviewed anomalies; synthetic and real evidence reported separately"
+    },
+    "pose_local": {
+      "adopt": false,
+      "selected_before_calibration": true,
+      "status": "not_accepted",
+      "bootstrap_all": {
+        "status": "insufficient_independent_anomaly_sources",
+        "n_sources": 0,
+        "interval95": null
+      },
+      "bootstrap_real_anomalies": {
+        "status": "insufficient_independent_anomaly_sources",
+        "n_sources": 0,
+        "interval95": null
+      },
+      "requirements": "FPR upper95 <=5%; coverage>=80%; calibrated WLS comparator; positive paired source interval on human-reviewed anomalies; synthetic and real evidence reported separately"
+    }
+  },
+  "private_record_sha256": {
+    "dataset-v1\\annotations-human-v1.json": "8059e222c501260ce1ac38891e96022c4c077ebf64e2f68b89ebbd6ebd8c0b73",
+    "dataset-v1\\reviewed-human-v1.json": "3b946f88c538946e91ae0da5d56e2430a4a4bbd0a202581f8dba074c8a7f1d08",
+    "frozen-human-v1\\frozen.json": "d3245570e0c10770ab4abde0be75a73d1dc24d1a5a5ab4cf50f3a5cf7e25c113",
+    "calibration-human-v1\\calibration.json": "f5455f99230d213d9c73b5870ddf00fd12418f08e943274f3f9b654457e890d3",
+    "evaluation-human-v1\\evaluation.json": "46e4480fe853374ce16f1de4bdd22e1184fc9140e2e04e61c79dbf28fc57afbd"
+  }
+}

@@ -9,7 +9,8 @@ from pathlib import Path
 from uuid import uuid4
 
 from .config import RuntimeConfig
-from .contracts import GenerationRequest
+from .contracts import GenerationRequest, ObservationRequest
+from .observers import run_observation
 from .skyreels import DEFAULT_PROMPT, UPSTREAM_REVISION, build_command, run_generation
 
 
@@ -19,6 +20,18 @@ def main() -> int:
     server = commands.add_parser("serve", help="Start the local control API")
     server.add_argument("--port", type=int, default=8000)
     commands.add_parser("doctor", help="Report control environment and inference configuration")
+    observe = commands.add_parser("observe", help="Run pinned CPU identity and geometry observers")
+    observed_source = observe.add_mutually_exclusive_group(required=True)
+    observed_source.add_argument("--image", type=Path)
+    observed_source.add_argument("--video", type=Path)
+    observe.add_argument("--anchor", type=Path, action="append", required=True)
+    observe.add_argument("--python", type=Path)
+    observe.add_argument("--models", type=Path)
+    observe.add_argument("--output", type=Path, required=True)
+    observe.add_argument("--sample-seconds", type=float, default=1)
+    observe.add_argument("--max-samples", type=int, default=120)
+    observe.add_argument("--identity-threshold", type=float)
+    observe.add_argument("--geometry-threshold", type=float)
     generate = commands.add_parser("generate", help="Run the pinned official SkyReels backend")
     source = generate.add_mutually_exclusive_group(required=True)
     source.add_argument("--image", type=Path)
@@ -76,6 +89,29 @@ def main() -> int:
             )
             return 0
 
+        if args.command == "observe":
+            values = config.model_dump()
+            if args.python is not None:
+                values["observer_python"] = args.python
+            if args.models is not None:
+                values["observer_models"] = args.models
+            config = RuntimeConfig.model_validate(values)
+            observation_request = ObservationRequest(
+                sample_seconds=args.sample_seconds,
+                max_samples=args.max_samples,
+                identity_threshold=args.identity_threshold,
+                geometry_threshold=args.geometry_threshold,
+            )
+            observed = run_observation(
+                config,
+                observation_request,
+                args.output,
+                anchors=args.anchor,
+                image=args.image,
+                video=args.video,
+            )
+            print(observed.output / "result.json")
+            return 0
         values = config.model_dump()
         for argument, field in (
             ("repo", "skyreels_repo"),

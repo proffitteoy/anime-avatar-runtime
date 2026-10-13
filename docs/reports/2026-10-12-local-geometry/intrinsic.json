@@ -1,0 +1,313 @@
+{
+  "schema_version": 1,
+  "diagnostic_only": true,
+  "evidence_level": "numerical-evidence",
+  "reference_id": "s0000",
+  "data_hash": "0295b9676709b19cdd659576e2261de52573788ff15f276f5e8102da6206befc",
+  "labels_hash": "7739882cd9ae354afe5c4a3303f8a3b237dffcb26c6ca4e0c212bfd68e50c0a8",
+  "extraction_hash": "9dd6762286976f34cbe65fcfd9d6af60490e69e792a95440f509c86645da375f",
+  "model_hash": "062cb4e53ecb0686109cbbd7f884414f0376fbada659fe10c09e5be02e677f88",
+  "implementation_sha256": "9faf2204e408dbf6de1d52f206218a8740e5651c8e7670eead886617a3ab3c7c",
+  "independent_sources": 1,
+  "protocol": {
+    "shape_components": [
+      "chin_height",
+      "chin_lateral",
+      "left_side_height",
+      "right_side_height"
+    ],
+    "target": "Frontal contour internal ratios only; all five contour points required",
+    "selection": "Development diagnostic; no threshold fitting or method adoption",
+    "negative_control": "Unbounded eye-spacing projection; no normal range learned"
+  },
+  "checks": {
+    "similarity_max_abs_error": 1.3010426069826053e-16,
+    "unrelated_points_max_abs_error": 0.0,
+    "chin_height_change": 0.019894605080270078,
+    "chin_height_expected": 0.019894605080270213
+  },
+  "rows": [
+    {
+      "sample_id": "s0000",
+      "transform": null,
+      "label": "normal",
+      "pose": "front",
+      "parts": [],
+      "intrinsic": {
+        "status": "valid",
+        "shape_rms": 0.0,
+        "chin_height_error": 0.0,
+        "chin_lateral_error": 0.0,
+        "left_side_height_error": 0.0,
+        "right_side_height_error": 0.0
+      }
+    },
+    {
+      "sample_id": "s0001",
+      "transform": {
+        "kind": "similarity_rotation",
+        "degrees": -8
+      },
+      "label": "normal",
+      "pose": "front",
+      "parts": [],
+      "intrinsic": {
+        "status": "valid",
+        "shape_rms": 0.000622107829996304,
+        "chin_height_error": 0.0006984897725176298,
+        "chin_lateral_error": 0.0003235839759527324,
+        "left_side_height_error": 0.0005524217110949858,
+        "right_side_height_error": 0.0008064169578305136
+      }
+    },
+    {
+      "sample_id": "s0002",
+      "transform": {
+        "kind": "similarity_rotation",
+        "degrees": 8
+      },
+      "label": "normal",
+      "pose": "front",
+      "parts": [],
+      "intrinsic": {
+        "status": "valid",
+        "shape_rms": 0.007702542690701294,
+        "chin_height_error": 0.008209055063362669,
+        "chin_lateral_error": 0.0035817631223355097,
+        "left_side_height_error": 0.011909963699972714,
+        "right_side_height_error": 0.003905356344278077
+      }
+    },
+    {
+      "sample_id": "s0003",
+      "transform": {
+        "kind": "similarity_scale",
+        "scale": 0.9
+      },
+      "label": "normal",
+      "pose": "front",
+      "parts": [],
+      "intrinsic": {
+        "status": "valid",
+        "shape_rms": 0.002355182220968308,
+        "chin_height_error": 0.0008112765362290331,
+        "chin_lateral_error": 0.0031445637390463493,
+        "left_side_height_error": 0.0012820981300338818,
+        "right_side_height_error": 0.003161851804506899
+      }
+    },
+    {
+      "sample_id": "s0004",
+      "transform": {
+        "kind": "eye_spacing",
+        "strength": 0.05,
+        "method": "inverse_compact_elliptic_displacement"
+      },
+      "label": "normal",
+      "pose": "front",
+      "parts": [],
+      "intrinsic": {
+        "status": "valid",
+        "shape_rms": 0.008701057030818507,
+        "chin_height_error": 0.011131739580189093,
+        "chin_lateral_error": 0.003257626435069718,
+        "left_side_height_error": 0.009152276971070905,
+        "right_side_height_error": 0.00919465301071315
+      }
+    },
+    {
+      "sample_id": "s0005",
+      "transform": {
+        "kind": "eye_spacing",
+        "strength": 0.1,
+        "method": "inverse_compact_elliptic_displacement"
+      },
+      "label": "normal",
+      "pose": "front",
+      "parts": [],
+      "intrinsic": {
+        "status": "valid",
+        "shape_rms": 0.013521744202004467,
+        "chin_height_error": 0.01607949687949939,
+        "chin_lateral_error": 0.009738179072832509,
+        "left_side_height_error": 0.01585966965575597,
+        "right_side_height_error": 0.011244500518728051
+      }
+    },
+    {
+      "sample_id": "s0006",
+      "transform": {
+        "kind": "eye_spacing",
+        "strength": 0.2,
+        "method": "inverse_compact_elliptic_displacement"
+      },
+      "label": "geometry_anomaly",
+      "pose": "front",
+      "parts": [
+        "left_eye",
+        "right_eye",
+        "eye_spacing"
+      ],
+      "intrinsic": {
+        "status": "valid",
+        "shape_rms": 0.017011134506373173,
+        "chin_height_error": 0.023210739507306066,
+        "chin_lateral_error": 0.006708119710069049,
+        "left_side_height_error": 0.018925297916475514,
+        "right_side_height_error": 0.01468368445001772
+      }
+    },
+    {
+      "sample_id": "s0007",
+      "transform": {
+        "kind": "nose_mouth",
+        "strength": 0.05,
+        "method": "inverse_compact_elliptic_displacement"
+      },
+      "label": "normal",
+      "pose": "front",
+      "parts": [],
+      "intrinsic": {
+        "status": "valid",
+        "shape_rms": 0.0021610854399197986,
+        "chin_height_error": 0.0017002962585215275,
+        "chin_lateral_error": 0.00218064229885384,
+        "left_side_height_error": 0.003319192744261179,
+        "right_side_height_error": 0.0001338373590761277
+      }
+    },
+    {
+      "sample_id": "s0008",
+      "transform": {
+        "kind": "nose_mouth",
+        "strength": 0.1,
+        "method": "inverse_compact_elliptic_displacement"
+      },
+      "label": "normal",
+      "pose": "front",
+      "parts": [],
+      "intrinsic": {
+        "status": "valid",
+        "shape_rms": 0.003841300146437357,
+        "chin_height_error": 0.002763760173120633,
+        "chin_lateral_error": 0.004255738450486728,
+        "left_side_height_error": 0.005744279456747492,
+        "right_side_height_error": 0.0005252815715294235
+      }
+    },
+    {
+      "sample_id": "s0009",
+      "transform": {
+        "kind": "nose_mouth",
+        "strength": 0.2,
+        "method": "inverse_compact_elliptic_displacement"
+      },
+      "label": "geometry_anomaly",
+      "pose": "front",
+      "parts": [
+        "mouth"
+      ],
+      "intrinsic": {
+        "status": "valid",
+        "shape_rms": 0.005313877063398181,
+        "chin_height_error": 0.003949015093645092,
+        "chin_lateral_error": 0.0059808325938856014,
+        "left_side_height_error": 0.00777950195301963,
+        "right_side_height_error": 0.001031226656307782
+      }
+    },
+    {
+      "sample_id": "s0010",
+      "transform": {
+        "kind": "chin",
+        "strength": 0.05,
+        "method": "inverse_compact_elliptic_displacement"
+      },
+      "label": "normal",
+      "pose": "front",
+      "parts": [],
+      "intrinsic": {
+        "status": "valid",
+        "shape_rms": 0.01591987130158339,
+        "chin_height_error": 0.031658022464130964,
+        "chin_lateral_error": 0.0009171924593646682,
+        "left_side_height_error": 0.0012955007095715176,
+        "right_side_height_error": 0.003003208051480466
+      }
+    },
+    {
+      "sample_id": "s0011",
+      "transform": {
+        "kind": "chin",
+        "strength": 0.1,
+        "method": "inverse_compact_elliptic_displacement"
+      },
+      "label": "geometry_anomaly",
+      "pose": "front",
+      "parts": [
+        "contour"
+      ],
+      "intrinsic": {
+        "status": "valid",
+        "shape_rms": 0.028434325365460013,
+        "chin_height_error": 0.056800555299999056,
+        "chin_lateral_error": 0.0019034874420881835,
+        "left_side_height_error": 0.0005105128152605443,
+        "right_side_height_error": 0.0019637886318000786
+      }
+    },
+    {
+      "sample_id": "s0012",
+      "transform": {
+        "kind": "chin",
+        "strength": 0.2,
+        "method": "inverse_compact_elliptic_displacement"
+      },
+      "label": "geometry_anomaly",
+      "pose": "front",
+      "parts": [
+        "contour"
+      ],
+      "intrinsic": {
+        "status": "valid",
+        "shape_rms": 0.04818923071381413,
+        "chin_height_error": 0.09413791423642237,
+        "chin_lateral_error": 0.000607282911074581,
+        "left_side_height_error": 0.014761634287039804,
+        "right_side_height_error": 0.014442516782556425
+      }
+    }
+  ],
+  "eye_nuisance_negative_control": [
+    {
+      "sample_id": "s0004",
+      "label": "normal",
+      "strength": 0.05,
+      "before_unweighted_rms": 0.03682216106693247,
+      "after_unweighted_rms": 0.017519277779833493,
+      "fraction_removed_squared_norm": 0.7736326166633343
+    },
+    {
+      "sample_id": "s0005",
+      "label": "normal",
+      "strength": 0.1,
+      "before_unweighted_rms": 0.06856348423060088,
+      "after_unweighted_rms": 0.02853992919766272,
+      "fraction_removed_squared_norm": 0.8267313370154371
+    },
+    {
+      "sample_id": "s0006",
+      "label": "geometry_anomaly",
+      "strength": 0.2,
+      "before_unweighted_rms": 0.10365873386087264,
+      "after_unweighted_rms": 0.05046537555874839,
+      "fraction_removed_squared_norm": 0.762985334360452
+    }
+  ],
+  "limitations": [
+    "Internal ratios are different observables from aligned RMS, not comparable thresholds",
+    "Does not detect isotropic contour enlargement or guarantee 3D pose invariance",
+    "Contour detection can still shift when other image regions change",
+    "One labelled frontal source; no independent calibration or validation"
+  ]
+}
