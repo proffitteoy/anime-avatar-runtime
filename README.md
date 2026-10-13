@@ -14,6 +14,10 @@
 
 当前没有自主待机循环、自动 Recovery、LLM/语音或展示前端。初始化后的 AvatarState 为 paused；API 会明确报告 autonomous_loop=false。身份/几何已用真实模型完成离线 CPU 样例验证；SkyReels GPU 推理、观测闭环与长期稳定性尚未验证。
 
+2026-10-13研究续作已完成33张新正脸表情的真实CPU观测，补全六维轮廓形状并修正小样本改进验收门槛。表情仍影响局部残差，风格化鼻点也可能导致缺测；新增图像尚无人工异常标签，独立5%误报验收和真实视频恢复效果未完成，详见 [正脸表达域续实验](./docs/reports/2026-10-12-local-geometry/README.md#14-2026-10-13正脸表达域续实验与审查修复)。
+
+后续已完成四种形状度量的稳定性对照、99次真实检测等变探针与有界正常范围的受控分析。得到的是指定扰动类下的条件性优势与误差界，尚未验证异常检测精度；人工盲审按当前要求暂缓，见 [稳定性研究](./docs/reports/2026-10-12-local-geometry/README.md#15-局部形状稳定性条件性优势与测量等变实验)。
+
 后续开发从 [Runtime 底座与接入说明](./docs/runtime-foundation.md) 开始，其中列出了模块职责、共享契约、控制状态、各条路线的接入点和对应 Issue。[现有 Project](https://github.com/users/proffitteoy/projects/2) 保留完整路线图；底座落地不代表所有功能 Issue 已完成。
 
 ## 开源选型
@@ -23,7 +27,7 @@
 | 图生视频与续接 | SkyReels-V2 DF 1.3B 540P | 官方 CLI 桥接已实现；目标 CUDA 环境待执行 |
 | 身份观测 | CCIP，ccip-caformer-24-randaug-pruned，经 dghs-imgutils / ONNX | 已接入固定版本、768 维特征与上游差异函数；CPU 图片/公开视频样例已执行 |
 | 几何观测 | anime-face-detector 0.1.0，28 点 landmarks | 已接入固定版本和置信度加权对齐、独立表情残差；适用范围与失败例已记录 |
-| 运动观测 | GMFlow | 已完成选型，待接入 |
+| 运动观测 | GMFlow | 正脸图对CPU双向光流诊断已执行；时序异常校准与Runtime接入待实现 |
 | 恢复对照 | 基础 Reset → DRBA → ToonCrafter / AniSora | 后续实现顺序，尚未进入闭环 |
 
 [开源调研与首版选型](./docs/open-source-selection.md) 包含 10 个官方项目的对比、代码提交、模型快照、许可区别、资源要求和取舍。生成后端使用独立 Python 3.10 / PyTorch 2.5.1 环境；不与控制工程或其他模型混装。

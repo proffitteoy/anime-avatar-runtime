@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "record_type": "Public summary of actual intrinsic_local freeze; raw landmarks and reviewer identities omitted",
+  "artifact_hash": "318a22a378fed21e57363810367c5cacdd90fbc620ee727c5145b30528711013",
+  "data_hash": "0295b9676709b19cdd659576e2261de52573788ff15f276f5e8102da6206befc",
+  "labels_hash": "7739882cd9ae354afe5c4a3303f8a3b237dffcb26c6ca4e0c212bfd68e50c0a8",
+  "model_hash": "062cb4e53ecb0686109cbbd7f884414f0376fbada659fe10c09e5be02e677f88",
+  "implementation_hash": "0530948fe74ed8aba56222d55ff407257fd88e7ccfdaa424d63de067ef3e505e",
+  "candidate_variant": "intrinsic_local",
+  "policy": {
+    "min_confidence": 0.3,
+    "mad_floor": 1E-06,
+    "min_development": 20,
+    "min_calibration": 39,
+    "alpha": 0.05,
+    "coverage_target": 0.8,
+    "bootstrap_repeats": 2000,
+    "seed": 42
+  },
+  "splits": {
+    "still_image_source": "development"
+  },
+  "references": [
+    {
+      "pose": "front",
+      "sample_id": "s0000",
+      "input_sha256": "61a1ba5b1c37b8cc650af140aa7df276a9aad97e59ce1e6051092daf3fc7dce6"
+    }
+  ],
+  "normalizers": {
+    "wls": {
+      "front": {},
+      "left_turn": {},
+      "right_turn": {},
+      "down": {},
+      "up": {}
+    },
+    "single_local": {
+      "front": {},
+      "left_turn": {},
+      "right_turn": {},
+      "down": {},
+      "up": {}
+    },
+    "pose_local": {
+      "front": {},
+      "left_turn": {},
+      "right_turn": {},
+      "down": {},
+      "up": {}
+    },
+    "oracle": {
+      "front": {},
+      "left_turn": {},
+      "right_turn": {},
+      "down": {},
+      "up": {}
+    },
+    "intrinsic_local": {
+      "front": {},
+      "left_turn": {},
+      "right_turn": {},
+      "down": {},
+      "up": {}
+    }
+  },
+  "pose_gates": {
+    "front": {}
+  }
+}

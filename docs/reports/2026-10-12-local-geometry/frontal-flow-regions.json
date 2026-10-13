@@ -1,0 +1,653 @@
+{
+  "schema_version": 1,
+  "diagnostic_only": true,
+  "data_hash": "0295b9676709b19cdd659576e2261de52573788ff15f276f5e8102da6206befc",
+  "flow_report_sha256": "99576f60e15ca5f52811c5e19227a55a51b4b502cb80e74ceba599ff2d5e20e4",
+  "reference_id": "s0000",
+  "implementation_sha256": "9faf2204e408dbf6de1d52f206218a8740e5651c8e7670eead886617a3ab3c7c",
+  "global_consistency_max_difference": 2.7013301595602002e-08,
+  "protocol": {
+    "region_masks": "Reference boxes padded by 0.15 RMS; no score-based tuning",
+    "sampling": "256x256; fixed regions; pinned upstream consistency rule 0.01/0.5"
+  },
+  "rows": [
+    {
+      "sample_id": "s0000",
+      "label": "normal",
+      "flow_sha256": "769c7607975aa471a1992ac97860f37b1ef05234c46c7de0e07a230a0ca06a87",
+      "regions": {
+        "left_eye": {
+          "mask_pixels": 640,
+          "consistent_pixels": 640,
+          "consistent_fraction_in_bounds": 1.0,
+          "median_pixels": 0.01340329460799694,
+          "p95_pixels": 0.01868673861026764
+        },
+        "right_eye": {
+          "mask_pixels": 731,
+          "consistent_pixels": 731,
+          "consistent_fraction_in_bounds": 1.0,
+          "median_pixels": 0.007729693315923214,
+          "p95_pixels": 0.016171660274267197
+        },
+        "eye_spacing": {
+          "mask_pixels": 1890,
+          "consistent_pixels": 1890,
+          "consistent_fraction_in_bounds": 1.0,
+          "median_pixels": 0.009281642735004425,
+          "p95_pixels": 0.018447518628090614
+        },
+        "nose": {
+          "mask_pixels": 169,
+          "consistent_pixels": 169,
+          "consistent_fraction_in_bounds": 1.0,
+          "median_pixels": 0.012606382369995117,
+          "p95_pixels": 0.015566948242485524
+        },
+        "mouth": {
+          "mask_pixels": 520,
+          "consistent_pixels": 520,
+          "consistent_fraction_in_bounds": 1.0,
+          "median_pixels": 0.0052202194929122925,
+          "p95_pixels": 0.014424275001510974
+        },
+        "contour": {
+          "mask_pixels": 7839,
+          "consistent_pixels": 7839,
+          "consistent_fraction_in_bounds": 1.0,
+          "median_pixels": 0.012214813381433487,
+          "p95_pixels": 0.03326159492135047
+        }
+      }
+    },
+    {
+      "sample_id": "s0001",
+      "label": "normal",
+      "flow_sha256": "48eac14c0e9989925029394d03b3bb76059d9dd23cc55c9d31fe296c1be91887",
+      "regions": {
+        "left_eye": {
+          "mask_pixels": 640,
+          "consistent_pixels": 630,
+          "consistent_fraction_in_bounds": 0.984375,
+          "median_pixels": 6.42476749420166,
+          "p95_pixels": 8.637018489837645
+        },
+        "right_eye": {
+          "mask_pixels": 731,
+          "consistent_pixels": 558,
+          "consistent_fraction_in_bounds": 0.7633378932968536,
+          "median_pixels": 2.1088852882385254,
+          "p95_pixels": 6.617813301086425
+        },
+        "eye_spacing": {
+          "mask_pixels": 1890,
+          "consistent_pixels": 1663,
+          "consistent_fraction_in_bounds": 0.8798941798941798,
+          "median_pixels": 3.642974853515625,
+          "p95_pixels": 8.169222259521485
+        },
+        "nose": {
+          "mask_pixels": 169,
+          "consistent_pixels": 169,
+          "consistent_fraction_in_bounds": 1.0,
+          "median_pixels": 2.611502170562744,
+          "p95_pixels": 3.601804494857788
+        },
+        "mouth": {
+          "mask_pixels": 520,
+          "consistent_pixels": 520,
+          "consistent_fraction_in_bounds": 1.0,
+          "median_pixels": 5.925492286682129,
+          "p95_pixels": 7.166274118423461
+        },
+        "contour": {
+          "mask_pixels": 7839,
+          "consistent_pixels": 7157,
+          "consistent_fraction_in_bounds": 0.9129991070289578,
+          "median_pixels": 7.676131248474121,
+          "p95_pixels": 11.397743988037108
+        }
+      }
+    },
+    {
+      "sample_id": "s0002",
+      "label": "normal",
+      "flow_sha256": "c7d10a96e70c951a75f75692158ce196d1b16829cb0555dbef0557ca442cc5b0",
+      "regions": {
+        "left_eye": {
+          "mask_pixels": 640,
+          "consistent_pixels": 640,
+          "consistent_fraction_in_bounds": 1.0,
+          "median_pixels": 5.943212509155273,
+          "p95_pixels": 8.221461725234985
+        },
+        "right_eye": {
+          "mask_pixels": 731,
+          "consistent_pixels": 663,
+          "consistent_fraction_in_bounds": 0.9069767441860465,
+          "median_pixels": 2.5475845336914062,
+          "p95_pixels": 6.651577901840209
+        },
+        "eye_spacing": {
+          "mask_pixels": 1890,
+          "consistent_pixels": 1819,
+          "consistent_fraction_in_bounds": 0.9624338624338624,
+          "median_pixels": 3.4286351203918457,
+          "p95_pixels": 7.902961301803588
+        },
+        "nose": {
+          "mask_pixels": 169,
+          "consistent_pixels": 169,
+          "consistent_fraction_in_bounds": 1.0,
+          "median_pixels": 2.115915298461914,
+          "p95_pixels": 2.9091935634613035
+        },
+        "mouth": {
+          "mask_pixels": 520,
+          "consistent_pixels": 520,
+          "consistent_fraction_in_bounds": 1.0,
+          "median_pixels": 4.789811134338379,
+          "p95_pixels": 6.368305492401123
+        },
+        "contour": {
+          "mask_pixels": 7839,
+          "consistent_pixels": 7527,
+          "consistent_fraction_in_bounds": 0.9601990049751243,
+          "median_pixels": 7.345355987548828,
+          "p95_pixels": 11.232226371765137
+        }
+      }
+    },
+    {
+      "sample_id": "s0003",
+      "label": "normal",
+      "flow_sha256": "042493a2a63a38e7fe64d6903ad59bba21de5939e89ac5baa449a8671126e4d0",
+      "regions": {
+        "left_eye": {
+          "mask_pixels": 640,
+          "consistent_pixels": 152,
+          "consistent_fraction_in_bounds": 0.2375,
+          "median_pixels": 4.941510200500488,
+          "p95_pixels": 6.725922751426697
+        },
+        "right_eye": {
+          "mask_pixels": 731,
+          "consistent_pixels": 387,
+          "consistent_fraction_in_bounds": 0.5294117647058824,
+          "median_pixels": 0.4228804111480713,
+          "p95_pixels": 2.143913793563842
+        },
+        "eye_spacing": {
+          "mask_pixels": 1890,
+          "consistent_pixels": 985,
+          "consistent_fraction_in_bounds": 0.5211640211640212,
+          "median_pixels": 0.5075298547744751,
+          "p95_pixels": 5.981016159057615
+        },
+        "nose": {
+          "mask_pixels": 169,
+          "consistent_pixels": 169,
+          "consistent_fraction_in_bounds": 1.0,
+          "median_pixels": 1.5004533529281616,
+          "p95_pixels": 2.125929021835327
+        },
+        "mouth": {
+          "mask_pixels": 520,
+          "consistent_pixels": 520,
+          "consistent_fraction_in_bounds": 1.0,
+          "median_pixels": 3.8113319873809814,
+          "p95_pixels": 4.553635263442993
+        },
+        "contour": {
+          "mask_pixels": 7839,
+          "consistent_pixels": 5033,
+          "consistent_fraction_in_bounds": 0.6420461793596122,
+          "median_pixels": 4.5176496505737305,
+          "p95_pixels": 10.305084800720214
+        }
+      }
+    },
+    {
+      "sample_id": "s0004",
+      "label": "normal",
+      "flow_sha256": "53a20781a8290669d31c9c183fec100476da5d9415b85bd4b4d1b2ee996b46bf",
+      "regions": {
+        "left_eye": {
+          "mask_pixels": 640,
+          "consistent_pixels": 640,
+          "consistent_fraction_in_bounds": 1.0,
+          "median_pixels": 0.01650141552090645,
+          "p95_pixels": 0.038888214714825155
+        },
+        "right_eye": {
+          "mask_pixels": 731,
+          "consistent_pixels": 731,
+          "consistent_fraction_in_bounds": 1.0,
+          "median_pixels": 0.02915402315557003,
+          "p95_pixels": 0.15048477053642273
+        },
+        "eye_spacing": {
+          "mask_pixels": 1890,
+          "consistent_pixels": 1890,
+          "consistent_fraction_in_bounds": 1.0,
+          "median_pixels": 0.017424870282411575,
+          "p95_pixels": 0.0898769561201334
+        },
+        "nose": {
+          "mask_pixels": 169,
+          "consistent_pixels": 169,
+          "consistent_fraction_in_bounds": 1.0,
+          "median_pixels": 0.004236240871250629,
+          "p95_pixels": 0.009243589825928211
+        },
+        "mouth": {
+          "mask_pixels": 520,
+          "consistent_pixels": 520,
+          "consistent_fraction_in_bounds": 1.0,
+          "median_pixels": 0.007894784212112427,
+          "p95_pixels": 0.02203748552128672
+        },
+        "contour": {
+          "mask_pixels": 7839,
+          "consistent_pixels": 7839,
+          "consistent_fraction_in_bounds": 1.0,
+          "median_pixels": 0.016446685418486595,
+          "p95_pixels": 0.04132595807313918
+        }
+      }
+    },
+    {
+      "sample_id": "s0005",
+      "label": "normal",
+      "flow_sha256": "a17aaa57dcf896ee87e229d7feed15ca87d572d20022df6e77a337541d08ccd4",
+      "regions": {
+        "left_eye": {
+          "mask_pixels": 640,
+          "consistent_pixels": 640,
+          "consistent_fraction_in_bounds": 1.0,
+          "median_pixels": 0.06486563384532928,
+          "p95_pixels": 0.09630579836666583
+        },
+        "right_eye": {
+          "mask_pixels": 731,
+          "consistent_pixels": 660,
+          "consistent_fraction_in_bounds": 0.9028727770177839,
+          "median_pixels": 0.16269901394844055,
+          "p95_pixels": 1.5138667821884155
+        },
+        "eye_spacing": {
+          "mask_pixels": 1890,
+          "consistent_pixels": 1819,
+          "consistent_fraction_in_bounds": 0.9624338624338624,
+          "median_pixels": 0.06014546379446983,
+          "p95_pixels": 1.2762764453887934
+        },
+        "nose": {
+          "mask_pixels": 169,
+          "consistent_pixels": 169,
+          "consistent_fraction_in_bounds": 1.0,
+          "median_pixels": 0.0303827915340662,
+          "p95_pixels": 0.04067361205816269
+        },
+        "mouth": {
+          "mask_pixels": 520,
+          "consistent_pixels": 520,
+          "consistent_fraction_in_bounds": 1.0,
+          "median_pixels": 0.01745438575744629,
+          "p95_pixels": 0.03282474000006914
+        },
+        "contour": {
+          "mask_pixels": 7839,
+          "consistent_pixels": 7789,
+          "consistent_fraction_in_bounds": 0.9936216354126802,
+          "median_pixels": 0.026036402210593224,
+          "p95_pixels": 0.08224932104349135
+        }
+      }
+    },
+    {
+      "sample_id": "s0006",
+      "label": "geometry_anomaly",
+      "flow_sha256": "8edfe795d86cd577b6ff85bdc417dabd1dff2ff1aef28de6fb3ca3a2fb37d062",
+      "regions": {
+        "left_eye": {
+          "mask_pixels": 640,
+          "consistent_pixels": 423,
+          "consistent_fraction_in_bounds": 0.6609375,
+          "median_pixels": 0.08124849945306778,
+          "p95_pixels": 5.698002052307129
+        },
+        "right_eye": {
+          "mask_pixels": 731,
+          "consistent_pixels": 300,
+          "consistent_fraction_in_bounds": 0.4103967168262654,
+          "median_pixels": 0.05097578465938568,
+          "p95_pixels": 3.7801101565361024
+        },
+        "eye_spacing": {
+          "mask_pixels": 1890,
+          "consistent_pixels": 1242,
+          "consistent_fraction_in_bounds": 0.6571428571428571,
+          "median_pixels": 0.023465212434530258,
+          "p95_pixels": 4.332076954841623
+        },
+        "nose": {
+          "mask_pixels": 169,
+          "consistent_pixels": 169,
+          "consistent_fraction_in_bounds": 1.0,
+          "median_pixels": 0.00604997668415308,
+          "p95_pixels": 0.011198853328824043
+        },
+        "mouth": {
+          "mask_pixels": 520,
+          "consistent_pixels": 520,
+          "consistent_fraction_in_bounds": 1.0,
+          "median_pixels": 0.010607985779643059,
+          "p95_pixels": 0.02473091688007116
+        },
+        "contour": {
+          "mask_pixels": 7839,
+          "consistent_pixels": 7483,
+          "consistent_fraction_in_bounds": 0.954586044138283,
+          "median_pixels": 0.021605880931019783,
+          "p95_pixels": 0.07875809594988822
+        }
+      }
+    },
+    {
+      "sample_id": "s0007",
+      "label": "normal",
+      "flow_sha256": "bfb34a326ea4daabe534df2feb774f670d6ddd5a20293e73877629d66c086907",
+      "regions": {
+        "left_eye": {
+          "mask_pixels": 640,
+          "consistent_pixels": 640,
+          "consistent_fraction_in_bounds": 1.0,
+          "median_pixels": 0.020937711000442505,
+          "p95_pixels": 0.03438409864902496
+        },
+        "right_eye": {
+          "mask_pixels": 731,
+          "consistent_pixels": 731,
+          "consistent_fraction_in_bounds": 1.0,
+          "median_pixels": 0.018020372837781906,
+          "p95_pixels": 0.05005592107772827
+        },
+        "eye_spacing": {
+          "mask_pixels": 1890,
+          "consistent_pixels": 1890,
+          "consistent_fraction_in_bounds": 1.0,
+          "median_pixels": 0.020845890045166016,
+          "p95_pixels": 0.050682484358549114
+        },
+        "nose": {
+          "mask_pixels": 169,
+          "consistent_pixels": 169,
+          "consistent_fraction_in_bounds": 1.0,
+          "median_pixels": 0.05750994384288788,
+          "p95_pixels": 0.06141723096370697
+        },
+        "mouth": {
+          "mask_pixels": 520,
+          "consistent_pixels": 520,
+          "consistent_fraction_in_bounds": 1.0,
+          "median_pixels": 0.05621655657887459,
+          "p95_pixels": 0.06624147854745388
+        },
+        "contour": {
+          "mask_pixels": 7839,
+          "consistent_pixels": 7839,
+          "consistent_fraction_in_bounds": 1.0,
+          "median_pixels": 0.030478453263640404,
+          "p95_pixels": 0.05882106274366379
+        }
+      }
+    },
+    {
+      "sample_id": "s0008",
+      "label": "normal",
+      "flow_sha256": "6c76e7f9714984bee4425237d8447aa4a97d5581d19528c03059dc681484f657",
+      "regions": {
+        "left_eye": {
+          "mask_pixels": 640,
+          "consistent_pixels": 640,
+          "consistent_fraction_in_bounds": 1.0,
+          "median_pixels": 0.02620825543999672,
+          "p95_pixels": 0.040603282488882536
+        },
+        "right_eye": {
+          "mask_pixels": 731,
+          "consistent_pixels": 731,
+          "consistent_fraction_in_bounds": 1.0,
+          "median_pixels": 0.023796530440449715,
+          "p95_pixels": 0.07006167992949486
+        },
+        "eye_spacing": {
+          "mask_pixels": 1890,
+          "consistent_pixels": 1890,
+          "consistent_fraction_in_bounds": 1.0,
+          "median_pixels": 0.025844845920801163,
+          "p95_pixels": 0.06704238206148147
+        },
+        "nose": {
+          "mask_pixels": 169,
+          "consistent_pixels": 169,
+          "consistent_fraction_in_bounds": 1.0,
+          "median_pixels": 0.07923141866922379,
+          "p95_pixels": 0.08653087764978408
+        },
+        "mouth": {
+          "mask_pixels": 520,
+          "consistent_pixels": 520,
+          "consistent_fraction_in_bounds": 1.0,
+          "median_pixels": 0.08229812979698181,
+          "p95_pixels": 0.09239944592118263
+        },
+        "contour": {
+          "mask_pixels": 7839,
+          "consistent_pixels": 7839,
+          "consistent_fraction_in_bounds": 1.0,
+          "median_pixels": 0.03702375292778015,
+          "p95_pixels": 0.08491477221250533
+        }
+      }
+    },
+    {
+      "sample_id": "s0009",
+      "label": "geometry_anomaly",
+      "flow_sha256": "7d8920d6603bb80aa61dc43fbcb8cfc28d0c14e48d2980920ea044a279674040",
+      "regions": {
+        "left_eye": {
+          "mask_pixels": 640,
+          "consistent_pixels": 640,
+          "consistent_fraction_in_bounds": 1.0,
+          "median_pixels": 0.02592245489358902,
+          "p95_pixels": 0.04635750036686658
+        },
+        "right_eye": {
+          "mask_pixels": 731,
+          "consistent_pixels": 731,
+          "consistent_fraction_in_bounds": 1.0,
+          "median_pixels": 0.03718671575188637,
+          "p95_pixels": 0.11652064695954323
+        },
+        "eye_spacing": {
+          "mask_pixels": 1890,
+          "consistent_pixels": 1890,
+          "consistent_fraction_in_bounds": 1.0,
+          "median_pixels": 0.02893652766942978,
+          "p95_pixels": 0.1032491989433765
+        },
+        "nose": {
+          "mask_pixels": 169,
+          "consistent_pixels": 169,
+          "consistent_fraction_in_bounds": 1.0,
+          "median_pixels": 0.1131836324930191,
+          "p95_pixels": 0.14167866110801697
+        },
+        "mouth": {
+          "mask_pixels": 520,
+          "consistent_pixels": 520,
+          "consistent_fraction_in_bounds": 1.0,
+          "median_pixels": 0.15035344660282135,
+          "p95_pixels": 0.17373750060796736
+        },
+        "contour": {
+          "mask_pixels": 7839,
+          "consistent_pixels": 7839,
+          "consistent_fraction_in_bounds": 1.0,
+          "median_pixels": 0.04225090518593788,
+          "p95_pixels": 0.15317203998565673
+        }
+      }
+    },
+    {
+      "sample_id": "s0010",
+      "label": "normal",
+      "flow_sha256": "d6af60ec160a35003279c705e90e6ed63a901900a0ac02ebd91508ba717b2175",
+      "regions": {
+        "left_eye": {
+          "mask_pixels": 640,
+          "consistent_pixels": 640,
+          "consistent_fraction_in_bounds": 1.0,
+          "median_pixels": 0.013080412521958351,
+          "p95_pixels": 0.017383519932627673
+        },
+        "right_eye": {
+          "mask_pixels": 731,
+          "consistent_pixels": 731,
+          "consistent_fraction_in_bounds": 1.0,
+          "median_pixels": 0.008448457345366478,
+          "p95_pixels": 0.016593056730926037
+        },
+        "eye_spacing": {
+          "mask_pixels": 1890,
+          "consistent_pixels": 1890,
+          "consistent_fraction_in_bounds": 1.0,
+          "median_pixels": 0.008437234908342361,
+          "p95_pixels": 0.01724622566252947
+        },
+        "nose": {
+          "mask_pixels": 169,
+          "consistent_pixels": 169,
+          "consistent_fraction_in_bounds": 1.0,
+          "median_pixels": 0.02535489946603775,
+          "p95_pixels": 0.05321787968277931
+        },
+        "mouth": {
+          "mask_pixels": 520,
+          "consistent_pixels": 520,
+          "consistent_fraction_in_bounds": 1.0,
+          "median_pixels": 0.13896217942237854,
+          "p95_pixels": 0.21643455401062964
+        },
+        "contour": {
+          "mask_pixels": 7839,
+          "consistent_pixels": 7839,
+          "consistent_fraction_in_bounds": 1.0,
+          "median_pixels": 0.02152847871184349,
+          "p95_pixels": 0.24674798101186737
+        }
+      }
+    },
+    {
+      "sample_id": "s0011",
+      "label": "geometry_anomaly",
+      "flow_sha256": "63db60c97285e7b898bf8c662b263156258b4dbe59008f97f73bde741889ae49",
+      "regions": {
+        "left_eye": {
+          "mask_pixels": 640,
+          "consistent_pixels": 640,
+          "consistent_fraction_in_bounds": 1.0,
+          "median_pixels": 0.013391705229878426,
+          "p95_pixels": 0.023035325296223163
+        },
+        "right_eye": {
+          "mask_pixels": 731,
+          "consistent_pixels": 731,
+          "consistent_fraction_in_bounds": 1.0,
+          "median_pixels": 0.008941934444010258,
+          "p95_pixels": 0.01847079861909151
+        },
+        "eye_spacing": {
+          "mask_pixels": 1890,
+          "consistent_pixels": 1890,
+          "consistent_fraction_in_bounds": 1.0,
+          "median_pixels": 0.010974893346428871,
+          "p95_pixels": 0.021938242111355064
+        },
+        "nose": {
+          "mask_pixels": 169,
+          "consistent_pixels": 169,
+          "consistent_fraction_in_bounds": 1.0,
+          "median_pixels": 0.015419971197843552,
+          "p95_pixels": 0.05292793959379195
+        },
+        "mouth": {
+          "mask_pixels": 520,
+          "consistent_pixels": 520,
+          "consistent_fraction_in_bounds": 1.0,
+          "median_pixels": 0.2032172977924347,
+          "p95_pixels": 0.4594515830278396
+        },
+        "contour": {
+          "mask_pixels": 7839,
+          "consistent_pixels": 7836,
+          "consistent_fraction_in_bounds": 0.9996172981247609,
+          "median_pixels": 0.024159271270036697,
+          "p95_pixels": 0.5955094248056412
+        }
+      }
+    },
+    {
+      "sample_id": "s0012",
+      "label": "geometry_anomaly",
+      "flow_sha256": "29d4f7a0cc4e96ef1a2b839abf036d1ce865f0a52214675c22c1bea56bfa19c1",
+      "regions": {
+        "left_eye": {
+          "mask_pixels": 640,
+          "consistent_pixels": 640,
+          "consistent_fraction_in_bounds": 1.0,
+          "median_pixels": 0.016743704676628113,
+          "p95_pixels": 0.043844367191195485
+        },
+        "right_eye": {
+          "mask_pixels": 731,
+          "consistent_pixels": 731,
+          "consistent_fraction_in_bounds": 1.0,
+          "median_pixels": 0.011720658279955387,
+          "p95_pixels": 0.023443184792995453
+        },
+        "eye_spacing": {
+          "mask_pixels": 1890,
+          "consistent_pixels": 1890,
+          "consistent_fraction_in_bounds": 1.0,
+          "median_pixels": 0.01590767502784729,
+          "p95_pixels": 0.04505797661840916
+        },
+        "nose": {
+          "mask_pixels": 169,
+          "consistent_pixels": 169,
+          "consistent_fraction_in_bounds": 1.0,
+          "median_pixels": 0.025011185556650162,
+          "p95_pixels": 0.039687751978635784
+        },
+        "mouth": {
+          "mask_pixels": 520,
+          "consistent_pixels": 520,
+          "consistent_fraction_in_bounds": 1.0,
+          "median_pixels": 0.0824396163225174,
+          "p95_pixels": 0.269262236356735
+        },
+        "contour": {
+          "mask_pixels": 7839,
+          "consistent_pixels": 7703,
+          "consistent_fraction_in_bounds": 0.9826508483224902,
+          "median_pixels": 0.027076570317149162,
+          "p95_pixels": 0.4640623003244399
+        }
+      }
+    }
+  ],
+  "scope": "Real frontal still pairs; regional flow is an observation, not a decision; no video, flow truth or calibrated recovery"
+}

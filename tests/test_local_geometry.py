@@ -50,6 +50,97 @@ def hash_id(value):
     return hashlib.sha256(value.encode()).hexdigest()
 
 
+def test_endpoint_jacobian_and_procrustes_have_the_same_similarity_kernel():
+    script = runpy.run_path(
+        str(Path(__file__).parents[1] / "scripts/observer_geometry_experiment.py")
+    )
+    p = landmarks()
+    jacobian = script["contour_jacobian"](p)
+    assert np.linalg.matrix_rank(jacobian) == 6
+    for column in range(10):
+        plus, minus = p.copy(), p.copy()
+        plus[column // 2, column % 2] += 1e-6
+        minus[column // 2, column % 2] -= 1e-6
+        actual = (local_geometry.contour_shape(plus) - local_geometry.contour_shape(minus)) / 2e-6
+        np.testing.assert_allclose(actual, jacobian[:, column], atol=1e-8)
+    theta = 0.4
+    rotation = np.array([[np.cos(theta), -np.sin(theta)], [np.sin(theta), np.cos(theta)]])
+    current = p.copy()
+    current[:, :2] = p[:, :2] @ rotation * 1.4 + [5, -2]
+    vectors, errors = script["shape_vectors"](current, p)
+    assert not errors
+    assert max(np.linalg.norm(v) for v in vectors.values()) < 1e-12
+    reflected = p.copy()
+    reflected[:, 0] *= -1
+    reflected_vectors = script["shape_vectors"](reflected, p)[0]
+    assert np.linalg.norm(reflected_vectors["procrustes"]) > 0.01
+
+
+def test_stability_four_methods_and_whitened_chart_control():
+    script = runpy.run_path(
+        str(Path(__file__).parents[1] / "scripts/observer_geometry_experiment.py")
+    )
+    p = landmarks()
+    manifest = StudyManifest(character_id="fixture", samples=[sample(0)])
+    extracted = {
+        "models": {},
+        "records": [
+            {
+                "sample_id": "sample0",
+                "faces": [{"bbox": [0, 0, 100, 100, 1], "keypoints": p.tolist()}],
+            }
+        ],
+    }
+    result = script["stability_experiment"](manifest, extracted, "sample0")
+    assert set(result["operators"]) == {"wls", "complement", "endpoint", "procrustes"}
+    assert result["checks"]["whitened_chart_gram_error"] < 1e-12
+    assert result["operators"]["procrustes"]["noise_to_min_shape_response"] == pytest.approx(1)
+    assert result["operators"]["endpoint"]["noise_to_min_shape_response"] > 1
+    for name in result["operators"]["endpoint"]["noise_models"]:
+        endpoint = result["operators"]["endpoint"]
+        procrustes = result["operators"]["procrustes"]
+        endpoint_noise = endpoint["noise_models"][name]["expected_squared_score"]
+        procrustes_noise = procrustes["noise_models"][name]["expected_squared_score"]
+        assert endpoint_noise / endpoint["target_shape_min_gain"] ** 2 >= (
+            procrustes_noise / procrustes["target_shape_min_gain"] ** 2 - 1e-12
+        )
+    assert result["coordinate_controls"]["contour_isotropic_size"]["endpoint"] < 1e-12
+    assert result["coordinate_controls"]["contour_isotropic_size"]["procrustes"] < 1e-12
+    assert result["rows"][0]["trusted_anomaly_judgment"].startswith("unknown")
+
+
+def test_stability_missing_endpoints_do_not_lower_confidence_gate():
+    script = runpy.run_path(
+        str(Path(__file__).parents[1] / "scripts/observer_geometry_experiment.py")
+    )
+    reference, current = landmarks(), landmarks()
+    current[0, 2] = 0.29
+    vectors, errors = script["shape_vectors"](current, reference)
+    assert "endpoint" in errors and "procrustes" in errors
+    assert "complement" in vectors
+    assert current[0, 2] == 0.29
+    assert np.linalg.norm(vectors["wls"]) == pytest.approx(
+        local_geometry.geometry_distance(current, reference)[0], abs=1e-12
+    )
+
+
+def test_similarity_probe_maps_pixel_centers_and_rejects_unknown_probe():
+    script = runpy.run_path(
+        str(Path(__file__).parents[1] / "scripts/observer_geometry_experiment.py")
+    )
+    image = Image.new("RGB", (20, 20), "black")
+    image.putpixel((6, 8), (255, 255, 255))
+    translated, matrix = script["similarity_probe"](image, "translate")
+    assert translated.getpixel((9, 6)) == (255, 255, 255)
+    np.testing.assert_allclose(matrix @ [6, 8, 1], [9, 6, 1])
+    _, matrix = script["similarity_probe"](image, "rotate")
+    np.testing.assert_allclose(matrix @ [9.5, 9.5, 1], [9.5, 9.5, 1])
+    _, matrix = script["similarity_probe"](image, "scale")
+    np.testing.assert_allclose(matrix @ [6, 8, 1], [(6.5) * 0.95 - 0.5, (8.5) * 0.95 - 0.5, 1])
+    with pytest.raises(ValueError, match="Unknown"):
+        script["similarity_probe"](image, "other")
+
+
 def sample(index, **kwargs):
     return StudySample(
         sample_id=f"sample{index}",
@@ -93,6 +184,204 @@ def test_target_movement_never_drives_its_own_fit(region):
     result = local_metrics(q, p)[region]
     assert result["fit_cost"] < 1e-12
     assert result["value"] > 0.1
+
+
+def test_coupling_operator_matches_refitting_and_removes_similarity():
+    script = runpy.run_path(
+        str(Path(__file__).parents[1] / "scripts/observer_geometry_experiment.py")
+    )
+    p = landmarks()
+    fit = tuple(i for i in local_geometry.STABLE_POINTS if i not in REGIONS["contour"])
+    operator, radius, _, jacobian = script["coupling_operator"](p, fit)
+    assert np.max(np.abs(operator @ jacobian)) < 1e-12
+    # Moving an eye leaks into a stationary chin through the complementary fit.
+    delta = np.zeros((28, 2))
+    delta[11, 0] = 1e-5
+    q = p.copy()
+    q[:, :2] += delta * radius
+    aligned, _, _, _ = local_geometry.aligned_residuals(q, p, fit)
+    predicted = (operator @ delta.reshape(-1)).reshape(28, 2)
+    assert np.linalg.norm(predicted[2]) > 1e-7
+    assert np.max(np.abs((aligned - p[:, :2]) / radius - predicted)) < 1e-9
+    # A held-out chin movement retains its full amplitude.
+    delta[:] = 0
+    delta[2, 1] = 0.05
+    assert (operator @ delta.reshape(-1)).reshape(28, 2)[2, 1] == pytest.approx(0.05)
+
+
+def test_coupling_operator_freezes_confidence_and_rejects_unobservable_fit():
+    script = runpy.run_path(
+        str(Path(__file__).parents[1] / "scripts/observer_geometry_experiment.py")
+    )
+    p = landmarks()
+    fit = tuple(i for i in local_geometry.STABLE_POINTS if i not in REGIONS["contour"])
+    confidence = p[:, 2].copy()
+    confidence[11] = 0
+    operator, _, _, _ = script["coupling_operator"](p, fit, confidence)
+    # A masked fit point cannot propagate coordinate changes to another region.
+    assert np.max(np.abs(operator[4:6, 22:24])) < 1e-12
+    confidence[list(fit)] = 0
+    with pytest.raises(ValueError, match="Insufficient complementary"):
+        script["coupling_operator"](p, fit, confidence)
+
+
+def test_coupling_experiment_rejects_unapproved_reference():
+    script = runpy.run_path(
+        str(Path(__file__).parents[1] / "scripts/observer_geometry_experiment.py")
+    )
+    manifest = StudyManifest(character_id="synthetic", samples=[sample(0, reviews=[review()])])
+    with pytest.raises(ValueError, match="approved human-normal original"):
+        script["coupling_experiment"](manifest, {"records": []}, "sample0")
+
+
+def test_intrinsic_contour_similarity_invariance_and_unrelated_point_isolation():
+    script = runpy.run_path(
+        str(Path(__file__).parents[1] / "scripts/observer_geometry_experiment.py")
+    )
+    shape = script["contour_shape"]
+    p = landmarks()
+    q = p.copy()
+    theta = 0.7
+    rotation = np.array([[np.cos(theta), -np.sin(theta)], [np.sin(theta), np.cos(theta)]])
+    q[:, :2] = p[:, :2] @ rotation * 3 + [40, -12]
+    assert np.allclose(shape(p), shape(q), atol=1e-12)
+    q = p.copy()
+    q[5:, :2] += 1000
+    assert np.array_equal(shape(p), shape(q))
+    frozen = {
+        "references": {"front": {"sample_id": "approved", "points": p.tolist()}},
+        "pose_gates": {},
+    }
+    result = feature_variants(q, frozen, "front")
+    assert result["intrinsic_local"]["contour"]["value"] == 0
+    assert result["single_local"]["contour"]["value"] > 0
+    assert profile_pose(result["intrinsic_local"], "intrinsic_local", "down") == "front"
+
+
+def test_intrinsic_contour_retains_chin_movement_and_reflection():
+    script = runpy.run_path(
+        str(Path(__file__).parents[1] / "scripts/observer_geometry_experiment.py")
+    )
+    shape = script["contour_shape"]
+    p = landmarks()
+    axis = p[4, :2] - p[0, :2]
+    q = p.copy()
+    q[2, :2] += np.array([-axis[1], axis[0]]) * 0.2
+    delta = shape(q) - shape(p)
+    assert delta.shape == (6,)
+    assert delta[0] == pytest.approx(0.2)
+    assert np.linalg.norm(delta[1:]) < 1e-12
+    assert np.sqrt(np.mean(delta**2)) == pytest.approx(0.2 / np.sqrt(6))
+    q = p.copy()
+    q[:, 0] *= -1
+    assert np.linalg.norm(shape(p) - shape(q)) > 0.1
+    q = p.copy()
+    q[4, :2] = q[0, :2]
+    with pytest.raises(ValueError, match="Degenerate contour width"):
+        shape(q)
+    p[2, 2] = 0
+    with pytest.raises(ValueError, match="All five contour"):
+        shape(p)
+
+
+@pytest.mark.parametrize("index,component", [(1, 4), (3, 5)])
+def test_intrinsic_contour_retains_side_movement_along_local_axis(index, component):
+    p = landmarks()
+    q = p.copy()
+    q[index, :2] += 0.2 * (p[4, :2] - p[0, :2])
+    delta = local_geometry.contour_shape(q) - local_geometry.contour_shape(p)
+    assert delta[component] == pytest.approx(0.2)
+    assert np.linalg.norm(np.delete(delta, component)) < 1e-12
+    frozen = {
+        "references": {"front": {"sample_id": "approved", "points": p.tolist()}},
+        "pose_gates": {},
+    }
+    result = feature_variants(q, frozen, "front")
+    assert result["intrinsic_local"]["contour"]["value"] == pytest.approx(0.2 / np.sqrt(6))
+    assert result["single_local"]["contour"]["value"] > 0.1
+
+
+def test_causal_replay_dwell_unknown_reset_hysteresis_and_prefix_invariance():
+    script = runpy.run_path(
+        str(Path(__file__).parents[1] / "scripts/observer_geometry_experiment.py")
+    )
+    replay = script["causal_replay"]
+    timeline = [{"time": i / 10, "value": 0.1, "mode": "idle"} for i in range(10)]
+    rows = replay(timeline, 0.03, 0.015, 0.5, 0.15)
+    assert sum(r["new_recommendation"] for r in rows) == 1
+    assert rows[5]["new_recommendation"]
+    assert replay(timeline[:4], 0.03, 0.015, 0.5, 0.15) == rows[:4]
+    timeline[4]["value"] = None
+    rows = replay(timeline, 0.03, 0.015, 0.5, 0.15)
+    assert rows[4]["state"] == "UNKNOWN"
+    assert not any(r["new_recommendation"] for r in rows)
+    timeline = [
+        {"time": 0.0, "value": 0.1, "mode": "idle"},
+        {"time": 0.1, "value": 0.02, "mode": "idle"},
+        {"time": 0.2, "value": 0.01, "mode": "idle"},
+        {"time": 1.0, "value": 0.1, "mode": "idle"},
+        {"time": 1.1, "value": 0.1, "mode": "interaction"},
+    ]
+    rows = replay(timeline, 0.03, 0.015, 0.5, 0.15)
+    assert [r["state"] for r in rows] == ["WATCH", "WATCH", "NORMAL", "WATCH", "UNKNOWN"]
+    assert rows[3]["gap_reset"] and rows[3]["watch_seconds"] == 0
+    with pytest.raises(ValueError, match="strictly increasing"):
+        replay(timeline + [timeline[-1]], 0.03, 0.015, 0.5, 0.15)
+
+
+def test_statistical_budget_uses_independent_valid_sources_and_conditional_control():
+    script = runpy.run_path(
+        str(Path(__file__).parents[1] / "scripts/observer_geometry_experiment.py")
+    )
+    budget = script["statistical_budget"]()
+    validation = budget["zero_false_positive_validation"]
+    assert validation[0]["minimum_valid_normals"] == 59
+    assert all(row["upper95"] <= 0.05 for row in validation)
+    assert budget["validity_sampling"]["minimum_sampled_normals"] > 59
+    control = budget["uniform_rank_calibration_control"]
+    assert control["marginal_false_positive_probability"] == 0.05
+    assert control["probability_frozen_true_fpr_exceeds_5_percent"] > 0.4
+
+
+def test_regional_flow_replay_preserves_known_translation_and_input_binding(tmp_path):
+    script = runpy.run_path(
+        str(Path(__file__).parents[1] / "scripts/observer_geometry_experiment.py")
+    )
+    s = sample(0, reviews=[review(approve_anchor=True)])
+    manifest = StudyManifest(character_id="synthetic", samples=[s])
+    Image.new("RGB", (256, 256)).save(tmp_path / s.image)
+    p = landmarks()
+    p[:, :2] = p[:, :2] * 50 + 128
+    extracted = {"records": [{"sample_id": s.sample_id, "faces": [{"keypoints": p.tolist()}]}]}
+    flow = np.zeros((2, 2, 256, 256), dtype=np.float32)
+    flow[0, 0] = 1
+    flow[1, 0] = -1
+    np.savez_compressed(tmp_path / f"{s.sample_id}-flow.npz", flow=flow)
+    report = {
+        "data_hash": data_hash(manifest),
+        "reference_id": s.sample_id,
+        "rows": [
+            {
+                "sample_id": s.sample_id,
+                "input_sha256": s.input_sha256,
+                "consistent_fraction_in_bounds": 1.0,
+            }
+        ],
+    }
+    location = tmp_path / "flow.json"
+    location.write_text(json.dumps(report), encoding="utf-8")
+    result = script["regional_flow_experiment"](
+        manifest, extracted, tmp_path, s.sample_id, location
+    )
+    assert result["global_consistency_max_difference"] == 0
+    for region in result["rows"][0]["regions"].values():
+        assert region["median_pixels"] == 1
+        assert region["p95_pixels"] == 1
+        assert region["consistent_fraction_in_bounds"] == 1
+    report["rows"][0]["input_sha256"] = "0" * 64
+    location.write_text(json.dumps(report), encoding="utf-8")
+    with pytest.raises(ValueError, match="input hash mismatch"):
+        script["regional_flow_experiment"](manifest, extracted, tmp_path, s.sample_id, location)
 
 
 def test_expression_aperture_is_not_eye_structure_and_partial_failure_is_local():
@@ -292,21 +581,61 @@ def test_paired_bootstrap_resamples_sources_and_unknown_anomalies_are_missed():
             "source_id": f"source{i}",
             "label": "geometry_anomaly",
             "decisions": {
-                "single_local": {"decision": "anomaly" if i < 8 else "unknown"},
+                "single_local": {"decision": "anomaly" if i < 16 else "unknown"},
                 "wls": {"decision": "within_thresholds"},
             },
         }
-        for i in range(10)
+        for i in range(20)
     ]
     result = paired_bootstrap(rows, "single_local")
     assert result["interval95"][0] > 0
+    assert result["sign_test"]["positive_sources"] == 16
+    assert result["sign_test"]["tied_sources"] == 4
+    assert result["sign_test"]["p_one_sided"] == 2**-16
     assert result == paired_bootstrap(rows, "single_local")
     assert paired_bootstrap([rows[0]] * 20, "single_local")["interval95"] is None
     for row in rows:
         row["primary"] = False
     summary = summarize_decisions(rows, "single_local")
     assert summary["recall"] == 0.8
-    assert summary["anomaly_unknown_counted_missed"] == 2
+    assert summary["anomaly_unknown_counted_missed"] == 4
+
+
+def test_two_positive_anomaly_sources_cannot_support_adoption():
+    rows = [
+        {
+            "source_id": f"source{i}",
+            "label": "geometry_anomaly",
+            "decisions": {
+                "single_local": {"decision": "anomaly"},
+                "wls": {"decision": "within_thresholds"},
+            },
+        }
+        for i in range(2)
+    ]
+    result = paired_bootstrap(rows, "single_local")
+    assert result["status"] == "insufficient_independent_anomaly_sources"
+    assert result["interval95"] is None
+    assert result["sign_test"]["p_one_sided"] == 0.25
+
+
+def test_source_sign_test_uses_direction_and_excludes_ties():
+    rows = [
+        {
+            "source_id": f"source{i}",
+            "label": "geometry_anomaly",
+            "decisions": {
+                "single_local": {"decision": "anomaly" if i < 8 else "within_thresholds"},
+                "wls": {"decision": "anomaly" if 8 <= i < 10 else "within_thresholds"},
+            },
+        }
+        for i in range(20)
+    ]
+    result = paired_bootstrap(rows, "single_local")
+    assert result["sign_test"]["positive_sources"] == 8
+    assert result["sign_test"]["negative_sources"] == 2
+    assert result["sign_test"]["tied_sources"] == 10
+    assert result["sign_test"]["p_one_sided"] == pytest.approx(56 / 1024)
 
 
 def test_review_import_preserves_data_binding_and_rejects_wrong_dataset(tmp_path, monkeypatch):
@@ -519,11 +848,16 @@ def test_freeze_never_reads_calibration_or_validation_labels_for_references():
     assert digest(before) != digest(after)
 
 
-def test_adoption_uses_reviewed_anomalies_and_separately_reports_real_evidence():
+@pytest.mark.parametrize("anomaly_sources,accepted", [(2, False), (20, True)])
+def test_adoption_uses_reviewed_anomalies_and_separately_reports_real_evidence(
+    anomaly_sources, accepted
+):
     # Controlled fixture, not an actual human dataset or accuracy result.
     manifest, extracted = corpus()
     splits = split_sources(manifest)
-    originals = [s for s in manifest.samples if splits[s.source_id] == "validation"][:10]
+    originals = [s for s in manifest.samples if splits[s.source_id] == "validation"][
+        :anomaly_sources
+    ]
     children = []
     for i, parent in enumerate(originals):
         child = parent.model_copy(
@@ -561,6 +895,6 @@ def test_adoption_uses_reviewed_anomalies_and_separately_reports_real_evidence()
     frozen = freeze_study(manifest, extracted, candidate_variant="single_local")
     calibrated = calibrate_study(manifest, extracted, frozen)
     report = evaluate_study(manifest, extracted, frozen, calibrated)
-    assert report["adoption"]["single_local"]["adopt"] is True
+    assert report["adoption"]["single_local"]["adopt"] is accepted
     assert report["adoption"]["single_local"]["bootstrap_real_anomalies"]["interval95"] is None
     assert report["strata"]["synthetic"]["True"]["single_local"]["recall"] == 1

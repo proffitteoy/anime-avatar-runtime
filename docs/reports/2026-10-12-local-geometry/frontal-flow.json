@@ -1,0 +1,267 @@
+{
+  "schema_version": 1,
+  "diagnostic_only": true,
+  "real_model_inference": true,
+  "reference_id": "s0000",
+  "data_hash": "0295b9676709b19cdd659576e2261de52573788ff15f276f5e8102da6206befc",
+  "labels_hash": "7739882cd9ae354afe5c4a3303f8a3b237dffcb26c6ca4e0c212bfd68e50c0a8",
+  "implementation_sha256": "9faf2204e408dbf6de1d52f206218a8740e5651c8e7670eead886617a3ab3c7c",
+  "model": {
+    "code_commit": "b5123431164d01ec14526a1c3d22218aecb62024",
+    "source_files_sha256": {
+      "LICENSE": "6746d3bb707775716932ce5df0de252a03b00ff6d4206aee9a63f9f0f4042775",
+      "gmflow/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gmflow/backbone.py": "eb40bddfa236ce678e9d2257ee1e8860b1b2f3acb19273afd80d230823747703",
+      "gmflow/geometry.py": "dd124c124cbc4314bc4079f098ae23aa67b9c9a8bb958ebb037c197697b64be0",
+      "gmflow/gmflow.py": "55105bcb9d7dcb24d2f007ceda47e9326af48f5233c2c1bb6a58902d58b63590",
+      "gmflow/matching.py": "c2baa9d6b388a17a63a45ac149878def7ad6de2f3df805c74120bc815a8459a6",
+      "gmflow/position.py": "ff034a0161a4ab1b33574a88e340dbc8ba10062fceee4da59e8029cef349fc7a",
+      "gmflow/transformer.py": "df68e3a18648b41035a2f11a0f82bdea0ba78753ae416ce2bacfc95497051ffe",
+      "gmflow/trident_conv.py": "08189c1c8310953939ad10902a684f64abf5e7ba6dfaed4edb2fdd8964487180",
+      "gmflow/utils.py": "e2f2efffc4dff50313afa542481f2a1ac448deb972dde593a432b53dbe1ef69b"
+    },
+    "weights_sha256": "e9887eda6165e0813c03f35998d6af86e265aafce2e3349af93d691a59696088",
+    "weights_url": "https://s3.eu-central-1.amazonaws.com/avg-projects/unimatch/pretrained/gmflow-scale1-things-e9887eda.pth",
+    "source_license": "Apache-2.0",
+    "weight_license": "Independent weight license not verified; not redistributed"
+  },
+  "environment": {
+    "device": "cpu",
+    "python": "3.12.13",
+    "torch": "2.5.1+cpu",
+    "threads": 2,
+    "inference_size": [
+      256,
+      256
+    ]
+  },
+  "load_seconds": 0.125,
+  "elapsed_seconds": 5.547000000005937,
+  "rows": [
+    {
+      "sample_id": "s0000",
+      "input_sha256": "61a1ba5b1c37b8cc650af140aa7df276a9aad97e59ce1e6051092daf3fc7dce6",
+      "label": "normal",
+      "parts": [],
+      "transform": null,
+      "flow_seconds": 0.40600000000267755,
+      "in_bounds_fraction": 1.0,
+      "consistent_fraction_in_bounds": 1.0,
+      "median_pixels_on_consistent": 0.017742857336997986,
+      "median_diagonal_on_consistent": 4.900818258053423e-05,
+      "mean_bidirectional_error_in_bounds": 0.049885962158441544
+    },
+    {
+      "sample_id": "s0001",
+      "input_sha256": "94f667529c9858e8bce6f0ec3a764cd09265ffddf22ce5e65bc0d613e6b8dd3f",
+      "label": "normal",
+      "parts": [],
+      "transform": {
+        "kind": "similarity_rotation",
+        "degrees": -8
+      },
+      "flow_seconds": 0.4059999999954016,
+      "in_bounds_fraction": 0.939239501953125,
+      "consistent_fraction_in_bounds": 0.9172434210777283,
+      "median_pixels_on_consistent": 13.59002685546875,
+      "median_diagonal_on_consistent": 0.03753750057034862,
+      "mean_bidirectional_error_in_bounds": 0.3678414523601532
+    },
+    {
+      "sample_id": "s0002",
+      "input_sha256": "4b279ac3b9b754b47c3c17673b768fad91285d47c52fbb9cde4b8f6b1d1d67de",
+      "label": "normal",
+      "parts": [],
+      "transform": {
+        "kind": "similarity_rotation",
+        "degrees": 8
+      },
+      "flow_seconds": 0.3899999999994179,
+      "in_bounds_fraction": 0.947967529296875,
+      "consistent_fraction_in_bounds": 0.9175385236740112,
+      "median_pixels_on_consistent": 13.792287826538086,
+      "median_diagonal_on_consistent": 0.03809617285242871,
+      "mean_bidirectional_error_in_bounds": 0.3666272461414337
+    },
+    {
+      "sample_id": "s0003",
+      "input_sha256": "e79ea09ace634101d0ab4eaa8ec4c44c88082b4eed1c256cabbbb57b32f1ad35",
+      "label": "normal",
+      "parts": [],
+      "transform": {
+        "kind": "similarity_scale",
+        "scale": 0.9
+      },
+      "flow_seconds": 0.39100000000325963,
+      "in_bounds_fraction": 1.0,
+      "consistent_fraction_in_bounds": 0.735260009765625,
+      "median_pixels_on_consistent": 9.352408409118652,
+      "median_diagonal_on_consistent": 0.02583262268169488,
+      "mean_bidirectional_error_in_bounds": 0.7287968397140503
+    },
+    {
+      "sample_id": "s0004",
+      "input_sha256": "6846f7d3f6605553c736d567eef817914cf8e46cc3d19c395e0532ec6e95923c",
+      "label": "normal",
+      "parts": [],
+      "transform": {
+        "kind": "eye_spacing",
+        "strength": 0.05,
+        "method": "inverse_compact_elliptic_displacement"
+      },
+      "flow_seconds": 0.40600000000267755,
+      "in_bounds_fraction": 1.0,
+      "consistent_fraction_in_bounds": 1.0,
+      "median_pixels_on_consistent": 0.019659537822008133,
+      "median_diagonal_on_consistent": 5.430231448802875e-05,
+      "mean_bidirectional_error_in_bounds": 0.05095331370830536
+    },
+    {
+      "sample_id": "s0005",
+      "input_sha256": "ce7e7d8c437eb2462da3604b52808602049de8ba37546b6dcb59ef74053e8d76",
+      "label": "normal",
+      "parts": [],
+      "transform": {
+        "kind": "eye_spacing",
+        "strength": 0.1,
+        "method": "inverse_compact_elliptic_displacement"
+      },
+      "flow_seconds": 0.39099999999598367,
+      "in_bounds_fraction": 1.0,
+      "consistent_fraction_in_bounds": 0.9989166259765625,
+      "median_pixels_on_consistent": 0.02220897749066353,
+      "median_diagonal_on_consistent": 6.134421322995146e-05,
+      "mean_bidirectional_error_in_bounds": 0.05424655228853226
+    },
+    {
+      "sample_id": "s0006",
+      "input_sha256": "d68aa347e4fe94df781e45c57824a4ac54525d08080cea92116f736a2cbf35d8",
+      "label": "geometry_anomaly",
+      "parts": [
+        "left_eye",
+        "right_eye",
+        "eye_spacing"
+      ],
+      "transform": {
+        "kind": "eye_spacing",
+        "strength": 0.2,
+        "method": "inverse_compact_elliptic_displacement"
+      },
+      "flow_seconds": 0.40600000000267755,
+      "in_bounds_fraction": 1.0,
+      "consistent_fraction_in_bounds": 0.9890289306640625,
+      "median_pixels_on_consistent": 0.020041896030306816,
+      "median_diagonal_on_consistent": 5.535843980806913e-05,
+      "mean_bidirectional_error_in_bounds": 0.08971508592367172
+    },
+    {
+      "sample_id": "s0007",
+      "input_sha256": "de21a7f853a09e4af6f1b1d2b053ba8f057248ad643e53045c3dab1bd4998a5f",
+      "label": "normal",
+      "parts": [],
+      "transform": {
+        "kind": "nose_mouth",
+        "strength": 0.05,
+        "method": "inverse_compact_elliptic_displacement"
+      },
+      "flow_seconds": 0.4219999999986612,
+      "in_bounds_fraction": 1.0,
+      "consistent_fraction_in_bounds": 1.0,
+      "median_pixels_on_consistent": 0.020549172535538673,
+      "median_diagonal_on_consistent": 5.675960643613967e-05,
+      "mean_bidirectional_error_in_bounds": 0.049937233328819275
+    },
+    {
+      "sample_id": "s0008",
+      "input_sha256": "78f86f39ab1dc70fba4118ecfbf62653956eedb586f018b83cfc2d153da8e60c",
+      "label": "normal",
+      "parts": [],
+      "transform": {
+        "kind": "nose_mouth",
+        "strength": 0.1,
+        "method": "inverse_compact_elliptic_displacement"
+      },
+      "flow_seconds": 0.43699999999807915,
+      "in_bounds_fraction": 1.0,
+      "consistent_fraction_in_bounds": 1.0,
+      "median_pixels_on_consistent": 0.021250732243061066,
+      "median_diagonal_on_consistent": 5.8697409665031604e-05,
+      "mean_bidirectional_error_in_bounds": 0.050497911870479584
+    },
+    {
+      "sample_id": "s0009",
+      "input_sha256": "393133621b5092c7024792b4f4f9af705cda9a88c8d53e965f4ccb0ba628ae5e",
+      "label": "geometry_anomaly",
+      "parts": [
+        "mouth"
+      ],
+      "transform": {
+        "kind": "nose_mouth",
+        "strength": 0.2,
+        "method": "inverse_compact_elliptic_displacement"
+      },
+      "flow_seconds": 0.4219999999986612,
+      "in_bounds_fraction": 1.0,
+      "consistent_fraction_in_bounds": 1.0,
+      "median_pixels_on_consistent": 0.021191230043768883,
+      "median_diagonal_on_consistent": 5.8533056506379196e-05,
+      "mean_bidirectional_error_in_bounds": 0.052221886813640594
+    },
+    {
+      "sample_id": "s0010",
+      "input_sha256": "1c24dc5ebc893c3ddd2d516d8d5312224b705b7805b596a262db901525d115e0",
+      "label": "normal",
+      "parts": [],
+      "transform": {
+        "kind": "chin",
+        "strength": 0.05,
+        "method": "inverse_compact_elliptic_displacement"
+      },
+      "flow_seconds": 0.4059999999954016,
+      "in_bounds_fraction": 1.0,
+      "consistent_fraction_in_bounds": 1.0,
+      "median_pixels_on_consistent": 0.019624555483460426,
+      "median_diagonal_on_consistent": 5.4205688516119186e-05,
+      "mean_bidirectional_error_in_bounds": 0.05094137787818909
+    },
+    {
+      "sample_id": "s0011",
+      "input_sha256": "28f6e545e9e74177ccd33b306375cc8eb2428a984008b359ee88d9d50dcf1bda",
+      "label": "geometry_anomaly",
+      "parts": [
+        "contour"
+      ],
+      "transform": {
+        "kind": "chin",
+        "strength": 0.1,
+        "method": "inverse_compact_elliptic_displacement"
+      },
+      "flow_seconds": 0.40600000000267755,
+      "in_bounds_fraction": 1.0,
+      "consistent_fraction_in_bounds": 0.9999542236328125,
+      "median_pixels_on_consistent": 0.019920941442251205,
+      "median_diagonal_on_consistent": 5.502434680248417e-05,
+      "mean_bidirectional_error_in_bounds": 0.05555753409862518
+    },
+    {
+      "sample_id": "s0012",
+      "input_sha256": "06dbc46f4914ffb31615df907114e01c9046ed66128384f3b37950407d186d1e",
+      "label": "geometry_anomaly",
+      "parts": [
+        "contour"
+      ],
+      "transform": {
+        "kind": "chin",
+        "strength": 0.2,
+        "method": "inverse_compact_elliptic_displacement"
+      },
+      "flow_seconds": 0.4220000000059372,
+      "in_bounds_fraction": 1.0,
+      "consistent_fraction_in_bounds": 0.9947357177734375,
+      "median_pixels_on_consistent": 0.020170701667666435,
+      "median_diagonal_on_consistent": 5.571421847850679e-05,
+      "mean_bidirectional_error_in_bounds": 0.0583651140332222
+    }
+  ],
+  "scope": "Frontal still pairs, not video. Consistency is a reliability proxy, not geometry validity; no flow truth, calibrated anomaly, GPU or recovery test"
+}

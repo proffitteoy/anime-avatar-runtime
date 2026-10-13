@@ -69,3 +69,11 @@
 
 上述为初始调研记录，当时模型权重未下载。2026-10-12 已下载固定 CCIP、YOLOv3、HRNetV2 权重并完成真实 CPU 身份/几何观测；新版权重来源、SHA-256、模型卡许可、独立环境和失败样例见 [观测实现与实测](./observers.md)。CUDA 生成、长期运行、恢复质量及串行吞吐仍未验证；按 [模型环境说明](./backend-setup.md) 在目标 NVIDIA 机器完成生成基线。
 
+## 正脸光流诊断补充（2026-10-12）
+
+沿用原选型的GMFlow，不改变Runtime或控制环境依赖。已核对固定提交 `b5123431164d01ec14526a1c3d22218aecb62024` 中的 `gmflow/` 九个Python文件及LICENSE，逐文件Git blob与下载字节一致；本地为经核验的模型源码子集，不冒充完整Git checkout。源码使用Apache-2.0。
+
+权重取自作者后续官方 [UniMatch MODEL_ZOO](https://github.com/autonomousvision/unimatch/blob/master/MODEL_ZOO.md) 的 [GMFlow-scale1-things单文件链接](https://s3.eu-central-1.amazonaws.com/avg-projects/unimatch/pretrained/gmflow-scale1-things-e9887eda.pth)。本次读取的模型表Git blob为 `0872cd5a59231d0cd66893313d5ccfd5179704ca`；权重18,768,907字节，SHA-256为 `e9887eda6165e0813c03f35998d6af86e265aafce2e3349af93d691a59696088`。未核验独立权重许可声明，不把源码许可套到权重上，权重不分发到仓库。
+
+独立模型环境现有Python 3.12.13 / Torch 2.5.1+cpu即可运行；`torch.load(..., weights_only=True, map_location="cpu")` 与严格state_dict加载均通过，不依赖原main.py中的CUDA checkpoint位置。源码放 `vendor/gmflow`，权重与11条文件来源／哈希记录放 `models/gmflow`，均被忽略。未修改上游文件或控制锁文件。13对已人工标注正脸图完成CPU双向推理；这不是视频测速、动漫光流精度、GPU生成或异常检出验收。运行命令见 [局部研究流程](./local-geometry-calibration.md#正脸光流时序回放与统计预算)，数值见 [实验报告](./reports/2026-10-12-local-geometry/README.md#11-正脸图对的真实gmflow测量)。
+

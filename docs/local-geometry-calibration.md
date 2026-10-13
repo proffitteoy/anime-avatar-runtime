@@ -8,6 +8,8 @@
 
 复用 [实验脚本](../scripts/observer_geometry_experiment.py) 的 `study` 子命令。新一轮已用清晰正脸原图重做为 dataset-front-v1：1 张原图、±8° 旋转和0.9倍缩放三个相似变换对照、眼距／鼻口／下巴各三档变形，共13张。该批人工盲测已完成（正常9、畸变4、不确定0），正常原图获准作为参考；最新对照见 [报告第八节](./reports/2026-10-12-local-geometry/README.md#8-完成人工盲测后的局部几何对照)。旧标签没有迁移。原图与全部派生图仍只有一个独立来源，旋转／缩放也不冒充真实头部姿态或正常表情动作。
 
+本轮另取得 [CC0 作者表情包](https://opengameart.org/content/headmugshot-packs-chibi-emotions) 的三个角色、23张正脸表情，以及 [ExpressEdit](https://huggingface.co/datasets/JiashengGuo/ExpressEdit/tree/85ea6cb43553c705a9301630985279b917190ee3) 固定版本 `85ea6cb43553c705a9301630985279b917190ee3` 的两个角色、10张扩散表情编辑结果，已完成真实CPU提取及诊断。各角色只与自己的参考候选配对；作者表情意图和生成标签只作弱标记，不是人工正常／异常真值。新增两批尚无人工复核标签或可信Anchor，ExpressEdit的无表情编辑结果也不能冒充未公开的原始图。重复表情和随机种子不能增加独立来源数，不能据此报告误报率或正式采用结论。新结果、鼻点缺测与表达域重叠见 [报告第十四节](./reports/2026-10-12-local-geometry/README.md#14-2026-10-13正脸表达域续实验与审查修复)。
+
 ```powershell
 .tools/observer-env/Scripts/python.exe scripts/observer_geometry_experiment.py study prepare --image var/observer-assets/public-anchor.png --character public-frontal-01 --models models/observers --similarity-controls --compact-warps --output var/local-geometry-study/dataset-front-v1
 ```
@@ -73,7 +75,38 @@ uv run --locked python scripts/observer_geometry_experiment.py study explore --m
 
 每个部位从现有 10 个结构拟合点中排除该部位，至少 4 个且不少于剩余点 75% 可靠；拟合必须非退化、正尺度且禁止反射。参考尺度来自参考结构点，评分使用原始最小置信度权重；下限仍为 0.3，不用 Huber 降权剔除异常。眼角、鼻、嘴评分要求对应目标点全部可靠；失败只影响对应部位。现有检测器没有瞳孔点，不虚构视线估计。
 
+## 拟合耦合机制实验
+
+`coupling` 阶段复用已提取的真实关键点，不加载模型。需要人工确认正常、获准作为参考的非派生原图；输入图片、样本和提取记录仍逐项核对哈希。输出目录必须不存在：
+
+```powershell
+uv run --locked python scripts/observer_geometry_experiment.py study coupling --manifest var/local-geometry-study/dataset-front-v1/reviewed-human-v1.json --extraction var/local-geometry-study/extraction-front-v1/extraction.json --reference s0000 --output var/local-geometry-study/coupling-repeat-v1
+```
+
+固定比较原结构点排除被测部位、再去掉鼻点、添加嘴角后排除被测部位三种拟合。每种都禁止被测点参与自身拟合。固定置信度权重和有效点集合，在参考位置线性化；用56个坐标方向的中心差分、准确相似变换与只移动下巴的控制检查。保存六组局部传播增益、理想各向同性噪声敏感性、13例实际重拟合与线性预测误差，以及下巴／两侧轮廓分项。
+
+`coupling.json` 的数字为开发诊断，不输出异常阈值或采用结论；双眼与左右眼区域有重叠，增益矩阵不是互斥部位分解。固定权重的导数不覆盖置信度变化、缺测切换、重新检测或大幅姿态变化。噪声敏感性假设坐标独立同方差，不表示检测器的真实误差分布。新增拟合方案不接入 `single_local` / `pose_local` 或已有冻结产物；若后续成为候选，需重新声明、冻结并独立验证。实测结果见 [报告第九节](./reports/2026-10-12-local-geometry/README.md#9-拟合耦合机制与拟合点对照实验)。
+
+## 局部形状稳定性与检测器等变诊断
+
+按2026-10-13确认的优先级，人工盲审暂缓，先分析稳定性，不继续增加合成时序回放。新增`study stability`固定比较现有全局WLS、补集轮廓拟合、六维端点坐标与五点等权保向Procrustes；后者只是研究对照，不加入冻结候选或Runtime。前三种复用原定义，Procrustes使用五点RMS／参考轮廓宽；原始数值尺度不同，比较噪声响应与最小目标响应之比。
+
+`stability`固定置信度及0.3有效集合，解析推导端点雅可比与相似变换切空间投影，用两个步长、56坐标方向复核。目标类限定为五点形状中正交于相似变换切空间的全部单位方向；理想独立／端点／内部／共同端点噪声因子不是真实检测器协方差。结果同时保留相对其他部位的轮廓等比例大小盲区，不能仅凭更小分数宣布异常检测改进。
+
+`repeatability`在固定模型CPU环境执行三种已知图像探针：整数平移(+3,-2)、+4°旋转、0.95倍取整缩放，再按像素中心约定逆变换检测点。每张与自身原提取比较；误差混合检测、参考、重采样及坐标约定，不是定位真值或随机噪声标定。全部点与失败留在私有记录；不可靠端点宽度不用于归一化误差。三层分别记录可靠点、原始量可计算性和未经校准的异常判断，生产姿态门单独报告。
+
+```powershell
+uv run --locked python scripts/observer_geometry_experiment.py study stability --manifest var/local-geometry-study/dataset-front-v1/reviewed-human-v1.json --extraction var/local-geometry-study/extraction-front-v1/extraction.json --reference s0000 --output var/local-geometry-study/stability-repeat
+.tools/observer-env/Scripts/python.exe scripts/observer_geometry_experiment.py study repeatability --manifest var/research-continuation/frontal-emotions-v1/aranel/dataset/manifest.json --extraction var/research-continuation/frontal-emotions-v1/aranel/extraction/extraction.json --models models/observers --output var/local-geometry-study/repeatability-repeat
+```
+
+输出目录必须不存在，原图哈希和模型清单须匹配。已完成六参考形状的解析对照及33图的99次检测探针；当前帧／参考的双边误差、近共线正常／异常方向及有界正常范围另有受控计算，详见 [第十五节](./reports/2026-10-12-local-geometry/README.md#15-局部形状稳定性条件性优势与测量等变实验)。这些结果没有学习正常表达分布或增加独立来源，未改变正常校准39来源、有效验证59来源及覆盖要求。
+
 ## 冻结、校准与独立评估
+
+新增正脸候选 `intrinsic_local`：眼、双眼关系、鼻、嘴沿用 `single_local`，仅把轮廓替换为五点内部形状比值。点0/4确定轮廓宽度和局部坐标轴，以两端点中点为原点。保留既有前四个分量：下巴点2的法向高度和沿轴偏移、两侧中间点1/3的法向高度；追加点1/3的沿轴偏移，共六维，均除以轮廓宽度；全部五点需可靠。对于端点不同、索引固定的二维五点轮廓，六维坐标完整保留去除平移、旋转和正尺度后的六个形状自由度，避免遗漏中间点沿轴移动。它消除跨部位拟合传播，不消除检测器噪声或耦合，也不保证三维姿态鲁棒性；轮廓整体等比例大小变化仍是盲区。
+
+单独诊断使用 `study intrinsic`，正式阶段可明确 `freeze --candidate intrinsic_local`，其余参数与下方命令一致。候选仍使用固定正脸参考／配置，不由人工姿态标签路由；每个部位重新用独立正常开发来源拟合尺度，再共同校准最大标准化统计量。新的轮廓比值不能共用原轮廓RMS阈值。[历史报告第十节](./reports/2026-10-12-local-geometry/README.md#10-正脸轮廓内部比值与可辨识性负对照) 保留历史v1的四维数值；新版六维评分须重新运行，不能把旧值改标为新版结果或沿用其阈值。源码变化使旧冻结产物失效，需使用新输出目录重新冻结；历史报告保留原版本。
 
 ```powershell
 uv run --locked python scripts/observer_geometry_experiment.py study freeze --manifest var/local-geometry-study/dataset-v1/reviewed.json --extraction var/local-geometry-study/extraction-v1/extraction.json --candidate pose_local --output var/local-geometry-study/frozen-v1
@@ -85,7 +118,7 @@ uv run --locked python scripts/observer_geometry_experiment.py study evaluate --
 
 冻结阶段按 front / left_turn / right_turn / down / up 选择人工确认正常原图的代表形状（结构对齐距离的 medoid）。用不包含参考来源的正常开发主样本拟合逐部位姿态门限：正确匹配误差 95% 分位数、最优次优差额 5% 分位数，至少 20 个独立来源。姿态候选比较不包含当前被检测部位；仅一个姿态参考、数据不足、歧义和越界都不输出可信姿态。各有效部位匹配姿态不一致时联合判定 unknown，仍保存原始局部残差和匹配原因。
 
-固定输出四个版本：生产 WLS、单正脸参考的局部对齐 single_local、自动姿态参考 pose_local、人工姿态 oracle。前两者使用一个固定正脸参考与正脸配置，按混合动作数据校准；自动版本由匹配结果选择姿态配置，只有 oracle 使用人工真值姿态路由。oracle 仅诊断，不参与采用。候选由 freeze --candidate 在校准前选定，默认 pose_local，不能根据验证集重新挑选。
+固定输出五个版本：生产 WLS、单正脸参考的局部对齐 single_local、自动姿态参考 pose_local、人工姿态 oracle、正脸轮廓比值 intrinsic_local。WLS、single_local和intrinsic_local使用固定正脸参考／配置，不自动取得姿态鲁棒性；自动版本由匹配结果选择姿态配置，只有 oracle 使用人工真值姿态路由。oracle 仅诊断，不参与采用。候选由 freeze --candidate 在校准前选定，默认 pose_local，不能根据验证集重新挑选。当前intrinsic_local实验输入限定为已有人工确认的正脸批次；其他姿态适用性未验收。
 
 正常开发主样本拟合 median／1.4826 MAD，至少 20 个独立来源；尺度下限 1e-6 并记录 mad_floored。以非负标准化局部残差的最大值形成几何辅助统计量，不混入身份/运动，不代替原始局部输出。每姿态配置至少 39 个独立正常校准主样本，排序位置 `ceil((n+1)*0.95)`，严格大于才标候选异常。稀疏部位、未知有效性组合或姿态歧义为 unknown；仅部分部位未超限时整体仍未知。
 
@@ -93,4 +126,24 @@ uv run --locked python scripts/observer_geometry_experiment.py study evaluate --
 
 验证仅使用验证来源、人工确认的 idle、受支持姿态及非严重遮挡数据。误报率分母为有可用统计判定的正常主样本；完整判定覆盖率的分母为所有符合范围的正常主样本。异常 unknown 计未检出；按姿态、部位、人工严重度、机械变形强度及合成／真实分别统计。Clopper–Pearson 单侧 95% 上界：59 个独立有效正常观测、0 误报时约 4.95%；不能用相邻帧替代这些来源。
 
-采用要求误报上界 ≤5%、正常完整判定覆盖率 ≥80%，WLS 也经过同目标校准，且人工确认畸变上的配对来源 bootstrap 区间下界大于 0。bootstrap 固定种子 42、2000 次；合成与真实畸变的区间和检出率分别报告；合成数据上的通过不能宣称自然生成异常已验收。缺数据时明确 not_accepted；任何通过也仅为离线范围，不自动启用 Runtime 或恢复。
+采用要求误报上界 ≤5%、正常完整判定覆盖率 ≥80%，WLS 也经过同目标校准且误报上界 ≤5%，人工确认畸变至少来自20个独立来源；配对来源簇 bootstrap 区间下界大于0，并且单侧精确来源符号检验的 p 值 ≤0.05。20个来源只是流程最低样本门槛，不保证充分检验功效；仍需按预期效应、来源差异和实际异常组成估算样本量。
+
+bootstrap 固定种子42、2000次，每次按来源簇重采样，保留簇内配对样本，计算按样本数加权的候选与WLS检出率差；输出百分位近似区间，不是严格的均值置信保证。来源符号检验按每个来源的检出率差统计正／负方向，排除差为0的来源，检验非零差来源中正向概率是否大于1/2；单侧精确二项 p 值依赖独立来源及零假设下正负方向等可能，检验对象不是样本加权平均检出率差，也不能将其改述为均值的置信区间。合成与真实畸变的区间和检出率分别报告；合成数据上的通过不能宣称自然生成异常已验收。缺数据时明确 not_accepted；任何通过也仅为离线范围，不自动启用 Runtime 或恢复。
+
+## 正脸光流、时序回放与统计预算
+
+`study flow` 在独立CPU模型环境中，对已人工标注的正脸图与正常参考作真实GMFlow双向推理，不下载模型。固定源码提交 `b5123431164d01ec14526a1c3d22218aecb62024`，使用官方模型表链接的 `gmflow-scale1-things-e9887eda.pth`，SHA-256为 `e9887eda6165e0813c03f35998d6af86e265aafce2e3349af93d691a59696088`。准备路径及许可边界见 [开源选型](./open-source-selection.md#正脸光流诊断补充2026-10-12)。需要10个上游源码文件的本地哈希清单 `models/gmflow/provenance.json`；严格加载权重，固定256×256、CPU、2线程、注意力分块2和全局匹配。
+
+```powershell
+.tools/observer-env/Scripts/python.exe scripts/observer_geometry_experiment.py study flow --manifest var/local-geometry-study/dataset-front-v1/reviewed-human-v1.json --extraction var/local-geometry-study/extraction-front-v1/extraction.json --reference s0000 --gmflow-repo vendor/gmflow --gmflow-model models/gmflow/gmflow-scale1-things-e9887eda.pth --gmflow-provenance models/gmflow/provenance.json --output var/local-geometry-study/front-flow-repeat
+uv run --locked python scripts/observer_geometry_experiment.py study flow-regions --manifest var/local-geometry-study/dataset-front-v1/reviewed-human-v1.json --extraction var/local-geometry-study/extraction-front-v1/extraction.json --reference s0000 --flow-report var/local-geometry-study/front-flow-repeat/flow.json --output var/local-geometry-study/front-flow-regions-repeat
+uv run --locked python scripts/observer_geometry_experiment.py study intrinsic --manifest var/local-geometry-study/dataset-front-v1/reviewed-human-v1.json --extraction var/local-geometry-study/extraction-front-v1/extraction.json --reference s0000 --output var/local-geometry-study/front-intrinsic-repeat
+uv run --locked python scripts/observer_geometry_experiment.py study replay --manifest var/local-geometry-study/dataset-front-v1/reviewed-human-v1.json --extraction var/local-geometry-study/extraction-front-v1/extraction.json --reference s0000 --output var/local-geometry-study/front-replay-repeat
+uv run --locked python scripts/observer_geometry_experiment.py study budget --output var/local-geometry-study/statistical-budget-repeat
+```
+
+所有输出目录须不存在。光流原始数组留在私有输出，`flow-regions`复用它们，不重新推理。固定参考点矩形加0.15倍参考RMS边距作为部位范围，输出中位数、95%分位数及双向一致性；全图光流或一致性均不能直接当异常分数。图对没有真实时间间隔，不输出速度、加速度或每秒运动指标。
+
+`replay` 是专用于本批已标注s0000/s0005/s0012的合成时间线：从静态测量构造正常、短暂变化、持续畸变及缺测场景，验证因果状态处理。显式工程夹具阈值0.03/0.015、持续0.5秒、最大间隔0.15秒未校准，不进入Runtime。超过进入线开始WATCH，保持在退出线上方持续达标才建议恢复；缺测、过长间隔或无交互配置断开持续计时。返回RECOVER_RECOMMENDED仅表示影子建议，不调用恢复后端，不表示真实视频预警或恢复成功。
+
+`budget` 计算独立有效正常观测的Clopper–Pearson要求及来源划分预算。39来源秩阈值提供交换性假设下的边际保证，不能保证每份冻结阈值的真实误报率都≤5%；独立验证仍必需。80%有效率预算另假设独立二项观测，不是当前覆盖率实测。完整续作结果、正式阶段数据不足与验收逐项状态见 [报告第十至十三节](./reports/2026-10-12-local-geometry/README.md#10-正脸轮廓内部比值与可辨识性负对照)。

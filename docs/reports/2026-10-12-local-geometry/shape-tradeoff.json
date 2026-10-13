@@ -1,0 +1,145 @@
+{
+  "schema_version": 1,
+  "diagnostic_only": true,
+  "code_sha256": "fb8a45467e18d639d605aa5f1aebcd5d97153d5b7cd4c2bdb7fe04c4729247bc",
+  "extraction_hash": "9dd6762286976f34cbe65fcfd9d6af60490e69e792a95440f509c86645da375f",
+  "labels_hash": "7739882cd9ae354afe5c4a3303f8a3b237dffcb26c6ca4e0c212bfd68e50c0a8",
+  "conditions": {
+    "normal_response": "A n = 0",
+    "target_response": "||A v|| >= 1",
+    "input_norm": "Euclidean quotient shape perturbation",
+    "bound": "||A|| >= 1/sin(theta); equality achieved by a two-direction rank-one map",
+    "theta": "Smallest angle between chosen normal and target directions/subspaces",
+    "not_a_learned_normal_subspace": true
+  },
+  "angle_controls": [
+    {
+      "angle_degrees": 0,
+      "status": "infeasible",
+      "minimum_noise_gain": null,
+      "reason": "Same normal/target direction; cannot annihilate one and retain the other"
+    },
+    {
+      "angle_degrees": 5,
+      "status": "feasible",
+      "minimum_noise_gain": 11.473713245669856,
+      "minimum_iid_noise_variance": 131.6460956438599
+    },
+    {
+      "angle_degrees": 15,
+      "status": "feasible",
+      "minimum_noise_gain": 3.8637033051562737,
+      "minimum_iid_noise_variance": 14.928203230275512
+    },
+    {
+      "angle_degrees": 30,
+      "status": "feasible",
+      "minimum_noise_gain": 2.0000000000000004,
+      "minimum_iid_noise_variance": 4.000000000000001
+    },
+    {
+      "angle_degrees": 60,
+      "status": "feasible",
+      "minimum_noise_gain": 1.1547005383792517,
+      "minimum_iid_noise_variance": 1.3333333333333335
+    },
+    {
+      "angle_degrees": 90,
+      "status": "feasible",
+      "minimum_noise_gain": 1.0,
+      "minimum_iid_noise_variance": 1.0
+    }
+  ],
+  "measured_single_source_chin_directions": [
+    {
+      "normal_sample": "s0010",
+      "target_sample": "s0011",
+      "principal_angle_degrees": 10.386389665224222,
+      "target_amplitude_retained_by_normal_direction_projection": 0.18028549752297907,
+      "target_squared_amplitude_retained": 0.03250286061710809,
+      "required_gain_to_restore_unit_target_after_exact_normal_suppression": 5.546757857617142,
+      "normal_label": "previous human-normal 5% chin image",
+      "target_label": "mild"
+    },
+    {
+      "normal_sample": "s0010",
+      "target_sample": "s0012",
+      "principal_angle_degrees": 10.39603324188682,
+      "target_amplitude_retained_by_normal_direction_projection": 0.18045104922446845,
+      "target_squared_amplitude_retained": 0.03256258116621153,
+      "required_gain_to_restore_unit_target_after_exact_normal_suppression": 5.541669080328096,
+      "normal_label": "previous human-normal 5% chin image",
+      "target_label": "moderate"
+    }
+  ],
+  "bounded_normal_set": {
+    "normal_set": "alpha*n, alpha in [0,a]; ||n||=1",
+    "target_class": "beta*n+w, beta>=b>a, w orthogonal to n",
+    "observable": "distance to the closed normal segment; 1-Lipschitz in quotient norm",
+    "noise_bound": "||eta||<=epsilon; normal response<=epsilon; target response>=b-a-epsilon",
+    "separation_condition": "b-a>2*epsilon; no high-gain normal-direction annihilation needed",
+    "same_direction_is_not_identical_observation": true,
+    "development_fixture_normal_amplitude": 0.025508551226476703,
+    "fixture_scope": "Segment inferred from one human-normal chin image for negative-control comparison only; not a learned or calibrated expression population",
+    "measured_single_source_responses": [
+      {
+        "sample_id": "s0011",
+        "observed_shape_amplitude": 0.04604078358810729,
+        "unbounded_direction_projection_response": 0.008300485575529731,
+        "bounded_segment_response": 0.021449017327105205,
+        "parallel_amplitude_beyond_normal_bound": 0.01977782302248865,
+        "deterministic_epsilon_separation_ceiling": 0.010724508663552602,
+        "epsilon_is_not_measured_or_calibrated": true
+      },
+      {
+        "sample_id": "s0012",
+        "observed_shape_amplitude": 0.0736337890162087,
+        "unbounded_direction_projection_response": 0.013287294486347998,
+        "bounded_segment_response": 0.04876173395250505,
+        "parallel_amplitude_beyond_normal_bound": 0.04691646303045392,
+        "deterministic_epsilon_separation_ceiling": 0.024380866976252524,
+        "epsilon_is_not_measured_or_calibrated": true
+      }
+    ],
+    "normal_range_requires_independent_conditional_validation": true
+  },
+  "two_sided_error_model": {
+    "residual": "A(e_current-e_reference)",
+    "covariance": "Sigma_current + Sigma_reference - Sigma_current,reference - Sigma_reference,current",
+    "cached_reference": "Independent current errors share the same reference error across observations; this creates cross-time covariance",
+    "no_empirical_covariance_estimation": true,
+    "ideal_rho_controls": [
+      {
+        "current_reference_correlation_rho": -1,
+        "difference_covariance_multiplier": 4,
+        "endpoint_normalized_expected_squared_response": 47.61801729310213,
+        "procrustes_normalized_expected_squared_response": 24
+      },
+      {
+        "current_reference_correlation_rho": -0.5,
+        "difference_covariance_multiplier": 3.0,
+        "endpoint_normalized_expected_squared_response": 35.713512969826596,
+        "procrustes_normalized_expected_squared_response": 18.0
+      },
+      {
+        "current_reference_correlation_rho": 0,
+        "difference_covariance_multiplier": 2,
+        "endpoint_normalized_expected_squared_response": 23.809008646551064,
+        "procrustes_normalized_expected_squared_response": 12
+      },
+      {
+        "current_reference_correlation_rho": 0.9,
+        "difference_covariance_multiplier": 0.19999999999999996,
+        "endpoint_normalized_expected_squared_response": 2.3809008646551058,
+        "procrustes_normalized_expected_squared_response": 1.1999999999999997
+      },
+      {
+        "current_reference_correlation_rho": 1,
+        "difference_covariance_multiplier": 0,
+        "endpoint_normalized_expected_squared_response": 0.0,
+        "procrustes_normalized_expected_squared_response": 0
+      }
+    ]
+  },
+  "scope": "Conditional linear algebra and one-source observed directions; no expression semantics, learned noise covariance, new human review, detection calibration or algorithm adoption"
+}

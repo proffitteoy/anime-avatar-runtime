@@ -25,12 +25,13 @@ REGIONS = {
     "mouth": (24, 26),
     "contour": (0, 1, 2, 3, 4),
 }
-VARIANTS = ("wls", "single_local", "pose_local", "oracle")
+VARIANTS = ("wls", "single_local", "pose_local", "oracle", "intrinsic_local")
 POLICY = {
     "min_confidence": 0.3,
     "mad_floor": 1e-6,
     "min_development": 20,
     "min_calibration": 39,
+    "min_anomaly_sources": 20,
     "alpha": 0.05,
     "coverage_target": 0.8,
     "bootstrap_repeats": 2000,
@@ -271,6 +272,36 @@ def local_metrics(current: FloatArray, reference: FloatArray) -> Json:
     return result
 
 
+def contour_shape(points: FloatArray) -> FloatArray:
+    """Signed contour ratios in its own proper-similarity-invariant local frame.
+
+    This frontal research observable uses all five contour points. It removes
+    cross-region fitting, not detector coupling or three-dimensional pose effects.
+    """
+    if points.shape != (28, 3) or not np.isfinite(points).all():
+        raise ValueError("Expected finite 28 landmarks")
+    if np.any(points[:5, 2] < POLICY["min_confidence"]):
+        raise ValueError("All five contour points must be reliable")
+    a, b = points[0, :2], points[4, :2]
+    axis = b - a
+    width = float(np.linalg.norm(axis))
+    if width <= 1e-8:
+        raise ValueError("Degenerate contour width")
+    along = axis / width
+    normal = np.array([-along[1], along[0]])
+    relative = (points[[1, 2, 3], :2] - (a + b) / 2) / width
+    return np.array(
+        [
+            relative[1] @ normal,
+            relative[1] @ along,
+            relative[0] @ normal,
+            relative[2] @ normal,
+            relative[0] @ along,
+            relative[2] @ along,
+        ]
+    )
+
+
 def feature_variants(current: FloatArray | None, frozen: Json, oracle_pose: str | None) -> Json:
     empty = {r: {"value": None, "status": "No usable reference or detection"} for r in REGIONS}
     result: Json = {
@@ -285,6 +316,17 @@ def feature_variants(current: FloatArray | None, frozen: Json, oracle_pose: str 
     }
     if "front" in refs:
         result["single_local"] = local_metrics(current, refs["front"])
+        result["intrinsic_local"] = {k: dict(v) for k, v in result["single_local"].items()}
+        try:
+            shape_delta = contour_shape(current) - contour_shape(refs["front"])
+            result["intrinsic_local"]["contour"] = {
+                "value": float(np.sqrt(np.mean(shape_delta**2))),
+                "status": "valid",
+                "chin_height_error": abs(float(shape_delta[0])),
+                "chin_lateral_error": abs(float(shape_delta[1])),
+            }
+        except ValueError as exc:
+            result["intrinsic_local"]["contour"] = {"value": None, "status": str(exc)}
         try:
             if (
                 face_status(
@@ -351,7 +393,7 @@ def profile_pose(metrics: Json, variant: str, human_pose: str) -> str | None:
     """Human pose routes the diagnostic oracle only, never the automatic candidate."""
     if variant == "oracle":
         return human_pose
-    if variant in {"wls", "single_local"}:
+    if variant in {"wls", "single_local", "intrinsic_local"}:
         return "front"  # These baselines use one fixed frontal reference/profile.
     matched = {row["matched_pose"] for row in metrics.values() if row["value"] is not None}
     return next(iter(matched)) if len(matched) == 1 else None
@@ -360,7 +402,7 @@ def profile_pose(metrics: Json, variant: str, human_pose: str) -> str | None:
 def freeze_study(
     manifest: StudyManifest, extracted: Json, candidate_variant: str = "pose_local"
 ) -> Json:
-    if candidate_variant not in {"single_local", "pose_local"}:
+    if candidate_variant not in {"single_local", "pose_local", "intrinsic_local"}:
         raise ValueError("Select a local candidate before calibration/validation")
     verify_extraction(manifest, extracted)
     records = {r["sample_id"]: r for r in extracted["records"]}
@@ -690,14 +732,9 @@ def summarize_decisions(rows: list[Json], variant: str) -> Json:
 
 
 def paired_bootstrap(rows: list[Json], variant: str) -> Json:
+    """Source-cluster bootstrap; sign test concerns source direction, not mean recall."""
     abnormal = [r for r in rows if r["label"] == "geometry_anomaly"]
     sources = sorted({r["source_id"] for r in abnormal})
-    if len(sources) < 2:
-        return {
-            "status": "insufficient_independent_anomaly_sources",
-            "n_sources": len(sources),
-            "interval95": None,
-        }
     counts = np.asarray(
         [
             [
@@ -716,15 +753,40 @@ def paired_bootstrap(rows: list[Json], variant: str) -> Json:
             for source in sources
         ],
         dtype=np.float64,
-    )
+    ).reshape(-1, 3)
+    differences = counts[:, 0] - counts[:, 1]
+    positive = int(np.count_nonzero(differences > 0))
+    negative = int(np.count_nonzero(differences < 0))
+    nonzero = positive + negative
+    sign_test = {
+        "positive_sources": positive,
+        "negative_sources": negative,
+        "tied_sources": len(sources) - nonzero,
+        "p_one_sided": sum(math.comb(nonzero, j) for j in range(positive, nonzero + 1)) / 2**nonzero
+        if nonzero
+        else None,
+        "target": "P(source recall difference > 0 | nonzero difference) > 0.5",
+    }
+    common = {
+        "n_sources": len(sources),
+        "minimum_sources": POLICY["min_anomaly_sources"],
+        "sign_test": sign_test,
+        "interval_target": (
+            "Sample-weighted recall difference; source-cluster percentile approximation"
+        ),
+    }
+    if len(sources) < POLICY["min_anomaly_sources"]:
+        return common | {
+            "status": "insufficient_independent_anomaly_sources",
+            "interval95": None,
+        }
     rng = np.random.default_rng(42)
     deltas = []
     for _ in range(2000):
         totals = counts[rng.integers(0, len(sources), len(sources))].sum(0)
         deltas.append(float((totals[0] - totals[1]) / totals[2]))
-    return {
+    return common | {
         "status": "estimated",
-        "n_sources": len(sources),
         "repeats": 2000,
         "seed": 42,
         "interval95": np.quantile(deltas, [0.025, 0.975]).tolist(),
@@ -793,7 +855,7 @@ def evaluate_study(
         )
     summaries = {v: summarize_decisions(rows, v) for v in VARIANTS}
     adoption: Json = {}
-    for variant in ("single_local", "pose_local"):
+    for variant in ("single_local", "pose_local", "intrinsic_local"):
         summary = summaries[variant]
         baseline = summaries["wls"]
         bootstrap = paired_bootstrap(rows, variant)
@@ -808,6 +870,8 @@ def evaluate_study(
             and baseline["fpr_upper95"] <= 0.05
             and bootstrap["interval95"] is not None
             and bootstrap["interval95"][0] > 0
+            and bootstrap["sign_test"]["p_one_sided"] is not None
+            and bootstrap["sign_test"]["p_one_sided"] <= 0.05
         )
         selected = variant == frozen["candidate_variant"]
         adoption[variant] = {
@@ -819,6 +883,7 @@ def evaluate_study(
             "requirements": (
                 "FPR upper95 <=5%; coverage>=80%; calibrated WLS comparator; "
                 "positive paired source interval on human-reviewed anomalies; "
+                "at least 20 independent anomaly sources; source-direction sign p<=0.05; "
                 "synthetic and real evidence reported separately"
             ),
         }
