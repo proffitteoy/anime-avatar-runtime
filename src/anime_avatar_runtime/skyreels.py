@@ -58,7 +58,7 @@ def build_command(
         if path is not None and not path.is_file():
             raise FileNotFoundError(path)
     command = [
-        str(python.resolve()),
+        str(python.absolute()),
         str((repo / "generate_video_df.py").resolve()),
         "--model_id",
         model,
@@ -215,7 +215,7 @@ def check_backend(
     # Runs only when explicitly generating, never on API startup or dry-run.
     result = _run_process(
         [
-            str(python.resolve()),
+            str(python.absolute()),
             "-c",
             "import torch; from moviepy.editor import VideoFileClip; "
             "assert torch.cuda.is_available(), 'SkyReels baseline requires an NVIDIA CUDA GPU'",

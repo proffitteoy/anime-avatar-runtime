@@ -83,3 +83,28 @@ uv run --locked avatar-runtime generate --image /absolute/path/reference.png --e
 - 单段成功不代表长期稳定、实时生成或自主恢复。完整闭环另按 #30 验收；模型优先级与显存调度由 #26 推进。
 
 `vendor/`、`models/`、`var/` 均被忽略，不提交权重、私人原图或大型视频。
+
+## 8GB 显存优化（实测，2026-10-17）
+
+上游模型约需 14.7GB 显存，无法直接在 RTX 4060 Laptop 8GB 上运行。已在目标机器（WSL2 + RTX 4060 Laptop 8GB，驱动 576.02，CUDA 12.4）实测打通，需应用本仓库的 vendor 补丁把峰值显存压到 8GB 以内：
+
+```bash
+git -C vendor/SkyReels-V2 apply ../../patches/skyreels-v2-8gb-memory.patch
+```
+
+补丁内容（`patches/skyreels-v2-8gb-memory.patch`，基于 commit `9351d13`）：
+
+- transformer 权重 int8 量化（`modules/__init__.py`，复用 `t5.py` 的 `quantize_model_to_int8`），省 ~1.4GB。
+- FFN 沿 seq 分块（`modules/transformer.py` 的 `_ffn_chunked`，chunk=8192），峰值 gate+up 中间量 1.8GB→~360MB，数值无损失。
+- bf16 中间量修复（`fast_rms_norm`/`mul_add`/`rope`），消除 fp32 中间激活。
+- VAE 空间分块解码（`modules/vae.py` 的 `_decode_spatial_tiles`，2×2 瓦片），解码峰值 ~5.8GB→2.2GB，无 CPU↔GPU 搬运开销。
+- VAE 懒加载/卸载 + bf16（`pipelines/diffusion_forcing_pipeline.py`）。
+
+实测（540P、97 帧、1 步、种子 42、`--offload`）：
+
+- 去噪 ~50s/步（优化前 ~22min/步，根因 WDDM 显存换页把大 kernel 拖慢 30~40×）。
+- VAE 解码 ~62s（优化前 9min+）。
+- 峰值显存 ~5.8GB（去噪）/ 2.2GB（解码）。
+- 环境：Python 3.10.22、torch 2.5.1+cu124、numpy 1.26.4、flash-attn 2.7.3、moviepy 1.0.3。
+
+> 瓦片解码的 attention 只在 bottleneck 一层、且被 64 输出像素重叠覆盖，实测瓦片/非瓦片最大绝对差 0.054（视觉无感）。若追求更短解码时间，可把 `_decode_spatial_tiles` 的 `pad` 从 8 降到 4 或改用 3×3 瓦片。
