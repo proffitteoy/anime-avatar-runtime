@@ -7,7 +7,7 @@ from uuid import UUID, uuid4
 
 from pydantic import AwareDatetime, BaseModel, ConfigDict, Field, field_validator, model_validator
 
-from .skyreels import DEFAULT_PROMPT
+from .skyreels import DEFAULT_NEGATIVE_PROMPT, DEFAULT_PROMPT
 
 
 class GenerationRequest(BaseModel):
@@ -16,6 +16,10 @@ class GenerationRequest(BaseModel):
     frames: int = Field(default=97, ge=97, strict=True)
     seed: int = Field(default=42, ge=0, lt=2**32, strict=True)
     prompt: str = DEFAULT_PROMPT
+    negative_prompt: str = DEFAULT_NEGATIVE_PROMPT
+    inference_steps: int = Field(default=30, ge=1, le=100, strict=True)
+    guidance_scale: float = Field(default=5.0, gt=0, allow_inf_nan=False)
+    shift: float = Field(default=5.0, gt=0, allow_inf_nan=False)
 
     @field_validator("frames")
     @classmethod
@@ -24,7 +28,7 @@ class GenerationRequest(BaseModel):
             raise ValueError("Frames must be 4n+1 and at least 97 for this baseline")
         return value
 
-    @field_validator("prompt")
+    @field_validator("prompt", "negative_prompt")
     @classmethod
     def validate_prompt(cls, value: str) -> str:
         if not value.strip():

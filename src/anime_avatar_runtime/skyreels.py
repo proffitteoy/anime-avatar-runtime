@@ -38,8 +38,16 @@ def vendor_patch_sha256() -> str | None:
 
 
 DEFAULT_PROMPT = (
-    "An anime character calmly idles, breathing softly and blinking naturally, "
-    "subtle hair movement, consistent identity and outfit, static camera, stable background."
+    "An anime character standing still and idling naturally: slow gentle breathing, "
+    "occasional soft blinks, natural gaze with subtle eye shifts, very slight head sway, "
+    "light hair and clothing movement from breathing, consistent facial identity and outfit, "
+    "static camera, stable background, no turning, no large gestures."
+)
+DEFAULT_NEGATIVE_PROMPT = (
+    "turning around, spinning, large body movement, fast motion, running, jumping, "
+    "complex hand gesture, camera pan, camera zoom, camera shake, scene change, "
+    "background change, flickering, jitter, shaking, looping, repeated motion, "
+    "warped face, deformed face, extra fingers, blurred, low quality, watermark, text, oversaturated"
 )
 
 
@@ -55,6 +63,10 @@ def build_command(
     frames: int = 97,
     seed: int = 42,
     prompt: str = DEFAULT_PROMPT,
+    negative_prompt: str = DEFAULT_NEGATIVE_PROMPT,
+    inference_steps: int = 30,
+    guidance_scale: float = 5.0,
+    shift: float = 5.0,
 ) -> list[str]:
     if (image is None) == (video is None):
         raise ValueError("Provide exactly one image or continuation video")
@@ -87,11 +99,11 @@ def build_command(
         "--addnoise_condition",
         "20",
         "--guidance_scale",
-        "5.0",
+        str(guidance_scale),
         "--shift",
-        "5.0",
+        str(shift),
         "--inference_steps",
-        "30",
+        str(inference_steps),
         "--seed",
         str(seed),
         "--fps",
@@ -101,6 +113,8 @@ def build_command(
         str(output.resolve()),
         "--prompt",
         prompt,
+        "--negative_prompt",
+        negative_prompt,
     ]
     source = image if image is not None else video
     assert source is not None
@@ -302,6 +316,10 @@ def run_generation(
             frames=request.frames,
             seed=request.seed,
             prompt=request.prompt,
+            negative_prompt=request.negative_prompt,
+            inference_steps=request.inference_steps,
+            guidance_scale=request.guidance_scale,
+            shift=request.shift,
         )
         inputs: dict[str, object] = {}
         for name, path in (("image", image), ("video", video), ("end_image", end_image)):

@@ -11,7 +11,7 @@ from uuid import uuid4
 from .config import RuntimeConfig
 from .contracts import GenerationRequest, ObservationRequest
 from .observers import run_observation
-from .skyreels import DEFAULT_PROMPT, UPSTREAM_REVISION, build_command, run_generation
+from .skyreels import DEFAULT_NEGATIVE_PROMPT, DEFAULT_PROMPT, UPSTREAM_REVISION, build_command, run_generation
 
 
 def main() -> int:
@@ -45,6 +45,10 @@ def main() -> int:
     generate.add_argument("--frames", type=int, default=97)
     generate.add_argument("--seed", type=int, default=42)
     generate.add_argument("--prompt", default=DEFAULT_PROMPT)
+    generate.add_argument("--negative-prompt", default=DEFAULT_NEGATIVE_PROMPT)
+    generate.add_argument("--inference-steps", type=int, default=30)
+    generate.add_argument("--guidance-scale", type=float, default=5.0)
+    generate.add_argument("--shift", type=float, default=5.0)
     generate.add_argument(
         "--dry-run", action="store_true", help="Print argv without loading models"
     )
@@ -122,7 +126,15 @@ def main() -> int:
             if (value := getattr(args, argument)) is not None:
                 values[field] = value
         config = RuntimeConfig.model_validate(values)
-        request = GenerationRequest(frames=args.frames, seed=args.seed, prompt=args.prompt)
+        request = GenerationRequest(
+            frames=args.frames,
+            seed=args.seed,
+            prompt=args.prompt,
+            negative_prompt=args.negative_prompt,
+            inference_steps=args.inference_steps,
+            guidance_scale=args.guidance_scale,
+            shift=args.shift,
+        )
         if args.dry_run:
             if config.skyreels_python is None:
                 raise ValueError("Set --python or SKYREELS_PYTHON to the separate CUDA environment")
@@ -137,6 +149,10 @@ def main() -> int:
                 frames=request.frames,
                 seed=request.seed,
                 prompt=request.prompt,
+                negative_prompt=request.negative_prompt,
+                inference_steps=request.inference_steps,
+                guidance_scale=request.guidance_scale,
+                shift=request.shift,
             )
             print(
                 json.dumps(
