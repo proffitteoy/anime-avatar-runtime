@@ -25,9 +25,30 @@ if TYPE_CHECKING:
 UPSTREAM_REVISION = "9351d13152207cc04de780e055346b08ade0b851"
 MODEL_ID = "Skywork/SkyReels-V2-DF-1.3B-540P"
 MODEL_REVISION = "1100111771ba2d921f10e76991f54db9f73edb3d"
+VENDOR_PATCH_NAME = "skyreels-v2-8gb-memory.patch"
+
+
+def vendor_patch_sha256() -> str | None:
+    """Fingerprint the committed vendor patch, so run.json records what was applied."""
+    patch_path = Path(__file__).resolve().parents[2] / "patches" / VENDOR_PATCH_NAME
+    if not patch_path.is_file():
+        return None
+    with patch_path.open("rb") as source:
+        return hashlib.file_digest(source, "sha256").hexdigest()
+
+
 DEFAULT_PROMPT = (
-    "An anime character calmly idles, breathing softly and blinking naturally, "
-    "subtle hair movement, consistent identity and outfit, static camera, stable background."
+    "An anime character standing still and idling naturally: slow gentle breathing, "
+    "occasional soft blinks, natural gaze with subtle eye shifts, very slight head sway, "
+    "light hair and clothing movement from breathing, consistent facial identity and outfit, "
+    "static camera, stable background, no turning, no large gestures."
+)
+DEFAULT_NEGATIVE_PROMPT = (
+    "turning around, spinning, large body movement, fast motion, running, jumping, "
+    "complex hand gesture, camera pan, camera zoom, camera shake, scene change, "
+    "background change, flickering, jitter, shaking, looping, repeated motion, "
+    "warped face, deformed face, extra fingers, blurred, low quality, watermark, "
+    "text, oversaturated"
 )
 
 
@@ -43,6 +64,10 @@ def build_command(
     frames: int = 97,
     seed: int = 42,
     prompt: str = DEFAULT_PROMPT,
+    negative_prompt: str = DEFAULT_NEGATIVE_PROMPT,
+    inference_steps: int = 30,
+    guidance_scale: float = 5.0,
+    shift: float = 5.0,
 ) -> list[str]:
     if (image is None) == (video is None):
         raise ValueError("Provide exactly one image or continuation video")
@@ -58,7 +83,7 @@ def build_command(
         if path is not None and not path.is_file():
             raise FileNotFoundError(path)
     command = [
-        str(python.resolve()),
+        str(python.absolute()),
         str((repo / "generate_video_df.py").resolve()),
         "--model_id",
         model,
@@ -75,11 +100,11 @@ def build_command(
         "--addnoise_condition",
         "20",
         "--guidance_scale",
-        "5.0",
+        str(guidance_scale),
         "--shift",
-        "5.0",
+        str(shift),
         "--inference_steps",
-        "30",
+        str(inference_steps),
         "--seed",
         str(seed),
         "--fps",
@@ -89,6 +114,8 @@ def build_command(
         str(output.resolve()),
         "--prompt",
         prompt,
+        "--negative_prompt",
+        negative_prompt,
     ]
     source = image if image is not None else video
     assert source is not None
@@ -215,7 +242,7 @@ def check_backend(
     # Runs only when explicitly generating, never on API startup or dry-run.
     result = _run_process(
         [
-            str(python.resolve()),
+            str(python.absolute()),
             "-c",
             "import torch; from moviepy.editor import VideoFileClip; "
             "assert torch.cuda.is_available(), 'SkyReels baseline requires an NVIDIA CUDA GPU'",
@@ -259,6 +286,8 @@ def run_generation(
         "model_id": MODEL_ID,
         "model_revision_expected": MODEL_REVISION,
         "model_revision_verified": False,
+        "quantize_int8": os.environ.get("QUANTIZE_INT8") == "1",
+        "vendor_patch_sha256": vendor_patch_sha256(),
         "hardware": None,
         "request": request.model_dump(mode="json"),
         "config": config.model_dump(mode="json"),
@@ -288,6 +317,10 @@ def run_generation(
             frames=request.frames,
             seed=request.seed,
             prompt=request.prompt,
+            negative_prompt=request.negative_prompt,
+            inference_steps=request.inference_steps,
+            guidance_scale=request.guidance_scale,
+            shift=request.shift,
         )
         inputs: dict[str, object] = {}
         for name, path in (("image", image), ("video", video), ("end_image", end_image)):

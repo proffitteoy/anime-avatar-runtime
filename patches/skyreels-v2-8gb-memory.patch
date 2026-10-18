@@ -1,0 +1,603 @@
+diff --git a/generate_video_df.py b/generate_video_df.py
+index 990ef61..ac1ef5e 100644
+--- a/generate_video_df.py
++++ b/generate_video_df.py
+@@ -50,6 +50,11 @@ if __name__ == "__main__":
+         type=str,
+         default="A woman in a leather jacket and sunglasses riding a vintage motorcycle through a desert highway at sunset, her hair blowing wildly in the wind as the motorcycle kicks up dust, with the golden sun casting long shadows across the barren landscape.",
+     )
++    parser.add_argument(
++        "--negative_prompt",
++        type=str,
++        default="色调艳丽，过曝，静态，细节模糊不清，字幕，风格，作品，画作，画面，静止，整体发灰，最差质量，低质量，JPEG压缩残留，丑陋的，残缺的，多余的手指，画得不好的手部，画得不好的脸部，畸形的，毁容的，形态畸形的肢体，手指融合，静止不动的画面，杂乱的背景，三条腿，背景人很多，倒着走",
++    )
+     parser.add_argument("--prompt_enhancer", action="store_true")
+     parser.add_argument("--teacache", action="store_true")
+     parser.add_argument(
+@@ -95,7 +100,7 @@ if __name__ == "__main__":
+     guidance_scale = args.guidance_scale
+     shift = args.shift
+     
+-    negative_prompt = "色调艳丽，过曝，静态，细节模糊不清，字幕，风格，作品，画作，画面，静止，整体发灰，最差质量，低质量，JPEG压缩残留，丑陋的，残缺的，多余的手指，画得不好的手部，画得不好的脸部，畸形的，毁容的，形态畸形的肢体，手指融合，静止不动的画面，杂乱的背景，三条腿，背景人很多，倒着走"
++    negative_prompt = args.negative_prompt
+ 
+     save_dir = os.path.join("result", args.outdir)
+     os.makedirs(save_dir, exist_ok=True)
+diff --git a/skyreels_v2_infer/modules/__init__.py b/skyreels_v2_infer/modules/__init__.py
+index 5bc6afe..98f5308 100644
+--- a/skyreels_v2_infer/modules/__init__.py
++++ b/skyreels_v2_infer/modules/__init__.py
+@@ -40,6 +40,10 @@ def get_transformer(model_path, device="cuda", weight_dtype=torch.bfloat16) -> W
+             gc.collect()
+             torch.cuda.empty_cache()
+ 
++    if os.environ.get("QUANTIZE_INT8") == "1":
++        from .transformer import quantize_model_to_int8_bf16
++        quantize_model_to_int8_bf16(transformer)
++
+     transformer.requires_grad_(False)
+     transformer.eval()
+     gc.collect()
+@@ -50,7 +54,7 @@ def get_transformer(model_path, device="cuda", weight_dtype=torch.bfloat16) -> W
+ def get_text_encoder(model_path, device="cuda", weight_dtype=torch.bfloat16) -> T5EncoderModel:
+     t5_model = os.path.join(model_path, "models_t5_umt5-xxl-enc-bf16.pth")
+     tokenizer_path = os.path.join(model_path, "google", "umt5-xxl")
+-    text_encoder = T5EncoderModel(checkpoint_path=t5_model, tokenizer_path=tokenizer_path).to(device).to(weight_dtype)
++    text_encoder = T5EncoderModel(checkpoint_path=t5_model, tokenizer_path=tokenizer_path).to(device)
+     text_encoder.requires_grad_(False)
+     text_encoder.eval()
+     gc.collect()
+diff --git a/skyreels_v2_infer/modules/attention.py b/skyreels_v2_infer/modules/attention.py
+index 2fd0dc0..5179dc7 100644
+--- a/skyreels_v2_infer/modules/attention.py
++++ b/skyreels_v2_infer/modules/attention.py
+@@ -1,6 +1,8 @@
+ # Copyright 2024-2025 The Alibaba Wan Team Authors. All rights reserved.
+ import torch
+ 
++from .profiling import record, report
++
+ try:
+     import flash_attn_interface
+ 
+@@ -63,6 +65,7 @@ def flash_attention(
+ 
+     # preprocess query
+ 
++    _fa_t0 = record()
+     q = half(q.flatten(0, 1))
+     q_lens = torch.tensor([lq] * b, dtype=torch.int32).to(device=q.device, non_blocking=True)
+ 
+@@ -75,6 +78,7 @@ def flash_attention(
+     q = q.to(v.dtype)
+     k = k.to(v.dtype)
+ 
++    _fa_t1 = record()
+     if q_scale is not None:
+         q = q * q_scale
+ 
+@@ -124,6 +128,8 @@ def flash_attention(
+             deterministic=deterministic,
+         ).unflatten(0, (b, lq))
+     torch.cuda.nvtx.range_pop()
++    report("FA-PRE", _fa_t0, _fa_t1)
++    report("FA-KERNEL", _fa_t1)
+ 
+     # output
+     return x
+diff --git a/skyreels_v2_infer/modules/profiling.py b/skyreels_v2_infer/modules/profiling.py
+new file mode 100644
+index 0000000..38f8069
+--- /dev/null
++++ b/skyreels_v2_infer/modules/profiling.py
+@@ -0,0 +1,30 @@
++# Opt-in CUDA event profiling. Zero overhead (no sync, no print) unless
++# SKYREELS_PROFILE=1 is set in the environment.
++
++import os
++
++PROFILING = os.environ.get("SKYREELS_PROFILE") == "1"
++
++
++def record():
++    """Record a CUDA event on the current stream, or None when profiling is off."""
++    if not PROFILING:
++        return None
++    import torch
++
++    ev = torch.cuda.Event(enable_timing=True)
++    ev.record()
++    return ev
++
++
++def report(name, start, end=None):
++    """Print elapsed ms between two events (end defaults to a new event now)."""
++    if not PROFILING or start is None:
++        return
++    import torch
++
++    if end is None:
++        end = torch.cuda.Event(enable_timing=True)
++        end.record()
++    torch.cuda.synchronize()
++    print(f"[PROFILE:{name}] {start.elapsed_time(end):.1f}ms", flush=True)
+diff --git a/skyreels_v2_infer/modules/t5.py b/skyreels_v2_infer/modules/t5.py
+index b882fe7..27c7d05 100644
+--- a/skyreels_v2_infer/modules/t5.py
++++ b/skyreels_v2_infer/modules/t5.py
+@@ -418,6 +418,42 @@ def umt5_xxl(**kwargs):
+     return _t5("umt5-xxl", **cfg)
+ 
+ 
++class LinearInt8(nn.Module):
++    """int8 weight storage with per-tensor scale; dequantizes to activation dtype on forward."""
++    def __init__(self, weight_int8, scale, bias=None):
++        super().__init__()
++        self.register_buffer("weight_int8", weight_int8)
++        self.register_buffer("scale", scale)
++        if bias is not None:
++            self.register_buffer("bias", bias)
++        else:
++            self.bias = None
++        self.in_features = weight_int8.shape[1]
++        self.out_features = weight_int8.shape[0]
++
++    def forward(self, x):
++        w = self.weight_int8.float() * self.scale
++        bias = self.bias.float() if self.bias is not None else None
++        return F.linear(x.float(), w, bias)
++
++
++def _quantize_linear(linear):
++    w = linear.weight.data.float()
++    scale = w.abs().max() / 127.0
++    scale = scale.clamp(min=1e-8)
++    w_int8 = (w / scale).round().clamp(-128, 127).to(torch.int8)
++    return LinearInt8(w_int8, scale, linear.bias)
++
++
++def quantize_model_to_int8(module):
++    for name, child in list(module.named_children()):
++        if isinstance(child, nn.Linear):
++            setattr(module, name, _quantize_linear(child))
++        else:
++            quantize_model_to_int8(child)
++    return module
++
++
+ class T5EncoderModel(ModelMixin):
+     def __init__(
+         self,
+@@ -432,9 +468,15 @@ class T5EncoderModel(ModelMixin):
+ 
+         super().__init__()
+         # init model
+-        model = umt5_xxl(encoder_only=True, return_tokenizer=False)
++        _old_default_dtype = torch.get_default_dtype()
++        torch.set_default_dtype(torch.bfloat16)
++        model = umt5_xxl(encoder_only=True, return_tokenizer=False, dtype=torch.bfloat16)
++        torch.set_default_dtype(_old_default_dtype)
+         logging.info(f"loading {checkpoint_path}")
+-        model.load_state_dict(torch.load(checkpoint_path, map_location="cpu"))
++        state_dict = torch.load(checkpoint_path, map_location="cpu", weights_only=True, mmap=True)
++        model.load_state_dict(state_dict, assign=True)
++        del state_dict
++        model = quantize_model_to_int8(model)
+         self.model = model
+         if shard_fn is not None:
+             self.model = shard_fn(self.model, sync_module_states=False)
+@@ -449,6 +491,6 @@ class T5EncoderModel(ModelMixin):
+         mask = mask.to(self.device)
+         # seq_lens = mask.gt(0).sum(dim=1).long()
+         context = self.model(ids, mask)
+-        context = context * mask.unsqueeze(-1).cuda()
++        context = context * mask.unsqueeze(-1).to(context.device)
+ 
+         return context
+diff --git a/skyreels_v2_infer/modules/transformer.py b/skyreels_v2_infer/modules/transformer.py
+index 7625938..3f4c9dc 100644
+--- a/skyreels_v2_infer/modules/transformer.py
++++ b/skyreels_v2_infer/modules/transformer.py
+@@ -14,11 +14,12 @@ from torch.nn.attention.flex_attention import create_block_mask
+ from torch.nn.attention.flex_attention import flex_attention
+ 
+ from .attention import flash_attention
++from .profiling import record, report
+ 
+ 
+-flex_attention = torch.compile(flex_attention, dynamic=False, mode="max-autotune")
++DISABLE_COMPILE = True  # get os env
+ 
+-DISABLE_COMPILE = False  # get os env
++flex_attention = torch.compile(flex_attention, dynamic=False, mode="max-autotune", disable=DISABLE_COMPILE)
+ 
+ __all__ = ["WanModel"]
+ 
+@@ -49,6 +50,7 @@ def rope_params(max_seq_len, dim, theta=10000):
+ def rope_apply(x, grid_sizes, freqs):
+     n, c = x.size(2), x.size(3) // 2
+     bs = x.size(0)
++    orig_dtype = x.dtype
+ 
+     # split freqs
+     freqs = freqs.split([c - 2 * (c // 3), c // 3, c // 3], dim=1)
+@@ -72,14 +74,14 @@ def rope_apply(x, grid_sizes, freqs):
+     # apply rotary embedding
+     x = torch.view_as_real(x * freqs_i).flatten(3)
+ 
+-    return x
++    return x.to(orig_dtype)
+ 
+ 
+ @torch.compile(dynamic=True, disable=DISABLE_COMPILE)
+ def fast_rms_norm(x, weight, eps):
+     x = x.float()
+     x = x * torch.rsqrt(x.pow(2).mean(dim=-1, keepdim=True) + eps)
+-    x = x.type_as(x) * weight
++    x = x.type_as(weight) * weight
+     return x
+ 
+ 
+@@ -160,7 +162,9 @@ class WanSelfAttention(nn.Module):
+         if not self._flag_ar_attention:
+             q = rope_apply(q, grid_sizes, freqs)
+             k = rope_apply(k, grid_sizes, freqs)
++            _a = record()
+             x = flash_attention(q=q, k=k, v=v, window_size=self.window_size)
++            report("SATTN-FLASH", _a)
+         else:
+             q = rope_apply(q, grid_sizes, freqs)
+             k = rope_apply(k, grid_sizes, freqs)
+@@ -252,11 +256,11 @@ WAN_CROSSATTENTION_CLASSES = {
+ 
+ 
+ def mul_add(x, y, z):
+-    return x.float() + y.float() * z.float()
++    return x + y * z.to(x.dtype)
+ 
+ 
+ def mul_add_add(x, y, z):
+-    return x.float() * (1 + y) + z
++    return x * (1 + y.to(x.dtype)) + z.to(x.dtype)
+ 
+ 
+ mul_add_compile = torch.compile(mul_add, dynamic=True, disable=DISABLE_COMPILE)
+@@ -317,17 +321,17 @@ class WanAttentionBlock(nn.Module):
+         """
+         if e.dim() == 3:
+             modulation = self.modulation  # 1, 6, dim
+-            with amp.autocast("cuda", dtype=torch.float32):
+-                e = (modulation + e).chunk(6, dim=1)
++            e = (modulation + e).chunk(6, dim=1)
+         elif e.dim() == 4:
+             modulation = self.modulation.unsqueeze(2)  # 1, 6, 1, dim
+-            with amp.autocast("cuda", dtype=torch.float32):
+-                e = (modulation + e).chunk(6, dim=1)
++            e = (modulation + e).chunk(6, dim=1)
+             e = [ei.squeeze(1) for ei in e]
+ 
+         # self-attention
+         out = mul_add_add_compile(self.norm1(x), e[1], e[0])
++        _sa0 = record()
+         y = self.self_attn(out, grid_sizes, freqs, block_mask)
++        report("BLK-SELFATTN", _sa0)
+         with amp.autocast("cuda", dtype=torch.float32):
+             x = mul_add_compile(x, y, e[2])
+ 
+@@ -335,15 +339,27 @@ class WanAttentionBlock(nn.Module):
+         def cross_attn_ffn(x, context, e):
+             dtype = context.dtype
+             x = x + self.cross_attn(self.norm3(x.to(dtype)), context)
+-            y = self.ffn(mul_add_add_compile(self.norm2(x), e[4], e[3]).to(dtype))
++            y = self._ffn_chunked(mul_add_add_compile(self.norm2(x), e[4], e[3]).to(dtype))
+             with amp.autocast("cuda", dtype=torch.float32):
+                 x = mul_add_compile(x, y, e[5])
+             return x
+ 
++        _cf0 = record()
+         x = cross_attn_ffn(x, context, e)
++        report("BLK-XFFN", _cf0)
+         return x.to(torch.bfloat16)
+ 
+ 
++    def _ffn_chunked(self, x, chunk=8192):
++        L = x.shape[1]
++        if L <= chunk:
++            return self.ffn(x)
++        outs = []
++        for i in range(0, L, chunk):
++            outs.append(self.ffn(x[:, i:i + chunk]))
++        return torch.cat(outs, dim=1)
++
++
+ class Head(nn.Module):
+     def __init__(self, dim, out_dim, patch_size, eps=1e-6):
+         super().__init__()
+@@ -645,6 +661,7 @@ class WanModel(ModelMixin, ConfigMixin, PeftAdapterMixin):
+             assert clip_fea is not None and y is not None
+         # params
+         device = self.patch_embedding.weight.device
++
+         if self.freqs.device != device:
+             self.freqs = self.freqs.to(device)
+ 
+@@ -698,7 +715,8 @@ class WanModel(ModelMixin, ConfigMixin, PeftAdapterMixin):
+                 e0 = e0.repeat(1, 1, grid_sizes[1], grid_sizes[2], 1, 1).flatten(1, 3)
+                 e0 = e0.transpose(1, 2).contiguous()
+ 
+-            assert e.dtype == torch.float32 and e0.dtype == torch.float32
++            e = e.to(torch.bfloat16)
++            e0 = e0.to(torch.bfloat16)
+ 
+         # context
+         context = self.text_embedding(context)
+@@ -837,3 +855,43 @@ class WanModel(ModelMixin, ConfigMixin, PeftAdapterMixin):
+ 
+         # init output layer
+         nn.init.zeros_(self.head.head.weight)
++
++
++
++class LinearInt8BF16(nn.Module):
++    """int8 weight storage; dequantizes to bf16 activation dtype on forward."""
++    def __init__(self, weight_int8, scale, bias=None):
++        super().__init__()
++        self.register_buffer("weight_int8", weight_int8)
++        self.register_buffer("scale", scale)
++        if bias is not None:
++            self.register_buffer("bias", bias)
++        else:
++            self.bias = None
++        self.in_features = weight_int8.shape[1]
++        self.out_features = weight_int8.shape[0]
++
++    @property
++    def weight(self):
++        return self.weight_int8.to(torch.bfloat16) * self.scale.to(torch.bfloat16)
++
++    def forward(self, x):
++        w = self.weight_int8.to(x.dtype) * self.scale.to(x.dtype)
++        bias = self.bias.to(x.dtype) if self.bias is not None else None
++        return torch.nn.functional.linear(x, w, bias)
++
++
++def _quantize_linear_bf16(linear):
++    w = linear.weight.data.float()
++    scale = (w.abs().max() / 127.0).clamp(min=1e-8)
++    w_int8 = (w / scale).round().clamp(-128, 127).to(torch.int8)
++    return LinearInt8BF16(w_int8, scale, linear.bias)
++
++
++def quantize_model_to_int8_bf16(module):
++    for name, child in list(module.named_children()):
++        if isinstance(child, nn.Linear):
++            setattr(module, name, _quantize_linear_bf16(child))
++        else:
++            quantize_model_to_int8_bf16(child)
++    return module
+diff --git a/skyreels_v2_infer/modules/vae.py b/skyreels_v2_infer/modules/vae.py
+index 9ffc5d4..ef5c9ab 100644
+--- a/skyreels_v2_infer/modules/vae.py
++++ b/skyreels_v2_infer/modules/vae.py
+@@ -507,15 +507,34 @@ class WanVAE_(nn.Module):
+             z = z / scale[1].view(1, self.z_dim, 1, 1, 1) + scale[0].view(1, self.z_dim, 1, 1, 1)
+         else:
+             z = z / scale[1] + scale[0]
+-        iter_ = z.shape[2]
+-        x = self.conv2(z)
+-        for i in range(iter_):
+-            self._conv_idx = [0]
+-            if i == 0:
+-                out = self.decoder(x[:, :, i : i + 1, :, :], feat_cache=self._feat_map, feat_idx=self._conv_idx)
+-            else:
+-                out_ = self.decoder(x[:, :, i : i + 1, :, :], feat_cache=self._feat_map, feat_idx=self._conv_idx)
+-                out = torch.cat([out, out_], 2)
++        return self._decode_spatial_tiles(z)
++
++    def _decode_spatial_tiles(self, z, tile=2, pad=8):
++        b, c, t, h, w = z.shape
++        up = 8
++        rows = []
++        for ty in range(tile):
++            row_tiles = []
++            for tx in range(tile):
++                h0 = max(0, (ty * h) // tile - pad)
++                h1 = min(h, ((ty + 1) * h + tile - 1) // tile + pad)
++                w0 = max(0, (tx * w) // tile - pad)
++                w1 = min(w, ((tx + 1) * w + tile - 1) // tile + pad)
++                self.clear_cache()
++                x = self.conv2(z[:, :, :, h0:h1, w0:w1])
++                outs = []
++                for i in range(t):
++                    self._conv_idx = [0]
++                    out_ = self.decoder(x[:, :, i : i + 1, :, :], feat_cache=self._feat_map, feat_idx=self._conv_idx)
++                    outs.append(out_.cpu())
++                tile_out = torch.cat(outs, 2)
++                oh0 = ((ty * h) // tile - h0) * up
++                oh1 = ((((ty + 1) * h + tile - 1) // tile) - h0) * up
++                ow0 = ((tx * w) // tile - w0) * up
++                ow1 = ((((tx + 1) * w + tile - 1) // tile) - w0) * up
++                row_tiles.append(tile_out[:, :, :, oh0:oh1, ow0:ow1])
++            rows.append(torch.cat(row_tiles, dim=4))
++        out = torch.cat(rows, dim=3)
+         self.clear_cache()
+         return out
+ 
+diff --git a/skyreels_v2_infer/pipelines/diffusion_forcing_pipeline.py b/skyreels_v2_infer/pipelines/diffusion_forcing_pipeline.py
+index f16f532..fe999a8 100644
+--- a/skyreels_v2_infer/pipelines/diffusion_forcing_pipeline.py
++++ b/skyreels_v2_infer/pipelines/diffusion_forcing_pipeline.py
+@@ -58,7 +58,7 @@ class DiffusionForcingPipeline:
+         load_device = "cpu" if offload else device
+         self.transformer = get_transformer(dit_path, load_device, weight_dtype)
+         vae_model_path = os.path.join(model_path, "Wan2.1_VAE.pth")
+-        self.vae = get_vae(vae_model_path, device, weight_dtype=torch.float32)
++        self.vae = get_vae(vae_model_path, load_device, weight_dtype=torch.bfloat16)
+         self.text_encoder = get_text_encoder(model_path, load_device, weight_dtype)
+         self.video_processor = VideoProcessor(vae_scale_factor=16)
+         self.device = device
+@@ -80,6 +80,54 @@ class DiffusionForcingPipeline:
+     def do_classifier_free_guidance(self) -> bool:
+         return self._guidance_scale > 1
+ 
++    @property
++    def _vae_dtype(self) -> torch.dtype:
++        return next(self.vae.vae.parameters()).dtype
++
++    def _vae_to_device(self) -> None:
++        if self.offload:
++            self.vae.to(self.device)
++
++    def _vae_to_cpu(self) -> None:
++        if self.offload:
++            self.vae.to("cpu")
++            torch.cuda.empty_cache()
++
++    def _encode_latents(self, video: torch.Tensor) -> List[torch.Tensor]:
++        # video: [B, C, T, H, W] on self.device. Cast to the VAE weight dtype so a
++        # float32 input works with a bf16 VAE regardless of the surrounding autocast.
++        self._vae_to_device()
++        try:
++            return [self.vae.encode(video.to(self._vae_dtype))[0]]
++        finally:
++            self._vae_to_cpu()
++
++    def _decode_latents(self, latents: torch.Tensor) -> torch.Tensor:
++        self._vae_to_device()
++        try:
++            return self.vae.decode(latents.to(self._vae_dtype))
++        finally:
++            self._vae_to_cpu()
++
++    def _encode_prompt(
++        self, prompt: Union[str, List[str]], negative_prompt: Union[str, List[str]] = ""
++    ) -> Tuple[torch.Tensor, Optional[torch.Tensor]]:
++        # The text encoder stays resident so the pipeline remains reusable across calls.
++        if self.offload:
++            prompt_embeds = self.text_encoder.encode(prompt).to(self.transformer.dtype)
++            prompt_embeds = prompt_embeds.to(self.device)
++            negative_prompt_embeds = None
++            if self.do_classifier_free_guidance:
++                negative_prompt_embeds = self.text_encoder.encode(negative_prompt).to(self.transformer.dtype)
++                negative_prompt_embeds = negative_prompt_embeds.to(self.device)
++        else:
++            self.text_encoder.to(self.device)
++            prompt_embeds = self.text_encoder.encode(prompt).to(self.transformer.dtype)
++            negative_prompt_embeds = None
++            if self.do_classifier_free_guidance:
++                negative_prompt_embeds = self.text_encoder.encode(negative_prompt).to(self.transformer.dtype)
++        return prompt_embeds, negative_prompt_embeds
++
+     def encode_image(
+         self, image: PipelineImageInput, height: int, width: int, num_frames: int
+     ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+@@ -90,7 +138,7 @@ class DiffusionForcingPipeline:
+         if prefix_video.dtype == torch.uint8:
+             prefix_video = (prefix_video.float() / (255.0 / 2.0)) - 1.0
+         prefix_video = prefix_video.to(self.device)
+-        prefix_video = [self.vae.encode(prefix_video.unsqueeze(0))[0]]  # [(c, f, h, w)]
++        prefix_video = self._encode_latents(prefix_video.unsqueeze(0))  # [(c, f, h, w)]
+         causal_block_size = self.transformer.num_frame_per_block
+         if prefix_video[0].shape[1] % causal_block_size != 0:
+             truncate_len = prefix_video[0].shape[1] % causal_block_size
+@@ -238,13 +286,7 @@ class DiffusionForcingPipeline:
+         prefix_video = None
+         predix_video_latent_length = 0
+ 
+-        self.text_encoder.to(self.device)
+-        prompt_embeds = self.text_encoder.encode(prompt).to(self.transformer.dtype)
+-        if self.do_classifier_free_guidance:
+-            negative_prompt_embeds = self.text_encoder.encode(negative_prompt).to(self.transformer.dtype)
+-        if self.offload:
+-            self.text_encoder.cpu()
+-            torch.cuda.empty_cache()
++        prompt_embeds, negative_prompt_embeds = self._encode_prompt(prompt, negative_prompt)
+ 
+         self.scheduler.set_timesteps(num_inference_steps, device=prompt_embeds.device, shift=shift)
+         init_timesteps = self.scheduler.timesteps
+@@ -268,7 +310,7 @@ class DiffusionForcingPipeline:
+         output_video = start_video.cpu()
+         for i in range(n_iter):
+             prefix_video = output_video[:, -overlap_history:].to(prompt_embeds.device)
+-            prefix_video = [self.vae.encode(prefix_video.unsqueeze(0))[0]]  # [(c, f, h, w)]
++            prefix_video = self._encode_latents(prefix_video.unsqueeze(0))  # [(c, f, h, w)]
+             if prefix_video[0].shape[1] % causal_block_size != 0:
+                 truncate_len = prefix_video[0].shape[1] % causal_block_size
+                 print("the length of prefix video is truncated for the casual block size alignment.")
+@@ -304,6 +346,7 @@ class DiffusionForcingPipeline:
+                 sample_scheduler.set_timesteps(num_inference_steps, device=prompt_embeds.device, shift=shift)
+                 sample_schedulers.append(sample_scheduler)
+             sample_schedulers_counter = [0] * base_num_frames_iter
++            torch.cuda.empty_cache()
+             self.transformer.to(self.device)
+             for i, timestep_i in enumerate(tqdm(step_matrix)):
+                 update_mask_i = step_update_mask[i]
+@@ -361,7 +404,7 @@ class DiffusionForcingPipeline:
+                 self.transformer.cpu()
+                 torch.cuda.empty_cache()
+             x0 = latents[0].unsqueeze(0)
+-            videos = [self.vae.decode(x0)[0]]
++            videos = [self._decode_latents(x0)[0]]
+             if output_video is None:
+                 output_video = videos[0].clamp(-1, 1).cpu()  # c, f, h, w
+             else:
+@@ -415,13 +458,7 @@ class DiffusionForcingPipeline:
+         if end_image:
+             end_video, end_video_latent_length = self.encode_image(end_image, height, width, num_frames)
+ 
+-        self.text_encoder.to(self.device)
+-        prompt_embeds = self.text_encoder.encode(prompt).to(self.transformer.dtype)
+-        if self.do_classifier_free_guidance:
+-            negative_prompt_embeds = self.text_encoder.encode(negative_prompt).to(self.transformer.dtype)
+-        if self.offload:
+-            self.text_encoder.cpu()
+-            torch.cuda.empty_cache()
++        prompt_embeds, negative_prompt_embeds = self._encode_prompt(prompt, negative_prompt)
+ 
+         self.scheduler.set_timesteps(num_inference_steps, device=prompt_embeds.device, shift=shift)
+         init_timesteps = self.scheduler.timesteps
+@@ -466,6 +503,7 @@ class DiffusionForcingPipeline:
+                 sample_scheduler.set_timesteps(num_inference_steps, device=prompt_embeds.device, shift=shift)
+                 sample_schedulers.append(sample_scheduler)
+             sample_schedulers_counter = [0] * latent_length
++            torch.cuda.empty_cache()
+             self.transformer.to(self.device)
+             for i, timestep_i in enumerate(tqdm(step_matrix)):
+                 update_mask_i = step_update_mask[i]
+@@ -522,8 +560,8 @@ class DiffusionForcingPipeline:
+             x0 = latents[0].unsqueeze(0)
+             if end_video is not None:
+                 x0 = latents[0][:, :-end_video_latent_length].unsqueeze(0)
+-            
+-            videos = self.vae.decode(x0)
++
++            videos = self._decode_latents(x0)
+             videos = (videos / 2 + 0.5).clamp(0, 1)
+             videos = [video for video in videos]
+             videos = [video.permute(1, 2, 3, 0) * 255 for video in videos]
+@@ -539,7 +577,7 @@ class DiffusionForcingPipeline:
+             for i in range(n_iter):
+                 if output_video is not None:  # i !=0
+                     prefix_video = output_video[:, -overlap_history:].to(prompt_embeds.device)
+-                    prefix_video = [self.vae.encode(prefix_video.unsqueeze(0))[0]]  # [(c, f, h, w)]
++                    prefix_video = self._encode_latents(prefix_video.unsqueeze(0))  # [(c, f, h, w)]
+                     if prefix_video[0].shape[1] % causal_block_size != 0:
+                         truncate_len = prefix_video[0].shape[1] % causal_block_size
+                         print("the length of prefix video is truncated for the casual block size alignment.")
+@@ -585,6 +623,7 @@ class DiffusionForcingPipeline:
+                     sample_scheduler.set_timesteps(num_inference_steps, device=prompt_embeds.device, shift=shift)
+                     sample_schedulers.append(sample_scheduler)
+                 sample_schedulers_counter = [0] * base_num_frames_iter
++                torch.cuda.empty_cache()
+                 self.transformer.to(self.device)
+                 for i, timestep_i in enumerate(tqdm(step_matrix)):
+                     update_mask_i = step_update_mask[i]
+@@ -645,7 +684,7 @@ class DiffusionForcingPipeline:
+                 if end_video is not None and i == n_iter - 1:
+                     x0 = latents[0][:, :-end_video_latent_length].unsqueeze(0)  
+ 
+-                videos = [self.vae.decode(x0)[0]]
++                videos = [self._decode_latents(x0)[0]]
+                 if output_video is None:
+                     output_video = videos[0].clamp(-1, 1).cpu()  # c, f, h, w
+                 else:

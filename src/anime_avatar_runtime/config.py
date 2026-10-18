@@ -34,17 +34,17 @@ class RuntimeConfig(BaseModel):
             raise ValueError("Path must not be blank; unset optional environment variables instead")
         return value
 
-    @field_validator(
-        "data_dir",
-        "skyreels_repo",
-        "skyreels_python",
-        "skyreels_model",
-        "observer_python",
-        "observer_models",
-    )
+    @field_validator("data_dir", "skyreels_repo", "skyreels_model", "observer_models")
     @classmethod
-    def resolve_path(cls, value: Path | None) -> Path | None:
-        return value.expanduser().resolve() if value is not None else None
+    def resolve_path(cls, value: Path) -> Path:
+        return value.expanduser().resolve()
+
+    @field_validator("skyreels_python", "observer_python")
+    @classmethod
+    def resolve_interpreter(cls, value: Path | None) -> Path | None:
+        # The venv interpreter is a symlink to the base python; resolving it
+        # drops the venv's site-packages. Keep the symlink path.
+        return value.expanduser().absolute() if value is not None else None
 
     @classmethod
     def from_env(cls) -> Self:
