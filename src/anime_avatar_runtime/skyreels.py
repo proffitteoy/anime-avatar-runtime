@@ -47,7 +47,8 @@ DEFAULT_NEGATIVE_PROMPT = (
     "turning around, spinning, large body movement, fast motion, running, jumping, "
     "complex hand gesture, camera pan, camera zoom, camera shake, scene change, "
     "background change, flickering, jitter, shaking, looping, repeated motion, "
-    "warped face, deformed face, extra fingers, blurred, low quality, watermark, text, oversaturated"
+    "warped face, deformed face, extra fingers, blurred, low quality, watermark, "
+    "text, oversaturated"
 )
 
 

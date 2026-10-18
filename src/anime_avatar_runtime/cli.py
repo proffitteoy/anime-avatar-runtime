@@ -11,7 +11,13 @@ from uuid import uuid4
 from .config import RuntimeConfig
 from .contracts import GenerationRequest, ObservationRequest
 from .observers import run_observation
-from .skyreels import DEFAULT_NEGATIVE_PROMPT, DEFAULT_PROMPT, UPSTREAM_REVISION, build_command, run_generation
+from .skyreels import (
+    DEFAULT_NEGATIVE_PROMPT,
+    DEFAULT_PROMPT,
+    UPSTREAM_REVISION,
+    build_command,
+    run_generation,
+)
 
 
 def main() -> int:
