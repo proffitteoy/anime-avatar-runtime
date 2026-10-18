@@ -35,6 +35,8 @@ def vendor_patch_sha256() -> str | None:
         return None
     with patch_path.open("rb") as source:
         return hashlib.file_digest(source, "sha256").hexdigest()
+
+
 DEFAULT_PROMPT = (
     "An anime character calmly idles, breathing softly and blinking naturally, "
     "subtle hair movement, consistent identity and outfit, static camera, stable background."
