@@ -90,21 +90,22 @@ uv run --locked avatar-runtime generate --image /absolute/path/reference.png --e
 
 ```bash
 git -C vendor/SkyReels-V2 apply ../../patches/skyreels-v2-8gb-memory.patch
+export QUANTIZE_INT8=1   # 必须显式开启，否则 transformer 权重按 bf16 加载，8GB 上会触发换页
 ```
 
 补丁内容（`patches/skyreels-v2-8gb-memory.patch`，基于 commit `9351d13`）：
 
-- transformer 权重 int8 量化（`modules/__init__.py`，复用 `t5.py` 的 `quantize_model_to_int8`），省 ~1.4GB。
+- transformer 权重 int8 量化（`modules/__init__.py` 的 `quantize_model_to_int8_bf16`，由 `QUANTIZE_INT8=1` 门控），省 ~1.4GB。
 - FFN 沿 seq 分块（`modules/transformer.py` 的 `_ffn_chunked`，chunk=8192），峰值 gate+up 中间量 1.8GB→~360MB，数值无损失。
 - bf16 中间量修复（`fast_rms_norm`/`mul_add`/`rope`），消除 fp32 中间激活。
-- VAE 空间分块解码（`modules/vae.py` 的 `_decode_spatial_tiles`，2×2 瓦片），解码峰值 ~5.8GB→2.2GB，无 CPU↔GPU 搬运开销。
-- VAE 懒加载/卸载 + bf16（`pipelines/diffusion_forcing_pipeline.py`）。
+- VAE 空间分块解码（`modules/vae.py` 的 `_decode_spatial_tiles`，2×2 瓦片），解码峰值 ~5.8GB→2.2GB。
+- VAE 懒加载/卸载 + bf16（`pipelines/diffusion_forcing_pipeline.py`）：`--offload` 下编码/解码/视频续接/长视频分支统一按需在 GPU 与 CPU 间迁移 VAE，并把输入 cast 到 VAE 的 bf16 权重 dtype。
 
-实测（540P、97 帧、1 步、种子 42、`--offload`）：
+实测（540P、97 帧、1 步、种子 42、`--offload`、`QUANTIZE_INT8=1`）：
 
 - 去噪 ~50s/步（优化前 ~22min/步，根因 WDDM 显存换页把大 kernel 拖慢 30~40×）。
 - VAE 解码 ~62s（优化前 9min+）。
 - 峰值显存 ~5.8GB（去噪）/ 2.2GB（解码）。
 - 环境：Python 3.10.22、torch 2.5.1+cu124、numpy 1.26.4、flash-attn 2.7.3、moviepy 1.0.3。
 
-> 瓦片解码的 attention 只在 bottleneck 一层、且被 64 输出像素重叠覆盖，实测瓦片/非瓦片最大绝对差 0.054（视觉无感）。若追求更短解码时间，可把 `_decode_spatial_tiles` 的 `pad` 从 8 降到 4 或改用 3×3 瓦片。
+> 空间瓦片解码**不是**严格数值等价：每帧瓦片输出会搬到 CPU（`out_.cpu()`）再拼接以压低峰值，存在 CPU↔GPU 搬运；且瓦片把 bottleneck attention 的作用域切到子块，拼接边界与注意力作用域与原版不同。单次实验最大绝对差 0.054 不能推广为“无损失”——正式验收需量瓦片缝、逐帧误差与身份/局部几何指标。若追求更短解码时间，可把 `_decode_spatial_tiles` 的 `pad` 从 8 降到 4 或改用 3×3 瓦片。

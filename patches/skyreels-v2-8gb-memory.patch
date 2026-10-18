@@ -1,3 +1,28 @@
+diff --git a/generate_video_df.py b/generate_video_df.py
+index 990ef61..ac1ef5e 100644
+--- a/generate_video_df.py
++++ b/generate_video_df.py
+@@ -50,6 +50,11 @@ if __name__ == "__main__":
+         type=str,
+         default="A woman in a leather jacket and sunglasses riding a vintage motorcycle through a desert highway at sunset, her hair blowing wildly in the wind as the motorcycle kicks up dust, with the golden sun casting long shadows across the barren landscape.",
+     )
++    parser.add_argument(
++        "--negative_prompt",
++        type=str,
++        default="色调艳丽，过曝，静态，细节模糊不清，字幕，风格，作品，画作，画面，静止，整体发灰，最差质量，低质量，JPEG压缩残留，丑陋的，残缺的，多余的手指，画得不好的手部，画得不好的脸部，畸形的，毁容的，形态畸形的肢体，手指融合，静止不动的画面，杂乱的背景，三条腿，背景人很多，倒着走",
++    )
+     parser.add_argument("--prompt_enhancer", action="store_true")
+     parser.add_argument("--teacache", action="store_true")
+     parser.add_argument(
+@@ -95,7 +100,7 @@ if __name__ == "__main__":
+     guidance_scale = args.guidance_scale
+     shift = args.shift
+     
+-    negative_prompt = "色调艳丽，过曝，静态，细节模糊不清，字幕，风格，作品，画作，画面，静止，整体发灰，最差质量，低质量，JPEG压缩残留，丑陋的，残缺的，多余的手指，画得不好的手部，画得不好的脸部，畸形的，毁容的，形态畸形的肢体，手指融合，静止不动的画面，杂乱的背景，三条腿，背景人很多，倒着走"
++    negative_prompt = args.negative_prompt
+ 
+     save_dir = os.path.join("result", args.outdir)
+     os.makedirs(save_dir, exist_ok=True)
 diff --git a/skyreels_v2_infer/modules/__init__.py b/skyreels_v2_infer/modules/__init__.py
 index 5bc6afe..98f5308 100644
 --- a/skyreels_v2_infer/modules/__init__.py
@@ -23,41 +48,79 @@ index 5bc6afe..98f5308 100644
      text_encoder.eval()
      gc.collect()
 diff --git a/skyreels_v2_infer/modules/attention.py b/skyreels_v2_infer/modules/attention.py
-index 2fd0dc0..32c7a32 100644
+index 2fd0dc0..5179dc7 100644
 --- a/skyreels_v2_infer/modules/attention.py
 +++ b/skyreels_v2_infer/modules/attention.py
-@@ -1,5 +1,6 @@
+@@ -1,6 +1,8 @@
  # Copyright 2024-2025 The Alibaba Wan Team Authors. All rights reserved.
  import torch
-+import time
  
++from .profiling import record, report
++
  try:
      import flash_attn_interface
-@@ -63,6 +64,7 @@ def flash_attention(
+ 
+@@ -63,6 +65,7 @@ def flash_attention(
  
      # preprocess query
  
-+    torch.cuda.synchronize(); _fa_t0 = time.time()
++    _fa_t0 = record()
      q = half(q.flatten(0, 1))
      q_lens = torch.tensor([lq] * b, dtype=torch.int32).to(device=q.device, non_blocking=True)
  
-@@ -75,6 +77,7 @@ def flash_attention(
+@@ -75,6 +78,7 @@ def flash_attention(
      q = q.to(v.dtype)
      k = k.to(v.dtype)
  
-+    torch.cuda.synchronize(); _fa_t1 = time.time()
++    _fa_t1 = record()
      if q_scale is not None:
          q = q * q_scale
  
-@@ -124,6 +127,8 @@ def flash_attention(
+@@ -124,6 +128,8 @@ def flash_attention(
              deterministic=deterministic,
          ).unflatten(0, (b, lq))
      torch.cuda.nvtx.range_pop()
-+    torch.cuda.synchronize(); _fa_t2 = time.time()
-+    print(f"[FA-PRE] {_fa_t1-_fa_t0:.3f}s [FA-KERNEL] {_fa_t2-_fa_t1:.3f}s", flush=True)
++    report("FA-PRE", _fa_t0, _fa_t1)
++    report("FA-KERNEL", _fa_t1)
  
      # output
      return x
+diff --git a/skyreels_v2_infer/modules/profiling.py b/skyreels_v2_infer/modules/profiling.py
+new file mode 100644
+index 0000000..38f8069
+--- /dev/null
++++ b/skyreels_v2_infer/modules/profiling.py
+@@ -0,0 +1,30 @@
++# Opt-in CUDA event profiling. Zero overhead (no sync, no print) unless
++# SKYREELS_PROFILE=1 is set in the environment.
++
++import os
++
++PROFILING = os.environ.get("SKYREELS_PROFILE") == "1"
++
++
++def record():
++    """Record a CUDA event on the current stream, or None when profiling is off."""
++    if not PROFILING:
++        return None
++    import torch
++
++    ev = torch.cuda.Event(enable_timing=True)
++    ev.record()
++    return ev
++
++
++def report(name, start, end=None):
++    """Print elapsed ms between two events (end defaults to a new event now)."""
++    if not PROFILING or start is None:
++        return
++    import torch
++
++    if end is None:
++        end = torch.cuda.Event(enable_timing=True)
++        end.record()
++    torch.cuda.synchronize()
++    print(f"[PROFILE:{name}] {start.elapsed_time(end):.1f}ms", flush=True)
 diff --git a/skyreels_v2_infer/modules/t5.py b/skyreels_v2_infer/modules/t5.py
 index b882fe7..27c7d05 100644
 --- a/skyreels_v2_infer/modules/t5.py
@@ -132,11 +195,14 @@ index b882fe7..27c7d05 100644
  
          return context
 diff --git a/skyreels_v2_infer/modules/transformer.py b/skyreels_v2_infer/modules/transformer.py
-index 7625938..254d93e 100644
+index 7625938..3f4c9dc 100644
 --- a/skyreels_v2_infer/modules/transformer.py
 +++ b/skyreels_v2_infer/modules/transformer.py
-@@ -16,9 +16,9 @@ from torch.nn.attention.flex_attention import flex_attention
+@@ -14,11 +14,12 @@ from torch.nn.attention.flex_attention import create_block_mask
+ from torch.nn.attention.flex_attention import flex_attention
+ 
  from .attention import flash_attention
++from .profiling import record, report
  
  
 -flex_attention = torch.compile(flex_attention, dynamic=False, mode="max-autotune")
@@ -147,7 +213,7 @@ index 7625938..254d93e 100644
  
  __all__ = ["WanModel"]
  
-@@ -49,6 +49,7 @@ def rope_params(max_seq_len, dim, theta=10000):
+@@ -49,6 +50,7 @@ def rope_params(max_seq_len, dim, theta=10000):
  def rope_apply(x, grid_sizes, freqs):
      n, c = x.size(2), x.size(3) // 2
      bs = x.size(0)
@@ -155,7 +221,7 @@ index 7625938..254d93e 100644
  
      # split freqs
      freqs = freqs.split([c - 2 * (c // 3), c // 3, c // 3], dim=1)
-@@ -72,14 +73,14 @@ def rope_apply(x, grid_sizes, freqs):
+@@ -72,14 +74,14 @@ def rope_apply(x, grid_sizes, freqs):
      # apply rotary embedding
      x = torch.view_as_real(x * freqs_i).flatten(3)
  
@@ -172,19 +238,17 @@ index 7625938..254d93e 100644
      return x
  
  
-@@ -160,7 +161,11 @@ class WanSelfAttention(nn.Module):
+@@ -160,7 +162,9 @@ class WanSelfAttention(nn.Module):
          if not self._flag_ar_attention:
              q = rope_apply(q, grid_sizes, freqs)
              k = rope_apply(k, grid_sizes, freqs)
-+            import time as _time
-+            torch.cuda.synchronize(); _a = _time.time()
++            _a = record()
              x = flash_attention(q=q, k=k, v=v, window_size=self.window_size)
-+            torch.cuda.synchronize(); _b = _time.time()
-+            print(f"[SATTN-FLASH] {_b-_a:.3f}s q={tuple(q.shape)}", flush=True)
++            report("SATTN-FLASH", _a)
          else:
              q = rope_apply(q, grid_sizes, freqs)
              k = rope_apply(k, grid_sizes, freqs)
-@@ -252,11 +257,11 @@ WAN_CROSSATTENTION_CLASSES = {
+@@ -252,11 +256,11 @@ WAN_CROSSATTENTION_CLASSES = {
  
  
  def mul_add(x, y, z):
@@ -198,7 +262,7 @@ index 7625938..254d93e 100644
  
  
  mul_add_compile = torch.compile(mul_add, dynamic=True, disable=DISABLE_COMPILE)
-@@ -317,17 +322,19 @@ class WanAttentionBlock(nn.Module):
+@@ -317,17 +321,17 @@ class WanAttentionBlock(nn.Module):
          """
          if e.dim() == 3:
              modulation = self.modulation  # 1, 6, dim
@@ -214,15 +278,13 @@ index 7625938..254d93e 100644
  
          # self-attention
          out = mul_add_add_compile(self.norm1(x), e[1], e[0])
-+        import time as _time
-+        torch.cuda.synchronize(); _sa0 = _time.time()
++        _sa0 = record()
          y = self.self_attn(out, grid_sizes, freqs, block_mask)
-+        torch.cuda.synchronize(); _sa1 = _time.time()
-+        print(f"[BLK-SELFATTN] {_sa1-_sa0:.3f}s", flush=True)
++        report("BLK-SELFATTN", _sa0)
          with amp.autocast("cuda", dtype=torch.float32):
              x = mul_add_compile(x, y, e[2])
  
-@@ -335,15 +342,29 @@ class WanAttentionBlock(nn.Module):
+@@ -335,15 +339,27 @@ class WanAttentionBlock(nn.Module):
          def cross_attn_ffn(x, context, e):
              dtype = context.dtype
              x = x + self.cross_attn(self.norm3(x.to(dtype)), context)
@@ -232,11 +294,9 @@ index 7625938..254d93e 100644
                  x = mul_add_compile(x, y, e[5])
              return x
  
-+        import time as _time
-+        torch.cuda.synchronize(); _cf0 = _time.time()
++        _cf0 = record()
          x = cross_attn_ffn(x, context, e)
-+        torch.cuda.synchronize(); _cf1 = _time.time()
-+        print(f"[BLK-XFFN] {_cf1-_cf0:.3f}s", flush=True)
++        report("BLK-XFFN", _cf0)
          return x.to(torch.bfloat16)
  
  
@@ -253,22 +313,15 @@ index 7625938..254d93e 100644
  class Head(nn.Module):
      def __init__(self, dim, out_dim, patch_size, eps=1e-6):
          super().__init__()
-@@ -645,6 +666,14 @@ class WanModel(ModelMixin, ConfigMixin, PeftAdapterMixin):
+@@ -645,6 +661,7 @@ class WanModel(ModelMixin, ConfigMixin, PeftAdapterMixin):
              assert clip_fea is not None and y is not None
          # params
          device = self.patch_embedding.weight.device
-+        import time as _t
-+        _t0 = _t.time()
-+        print(f"[DEBUG-FWD] x.device={x.device} x.dtype={x.dtype} x.shape={tuple(x.shape)} "
-+              f"t.device={t.device} context.device={context.device} context.dtype={context.dtype} "
-+              f"weight.device={self.patch_embedding.weight.device} weight.dtype={self.patch_embedding.weight.dtype} "
-+              f"mem_alloc={torch.cuda.memory_allocated()/1e9:.2f}GB mem_reserved={torch.cuda.memory_reserved()/1e9:.2f}GB",
-+              flush=True)
 +
          if self.freqs.device != device:
              self.freqs = self.freqs.to(device)
  
-@@ -698,7 +727,8 @@ class WanModel(ModelMixin, ConfigMixin, PeftAdapterMixin):
+@@ -698,7 +715,8 @@ class WanModel(ModelMixin, ConfigMixin, PeftAdapterMixin):
                  e0 = e0.repeat(1, 1, grid_sizes[1], grid_sizes[2], 1, 1).flatten(1, 3)
                  e0 = e0.transpose(1, 2).contiguous()
  
@@ -278,24 +331,7 @@ index 7625938..254d93e 100644
  
          # context
          context = self.text_embedding(context)
-@@ -764,8 +794,15 @@ class WanModel(ModelMixin, ConfigMixin, PeftAdapterMixin):
-             if self.cnt >= self.num_steps:
-                 self.cnt = 0
-         else:
--            for block in self.blocks:
-+            torch.cuda.reset_peak_memory_stats()
-+            for _bi, block in enumerate(self.blocks):
-+                _bt0 = _t.time()
-                 x = block(x, **kwargs)
-+                _bt = _t.time() - _bt0
-+                if _bi % 5 == 0:
-+                    _peak = torch.cuda.max_memory_allocated() / 1e9
-+                    print(f"[DEBUG-BLOCK] block {_bi} took {_bt:.3f}s x.device={x.device} x.dtype={x.dtype} mem_alloc={torch.cuda.memory_allocated()/1e9:.2f}GB mem_reserved={torch.cuda.memory_reserved()/1e9:.2f}GB peak_alloc={_peak:.2f}GB", flush=True)
-+
- 
-         x = self.head(x, e)
- 
-@@ -837,3 +874,43 @@ class WanModel(ModelMixin, ConfigMixin, PeftAdapterMixin):
+@@ -837,3 +855,43 @@ class WanModel(ModelMixin, ConfigMixin, PeftAdapterMixin):
  
          # init output layer
          nn.init.zeros_(self.head.head.weight)
@@ -388,17 +424,10 @@ index 9ffc5d4..ef5c9ab 100644
          return out
  
 diff --git a/skyreels_v2_infer/pipelines/diffusion_forcing_pipeline.py b/skyreels_v2_infer/pipelines/diffusion_forcing_pipeline.py
-index f16f532..bbd28e8 100644
+index f16f532..fe999a8 100644
 --- a/skyreels_v2_infer/pipelines/diffusion_forcing_pipeline.py
 +++ b/skyreels_v2_infer/pipelines/diffusion_forcing_pipeline.py
-@@ -1,5 +1,6 @@
- import math
- import os
-+import gc
- from typing import List
- from typing import Optional
- from typing import Tuple
-@@ -58,7 +59,7 @@ class DiffusionForcingPipeline:
+@@ -58,7 +58,7 @@ class DiffusionForcingPipeline:
          load_device = "cpu" if offload else device
          self.transformer = get_transformer(dit_path, load_device, weight_dtype)
          vae_model_path = os.path.join(model_path, "Wan2.1_VAE.pth")
@@ -407,20 +436,71 @@ index f16f532..bbd28e8 100644
          self.text_encoder = get_text_encoder(model_path, load_device, weight_dtype)
          self.video_processor = VideoProcessor(vae_scale_factor=16)
          self.device = device
-@@ -90,7 +91,12 @@ class DiffusionForcingPipeline:
-         if prefix_video.dtype == torch.uint8:
-             prefix_video = (prefix_video.float() / (255.0 / 2.0)) - 1.0
-         prefix_video = prefix_video.to(self.device)
+@@ -80,6 +80,54 @@ class DiffusionForcingPipeline:
+     def do_classifier_free_guidance(self) -> bool:
+         return self._guidance_scale > 1
+ 
++    @property
++    def _vae_dtype(self) -> torch.dtype:
++        return next(self.vae.vae.parameters()).dtype
++
++    def _vae_to_device(self) -> None:
 +        if self.offload:
 +            self.vae.to(self.device)
-         prefix_video = [self.vae.encode(prefix_video.unsqueeze(0))[0]]  # [(c, f, h, w)]
++
++    def _vae_to_cpu(self) -> None:
 +        if self.offload:
 +            self.vae.to("cpu")
 +            torch.cuda.empty_cache()
++
++    def _encode_latents(self, video: torch.Tensor) -> List[torch.Tensor]:
++        # video: [B, C, T, H, W] on self.device. Cast to the VAE weight dtype so a
++        # float32 input works with a bf16 VAE regardless of the surrounding autocast.
++        self._vae_to_device()
++        try:
++            return [self.vae.encode(video.to(self._vae_dtype))[0]]
++        finally:
++            self._vae_to_cpu()
++
++    def _decode_latents(self, latents: torch.Tensor) -> torch.Tensor:
++        self._vae_to_device()
++        try:
++            return self.vae.decode(latents.to(self._vae_dtype))
++        finally:
++            self._vae_to_cpu()
++
++    def _encode_prompt(
++        self, prompt: Union[str, List[str]], negative_prompt: Union[str, List[str]] = ""
++    ) -> Tuple[torch.Tensor, Optional[torch.Tensor]]:
++        # The text encoder stays resident so the pipeline remains reusable across calls.
++        if self.offload:
++            prompt_embeds = self.text_encoder.encode(prompt).to(self.transformer.dtype)
++            prompt_embeds = prompt_embeds.to(self.device)
++            negative_prompt_embeds = None
++            if self.do_classifier_free_guidance:
++                negative_prompt_embeds = self.text_encoder.encode(negative_prompt).to(self.transformer.dtype)
++                negative_prompt_embeds = negative_prompt_embeds.to(self.device)
++        else:
++            self.text_encoder.to(self.device)
++            prompt_embeds = self.text_encoder.encode(prompt).to(self.transformer.dtype)
++            negative_prompt_embeds = None
++            if self.do_classifier_free_guidance:
++                negative_prompt_embeds = self.text_encoder.encode(negative_prompt).to(self.transformer.dtype)
++        return prompt_embeds, negative_prompt_embeds
++
+     def encode_image(
+         self, image: PipelineImageInput, height: int, width: int, num_frames: int
+     ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+@@ -90,7 +138,7 @@ class DiffusionForcingPipeline:
+         if prefix_video.dtype == torch.uint8:
+             prefix_video = (prefix_video.float() / (255.0 / 2.0)) - 1.0
+         prefix_video = prefix_video.to(self.device)
+-        prefix_video = [self.vae.encode(prefix_video.unsqueeze(0))[0]]  # [(c, f, h, w)]
++        prefix_video = self._encode_latents(prefix_video.unsqueeze(0))  # [(c, f, h, w)]
          causal_block_size = self.transformer.num_frame_per_block
          if prefix_video[0].shape[1] % causal_block_size != 0:
              truncate_len = prefix_video[0].shape[1] % causal_block_size
-@@ -238,13 +244,21 @@ class DiffusionForcingPipeline:
+@@ -238,13 +286,7 @@ class DiffusionForcingPipeline:
          prefix_video = None
          predix_video_latent_length = 0
  
@@ -428,26 +508,23 @@ index f16f532..bbd28e8 100644
 -        prompt_embeds = self.text_encoder.encode(prompt).to(self.transformer.dtype)
 -        if self.do_classifier_free_guidance:
 -            negative_prompt_embeds = self.text_encoder.encode(negative_prompt).to(self.transformer.dtype)
-         if self.offload:
+-        if self.offload:
 -            self.text_encoder.cpu()
-+            prompt_embeds = self.text_encoder.encode(prompt).to(self.transformer.dtype)
-+            if self.do_classifier_free_guidance:
-+                negative_prompt_embeds = self.text_encoder.encode(negative_prompt).to(self.transformer.dtype)
-+            prompt_embeds = prompt_embeds.to(self.device)
-+            if self.do_classifier_free_guidance:
-+                negative_prompt_embeds = negative_prompt_embeds.to(self.device)
-+            del self.text_encoder
-+            gc.collect()
-             torch.cuda.empty_cache()
-+        else:
-+            self.text_encoder.to(self.device)
-+            prompt_embeds = self.text_encoder.encode(prompt).to(self.transformer.dtype)
-+            if self.do_classifier_free_guidance:
-+                negative_prompt_embeds = self.text_encoder.encode(negative_prompt).to(self.transformer.dtype)
+-            torch.cuda.empty_cache()
++        prompt_embeds, negative_prompt_embeds = self._encode_prompt(prompt, negative_prompt)
  
          self.scheduler.set_timesteps(num_inference_steps, device=prompt_embeds.device, shift=shift)
          init_timesteps = self.scheduler.timesteps
-@@ -304,6 +318,7 @@ class DiffusionForcingPipeline:
+@@ -268,7 +310,7 @@ class DiffusionForcingPipeline:
+         output_video = start_video.cpu()
+         for i in range(n_iter):
+             prefix_video = output_video[:, -overlap_history:].to(prompt_embeds.device)
+-            prefix_video = [self.vae.encode(prefix_video.unsqueeze(0))[0]]  # [(c, f, h, w)]
++            prefix_video = self._encode_latents(prefix_video.unsqueeze(0))  # [(c, f, h, w)]
+             if prefix_video[0].shape[1] % causal_block_size != 0:
+                 truncate_len = prefix_video[0].shape[1] % causal_block_size
+                 print("the length of prefix video is truncated for the casual block size alignment.")
+@@ -304,6 +346,7 @@ class DiffusionForcingPipeline:
                  sample_scheduler.set_timesteps(num_inference_steps, device=prompt_embeds.device, shift=shift)
                  sample_schedulers.append(sample_scheduler)
              sample_schedulers_counter = [0] * base_num_frames_iter
@@ -455,7 +532,16 @@ index f16f532..bbd28e8 100644
              self.transformer.to(self.device)
              for i, timestep_i in enumerate(tqdm(step_matrix)):
                  update_mask_i = step_update_mask[i]
-@@ -415,13 +430,21 @@ class DiffusionForcingPipeline:
+@@ -361,7 +404,7 @@ class DiffusionForcingPipeline:
+                 self.transformer.cpu()
+                 torch.cuda.empty_cache()
+             x0 = latents[0].unsqueeze(0)
+-            videos = [self.vae.decode(x0)[0]]
++            videos = [self._decode_latents(x0)[0]]
+             if output_video is None:
+                 output_video = videos[0].clamp(-1, 1).cpu()  # c, f, h, w
+             else:
+@@ -415,13 +458,7 @@ class DiffusionForcingPipeline:
          if end_image:
              end_video, end_video_latent_length = self.encode_image(end_image, height, width, num_frames)
  
@@ -463,26 +549,14 @@ index f16f532..bbd28e8 100644
 -        prompt_embeds = self.text_encoder.encode(prompt).to(self.transformer.dtype)
 -        if self.do_classifier_free_guidance:
 -            negative_prompt_embeds = self.text_encoder.encode(negative_prompt).to(self.transformer.dtype)
-         if self.offload:
+-        if self.offload:
 -            self.text_encoder.cpu()
-+            prompt_embeds = self.text_encoder.encode(prompt).to(self.transformer.dtype)
-+            if self.do_classifier_free_guidance:
-+                negative_prompt_embeds = self.text_encoder.encode(negative_prompt).to(self.transformer.dtype)
-+            prompt_embeds = prompt_embeds.to(self.device)
-+            if self.do_classifier_free_guidance:
-+                negative_prompt_embeds = negative_prompt_embeds.to(self.device)
-+            del self.text_encoder
-+            gc.collect()
-             torch.cuda.empty_cache()
-+        else:
-+            self.text_encoder.to(self.device)
-+            prompt_embeds = self.text_encoder.encode(prompt).to(self.transformer.dtype)
-+            if self.do_classifier_free_guidance:
-+                negative_prompt_embeds = self.text_encoder.encode(negative_prompt).to(self.transformer.dtype)
+-            torch.cuda.empty_cache()
++        prompt_embeds, negative_prompt_embeds = self._encode_prompt(prompt, negative_prompt)
  
          self.scheduler.set_timesteps(num_inference_steps, device=prompt_embeds.device, shift=shift)
          init_timesteps = self.scheduler.timesteps
-@@ -466,6 +489,7 @@ class DiffusionForcingPipeline:
+@@ -466,6 +503,7 @@ class DiffusionForcingPipeline:
                  sample_scheduler.set_timesteps(num_inference_steps, device=prompt_embeds.device, shift=shift)
                  sample_schedulers.append(sample_scheduler)
              sample_schedulers_counter = [0] * latent_length
@@ -490,32 +564,27 @@ index f16f532..bbd28e8 100644
              self.transformer.to(self.device)
              for i, timestep_i in enumerate(tqdm(step_matrix)):
                  update_mask_i = step_update_mask[i]
-@@ -522,8 +546,23 @@ class DiffusionForcingPipeline:
+@@ -522,8 +560,8 @@ class DiffusionForcingPipeline:
              x0 = latents[0].unsqueeze(0)
              if end_video is not None:
                  x0 = latents[0][:, :-end_video_latent_length].unsqueeze(0)
 -            
+-            videos = self.vae.decode(x0)
 +
-+            torch.cuda.empty_cache()
-+            if self.offload:
-+                self.vae.to(self.device)
-+            import gc as _gc
-+            _gc.collect()
-+            torch.cuda.empty_cache()
-+            print(f'[PRE-DECODE] alloc={torch.cuda.memory_allocated()/1e9:.2f}GB reserved={torch.cuda.memory_reserved()/1e9:.2f}GB peak={torch.cuda.max_memory_allocated()/1e9:.2f}GB', flush=True)
-+            import time as _t2
-+            _d0=_t2.time()
-             videos = self.vae.decode(x0)
-+            torch.cuda.synchronize(); _d1=_t2.time()
-+            print(f'[DECODE] {_d1-_d0:.3f}s', flush=True)
-+            print(f'[POST-DECODE] alloc={torch.cuda.memory_allocated()/1e9:.2f}GB reserved={torch.cuda.memory_reserved()/1e9:.2f}GB peak={torch.cuda.max_memory_allocated()/1e9:.2f}GB', flush=True)
-+            if self.offload:
-+                self.vae.to("cpu")
-+                torch.cuda.empty_cache()
++            videos = self._decode_latents(x0)
              videos = (videos / 2 + 0.5).clamp(0, 1)
              videos = [video for video in videos]
              videos = [video.permute(1, 2, 3, 0) * 255 for video in videos]
-@@ -585,6 +624,7 @@ class DiffusionForcingPipeline:
+@@ -539,7 +577,7 @@ class DiffusionForcingPipeline:
+             for i in range(n_iter):
+                 if output_video is not None:  # i !=0
+                     prefix_video = output_video[:, -overlap_history:].to(prompt_embeds.device)
+-                    prefix_video = [self.vae.encode(prefix_video.unsqueeze(0))[0]]  # [(c, f, h, w)]
++                    prefix_video = self._encode_latents(prefix_video.unsqueeze(0))  # [(c, f, h, w)]
+                     if prefix_video[0].shape[1] % causal_block_size != 0:
+                         truncate_len = prefix_video[0].shape[1] % causal_block_size
+                         print("the length of prefix video is truncated for the casual block size alignment.")
+@@ -585,6 +623,7 @@ class DiffusionForcingPipeline:
                      sample_scheduler.set_timesteps(num_inference_steps, device=prompt_embeds.device, shift=shift)
                      sample_schedulers.append(sample_scheduler)
                  sample_schedulers_counter = [0] * base_num_frames_iter
@@ -523,3 +592,12 @@ index f16f532..bbd28e8 100644
                  self.transformer.to(self.device)
                  for i, timestep_i in enumerate(tqdm(step_matrix)):
                      update_mask_i = step_update_mask[i]
+@@ -645,7 +684,7 @@ class DiffusionForcingPipeline:
+                 if end_video is not None and i == n_iter - 1:
+                     x0 = latents[0][:, :-end_video_latent_length].unsqueeze(0)  
+ 
+-                videos = [self.vae.decode(x0)[0]]
++                videos = [self._decode_latents(x0)[0]]
+                 if output_video is None:
+                     output_video = videos[0].clamp(-1, 1).cpu()  # c, f, h, w
+                 else:

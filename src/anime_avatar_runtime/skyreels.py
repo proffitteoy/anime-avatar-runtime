@@ -25,6 +25,16 @@ if TYPE_CHECKING:
 UPSTREAM_REVISION = "9351d13152207cc04de780e055346b08ade0b851"
 MODEL_ID = "Skywork/SkyReels-V2-DF-1.3B-540P"
 MODEL_REVISION = "1100111771ba2d921f10e76991f54db9f73edb3d"
+VENDOR_PATCH_NAME = "skyreels-v2-8gb-memory.patch"
+
+
+def vendor_patch_sha256() -> str | None:
+    """Fingerprint the committed vendor patch, so run.json records what was applied."""
+    patch_path = Path(__file__).resolve().parents[2] / "patches" / VENDOR_PATCH_NAME
+    if not patch_path.is_file():
+        return None
+    with patch_path.open("rb") as source:
+        return hashlib.file_digest(source, "sha256").hexdigest()
 DEFAULT_PROMPT = (
     "An anime character calmly idles, breathing softly and blinking naturally, "
     "subtle hair movement, consistent identity and outfit, static camera, stable background."
@@ -259,6 +269,8 @@ def run_generation(
         "model_id": MODEL_ID,
         "model_revision_expected": MODEL_REVISION,
         "model_revision_verified": False,
+        "quantize_int8": os.environ.get("QUANTIZE_INT8") == "1",
+        "vendor_patch_sha256": vendor_patch_sha256(),
         "hardware": None,
         "request": request.model_dump(mode="json"),
         "config": config.model_dump(mode="json"),
