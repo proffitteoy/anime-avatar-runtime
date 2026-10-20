@@ -1,16 +1,18 @@
 """Local API entry point and reproducible invocation of upstream generation."""
 
 import argparse
+import asyncio
 import importlib.metadata
 import json
 import platform
 import sys
 from pathlib import Path
-from uuid import uuid4
+from uuid import UUID, uuid4
 
 from .config import RuntimeConfig
 from .contracts import GenerationRequest, ObservationRequest
 from .observers import run_observation
+from .runtime import Runtime
 from .skyreels import (
     DEFAULT_NEGATIVE_PROMPT,
     DEFAULT_PROMPT,
@@ -18,6 +20,24 @@ from .skyreels import (
     build_command,
     run_generation,
 )
+
+
+async def _run_windows(
+    config: RuntimeConfig, request: GenerationRequest, image: Path | None
+) -> int:
+    runtime = Runtime(config)
+    try:
+        if image is not None:
+            await runtime.initialize(image.read_bytes())
+        await runtime.resume()
+        job = await runtime.submit(request)
+        print(config.data_dir / "runs" / str(job.run_id) / "job.json", flush=True)
+        job = await runtime.wait_for_job(job.run_id)
+        if job.status != "completed":
+            raise RuntimeError(job.error or "Window task did not complete")
+        return 0
+    finally:
+        await runtime.close()
 
 
 def main() -> int:
@@ -58,6 +78,21 @@ def main() -> int:
     generate.add_argument(
         "--dry-run", action="store_true", help="Print argv without loading models"
     )
+    windows = commands.add_parser("windows", help="Run a bounded sequence through Runtime")
+    windows.add_argument("--image", type=Path, help="Initialize a new avatar data directory")
+    windows.add_argument("--data-dir", type=Path)
+    windows.add_argument("--windows", type=int, default=3, help="Finite limit, 1 to 100")
+    windows.add_argument("--previous-run-id", type=UUID, help="Resume its last accepted window")
+    for name in ("repo", "python", "model"):
+        windows.add_argument(f"--{name}", type=Path)
+    windows.add_argument("--timeout", type=float, help="Per-window generation/inspection timeout")
+    windows.add_argument("--frames", type=int, default=97)
+    windows.add_argument("--seed", type=int, default=42)
+    windows.add_argument("--prompt", default=DEFAULT_PROMPT)
+    windows.add_argument("--negative-prompt", default=DEFAULT_NEGATIVE_PROMPT)
+    windows.add_argument("--inference-steps", type=int, default=30)
+    windows.add_argument("--guidance-scale", type=float, default=5.0)
+    windows.add_argument("--shift", type=float, default=5.0)
     args = parser.parse_args()
 
     try:
@@ -123,6 +158,8 @@ def main() -> int:
             print(observed.output / "result.json")
             return 0
         values = config.model_dump()
+        if args.command == "windows" and args.data_dir is not None:
+            values["data_dir"] = args.data_dir
         for argument, field in (
             ("repo", "skyreels_repo"),
             ("python", "skyreels_python"),
@@ -140,7 +177,11 @@ def main() -> int:
             inference_steps=args.inference_steps,
             guidance_scale=args.guidance_scale,
             shift=args.shift,
+            windows=args.windows if args.command == "windows" else None,
+            previous_run_id=args.previous_run_id if args.command == "windows" else None,
         )
+        if args.command == "windows":
+            return asyncio.run(_run_windows(config, request, args.image))
         if args.dry_run:
             if config.skyreels_python is None:
                 raise ValueError("Set --python or SKYREELS_PYTHON to the separate CUDA environment")
@@ -177,7 +218,7 @@ def main() -> int:
         )
         print(result.output / "run.json")
         return 0
-    except (OSError, ValueError, RuntimeError) as exc:
+    except (OSError, ValueError, RuntimeError, LookupError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 1
     except KeyboardInterrupt:

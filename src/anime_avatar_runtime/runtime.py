@@ -2,6 +2,7 @@
 
 import asyncio
 import io
+import time
 from collections import deque
 from datetime import UTC, datetime
 from threading import Event
@@ -12,13 +13,22 @@ from .contracts import (
     EventKind,
     GenerationJob,
     GenerationRequest,
+    GenerationResult,
+    GenerationWindow,
     Observation,
     ObservationRequest,
     ObservationResult,
     RuntimeEvent,
 )
 from .observers import read_image, run_observation
-from .skyreels import GenerationCancelled, backend_unavailable_reason, run_generation
+from .skyreels import (
+    WINDOW_OVERLAP,
+    GenerationCancelled,
+    backend_unavailable_reason,
+    inspect_window,
+    run_generation,
+    verify_window_source,
+)
 from .state import AvatarState, atomic_write, initialize, load_state
 
 
@@ -332,13 +342,148 @@ class Runtime:
                 raise RuntimeConflict("Resume the runtime before submitting generation")
             if reason := backend_unavailable_reason(self.config):
                 raise CapabilityUnavailable(reason)
+            if request.previous_run_id is not None:
+                previous = self.get_job(request.previous_run_id)
+                if not previous.accepted_windows:
+                    raise RuntimeConflict("Previous job has no accepted continuation window")
             job = GenerationJob(run_id=uuid4(), avatar_id=state.avatar_id, request=request)
             self._save_job(job)
             self._active_job = job
             self._cancel = Event()
-            self._emit("generation_submitted", "One reference-image segment requested", job.run_id)
+            self._emit(
+                "generation_submitted",
+                "Bounded windows requested"
+                if request.windows
+                else "One reference-image segment requested",
+                job.run_id,
+            )
             self._task = asyncio.create_task(self._execute(job), name=f"generation-{job.run_id}")
             return job
+
+    async def wait_for_job(self, run_id: UUID) -> GenerationJob:
+        """Wait for a locally submitted task; cancellation is cleaned up by close/pause."""
+        if self._active_job is not None and self._active_job.run_id == run_id:
+            if self._task is not None:
+                await asyncio.shield(self._task)
+        return self.get_job(run_id)
+
+    def _generate_window(
+        self, job: GenerationJob, previous: GenerationWindow | None
+    ) -> GenerationWindow:
+        state = self.avatar_state()
+        if state.avatar_id != job.avatar_id:
+            raise ValueError("Avatar changed before generating the next window")
+        root = self.config.data_dir / "runs" / str(job.run_id)
+        window_id = uuid4()
+        index = previous.index + 1 if previous else 1
+        request = GenerationRequest.model_validate(
+            job.request.model_dump()
+            | {
+                "windows": None,
+                "previous_run_id": None,
+                "seed": (job.request.seed + index - 1) % 2**32,
+            }
+        )
+        output = root / "windows" / str(window_id)
+        previous_frames = previous.frame_count if previous else 0
+        added_frames = request.frames - (WINDOW_OVERLAP if previous else 0)
+        expected_frames = previous_frames + added_frames
+
+        if previous is not None:
+            verify_window_source(self.config, previous)
+        result = run_generation(
+            self.config,
+            request,
+            output,
+            run_id=window_id,
+            avatar_id=job.avatar_id,
+            image=(
+                self.config.data_dir / "references" / f"{state.reference_sha256}.png"
+                if previous is None
+                else None
+            ),
+            video=previous.video if previous else None,
+            cancel_event=self._cancel,
+        )
+        if result.run_id != window_id or result.avatar_id != job.avatar_id:
+            raise ValueError("Window result does not belong to this job")
+        if (
+            result.output.resolve() != output.resolve()
+            or len(result.videos) != 1
+            or not result.videos[0].resolve().is_relative_to(output.resolve())
+        ):
+            raise ValueError("Window must produce exactly one video in its output directory")
+        video = result.videos[0]
+        digest = inspect_window(
+            self.config,
+            video,
+            output,
+            expected_frames=expected_frames,
+            previous_frames=previous_frames,
+            cancel_event=self._cancel,
+        )
+        if previous is not None:
+            verify_window_source(self.config, previous)
+        return GenerationWindow(
+            window_id=window_id,
+            run_id=job.run_id,
+            avatar_id=job.avatar_id,
+            index=index,
+            previous_window_id=previous.window_id if previous else None,
+            request=request,
+            video=video,
+            video_sha256=digest,
+            frame_count=expected_frames,
+            previous_frame_count=previous_frames,
+            added_frames=added_frames,
+            elapsed_seconds=result.elapsed_seconds,
+            boundary_video=output / "review" / "boundary.mp4" if previous else None,
+        )
+
+    async def _execute_windows(self, job: GenerationJob) -> GenerationResult:
+        assert job.request.windows is not None
+        previous = None
+        if job.request.previous_run_id is not None:
+            previous = self.get_job(job.request.previous_run_id).accepted_windows[-1]
+        started = time.monotonic()
+        root = self.config.data_dir / "runs" / str(job.run_id)
+        for _ in range(job.request.windows):
+            if self._cancel.is_set():
+                raise GenerationCancelled("Generation cancelled before starting the next window")
+            worker = asyncio.create_task(asyncio.to_thread(self._generate_window, job, previous))
+            try:
+                window = await asyncio.shield(worker)
+            except asyncio.CancelledError:
+                self._cancel.set()
+                try:
+                    await worker
+                except Exception:
+                    pass
+                raise GenerationCancelled("Runtime window task cancelled") from None
+            if self._cancel.is_set():
+                raise GenerationCancelled("Window cancelled before committing context")
+            # One atomic job write commits both progress and effective continuation context.
+            # No await between the cancellation check and commit on this event loop.
+            updated = GenerationJob.model_validate(
+                job.model_dump() | {"accepted_windows": [*job.accepted_windows, window]}
+            )
+            self._save_job(updated)
+            self._active_job = job = updated
+            self._emit(
+                "generation_window_accepted",
+                f"Window {window.index}: {window.frame_count} frames at 24 FPS; "
+                f"added {window.added_frames} frames",
+                job.run_id,
+            )
+            previous = window
+        assert previous is not None
+        return GenerationResult(
+            run_id=job.run_id,
+            avatar_id=job.avatar_id,
+            output=root,
+            videos=[previous.video],
+            elapsed_seconds=time.monotonic() - started,
+        )
 
     async def _execute(self, job: GenerationJob) -> None:
         terminal: GenerationJob | None = None
@@ -354,7 +499,9 @@ class Runtime:
             image = self.config.data_dir / "references" / f"{state.reference_sha256}.png"
             output = self.config.data_dir / "runs" / str(job.run_id) / "output"
             worker = asyncio.create_task(
-                asyncio.to_thread(
+                self._execute_windows(job)
+                if job.request.windows is not None
+                else asyncio.to_thread(
                     run_generation,
                     self.config,
                     job.request,
@@ -377,12 +524,14 @@ class Runtime:
                 raise GenerationCancelled("Runtime task cancelled") from None
             if self._cancel.is_set():
                 raise GenerationCancelled("Generation cancelled before accepting the result")
+            job = self._active_job or job
             terminal = GenerationJob.model_validate(
                 job.model_dump()
                 | {"status": "completed", "finished_at": datetime.now(UTC), "result": result}
             )
             kind = "generation_completed"
         except Exception as exc:
+            job = self._active_job or job
             cancelled = isinstance(exc, GenerationCancelled)
             terminal = GenerationJob.model_validate(
                 job.model_dump()

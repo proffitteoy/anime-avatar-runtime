@@ -2,6 +2,7 @@ import ast
 import hashlib
 import json
 import os
+import subprocess
 import sys
 import time
 from concurrent.futures import ThreadPoolExecutor
@@ -69,12 +70,111 @@ def test_generated_flags_exist_in_official_entrypoint(tmp_path: Path) -> None:
         and isinstance(arg.value, str)
         and arg.value.startswith("--")
     }
+    # The repository's documented vendor patch adds the configurable negative prompt.
+    patch = Path("patches/skyreels-v2-8gb-memory.patch").read_text(encoding="utf-8")
+    assert '+        "--negative_prompt",' in patch
+    assert "+    negative_prompt = args.negative_prompt" in patch
+    flags.add("--negative_prompt")
     source = tmp_path / "input.png"
     source.touch()
     argv = build_command(
         repo=upstream.parent, python=tmp_path, output=tmp_path, image=source, end_image=source
     )
     assert {arg for arg in argv if arg.startswith("--")} <= flags
+
+
+def test_pinned_extend_video_retains_prefix_and_drops_overlap() -> None:
+    upstream = Path(".cache/research/diffusion_forcing_pipeline.py")
+    if not upstream.exists():
+        pytest.skip("Optional pinned pipeline source absent")
+    content = upstream.read_bytes().replace(b"\r\n", b"\n")
+    blob = b"blob " + str(len(content)).encode() + b"\0" + content
+    assert hashlib.sha1(blob).hexdigest() == "f16f532642944853f48f614bf7d44ff88b6374b5"
+    tree = ast.parse(content)
+    extend = next(
+        n for n in ast.walk(tree) if isinstance(n, ast.FunctionDef) and n.name == "extend_video"
+    )
+    code = ast.unparse(extend)
+    assert "output_video = start_video.cpu()" in code
+    assert "output_video[:, -overlap_history:]" in code
+    assert "videos[0][:, overlap_history:]" in code
+
+
+@pytest.mark.parametrize(
+    "frames,fps,valid", [(177, 24, True), (176, 24, False), (178, 24, False), (177, 25, False)]
+)
+def test_real_video_decode_timeline_and_boundary(
+    tmp_path: Path, frames: int, fps: int, valid: bool
+) -> None:
+    python = os.environ.get("AVATAR_TEST_MEDIA_PYTHON")
+    if not python:
+        pytest.skip("Optional MoviePy/FFmpeg environment not configured")
+    # Deterministic encoded color frames exercise media handling only, never a model.
+    video = tmp_path / "encoded-test-fixture.mp4"
+    subprocess.run(
+        [
+            python,
+            "-c",
+            (
+                "import imageio, numpy as np, sys\n"
+                "with imageio.get_writer(sys.argv[1], fps=int(sys.argv[3])) as writer:\n"
+                "    for i in range(int(sys.argv[2])):\n"
+                "        writer.append_data(np.full((32, 48, 3), i % 256, dtype=np.uint8))\n"
+            ),
+            str(video),
+            str(frames),
+            str(fps),
+        ],
+        check=True,
+    )
+    config = RuntimeConfig(skyreels_python=Path(python))
+    if not valid:
+        with pytest.raises(RuntimeError, match="decode/timeline"):
+            skyreels.inspect_window(
+                config,
+                video,
+                tmp_path,
+                expected_frames=177,
+                previous_frames=97,
+                cancel_event=Event(),
+            )
+        evidence = json.loads((tmp_path / "review" / "validation.json").read_text())
+        assert evidence["status"] == "failed"
+        return
+    digest = skyreels.inspect_window(
+        config,
+        video,
+        tmp_path,
+        expected_frames=177,
+        previous_frames=97,
+        cancel_event=Event(),
+    )
+    assert digest == hashlib.sha256(video.read_bytes()).hexdigest()
+    media = json.loads((tmp_path / "review" / "media.json").read_text())
+    assert media["frame_count"] == 177
+    assert media["added_frames"] == 80
+    assert media["boundary_frame"] == 97
+    # Independently decode the emitted boundary clip and verify its before/after span.
+    result = subprocess.run(
+        [
+            python,
+            "-c",
+            (
+                "from moviepy.editor import VideoFileClip; import json, sys\n"
+                "with VideoFileClip(sys.argv[1]) as clip:\n"
+                "    count = round(clip.duration * clip.fps)\n"
+                "    first, last = clip.get_frame(0), clip.get_frame((count - 1) / clip.fps)\n"
+                "    print(json.dumps([count, float(first.mean()), float(last.mean())]))\n"
+            ),
+            str(tmp_path / "review" / "boundary.mp4"),
+        ],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    count, first, last = json.loads(result.stdout)
+    assert count == 34
+    assert first == pytest.approx(80, abs=3) and last == pytest.approx(113, abs=3)
 
 
 def test_real_process_timeout_terminates_child(tmp_path: Path) -> None:
