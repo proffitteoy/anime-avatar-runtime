@@ -37,7 +37,7 @@
 
 - A 路线负责生成与正常状态保持，B 路线负责异常恢复，C 路线负责组织、调度和存储。
 - AvatarState 不等于当前帧。当前 schema_version=1 仅表达已知参考图和暂停状态；后续增加 pose、embedding、generation_context 时不得虚构已计算结果。
-- 实时模式以 Runtime 为准；resume 仅允许手动单段提交，不开启自主循环。生成实验不自动覆盖参考 checkpoint；具体契约和扩展入口见 [Runtime 底座](./docs/runtime-foundation.md)。
+- 实时模式以 Runtime 为准；resume 仅允许手动提交单段或有明确数量上限的连续窗口，不开启自主观测/恢复循环。连续窗口的有效上下文原子保存在任务记录中，不覆盖参考 checkpoint；具体契约和扩展入口见 [Runtime 底座](./docs/runtime-foundation.md)。
 - Observer 提供信号，由 Runtime 决定后续动作；身份、几何、运动指标先独立记录，交互和待机条件需区分。
 - Anchor 初期只使用原图或人工确认的图像，避免把生成错误加入可信参考。
 - LLM、人格和语音在核心闭环之上扩展，避免与实时视觉状态混杂。

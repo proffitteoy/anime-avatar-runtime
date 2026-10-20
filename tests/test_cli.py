@@ -6,6 +6,8 @@ from pathlib import Path
 import pytest
 
 from anime_avatar_runtime import cli, skyreels
+from anime_avatar_runtime import runtime as runtime_module
+from anime_avatar_runtime.state import initialize
 
 
 def arguments(tmp_path: Path) -> list[str]:
@@ -98,3 +100,39 @@ def test_blank_backend_path_is_not_resolved_to_current_directory(
     monkeypatch.setenv("SKYREELS_PYTHON", "")
     monkeypatch.setattr(sys, "argv", ["avatar-runtime", "doctor"])
     assert cli.main() == 1
+
+
+def test_windows_missing_avatar_returns_error_without_traceback(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    monkeypatch.setattr(sys, "argv", ["avatar-runtime", "windows", "--data-dir", str(tmp_path)])
+    assert cli.main() == 1
+    assert "Initialize an avatar first" in capsys.readouterr().err
+    assert not (tmp_path / "runs").exists()
+
+
+def test_windows_backend_failure_is_persisted_and_returns_nonzero(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    from PIL import Image
+
+    image = tmp_path / "reference.png"
+    Image.new("RGB", (16, 16)).save(image)
+    data = tmp_path / "avatar"
+    initialize(data, image.read_bytes())
+    checkpoint = (data / "state.json").read_bytes()
+    monkeypatch.setattr(runtime_module, "backend_unavailable_reason", lambda _: None)
+
+    def fail(*args, **kwargs):
+        raise RuntimeError("explicit CLI window backend failure")
+
+    monkeypatch.setattr(runtime_module, "run_generation", fail)
+    monkeypatch.setattr(sys, "argv", ["avatar-runtime", "windows", "--data-dir", str(data)])
+    assert cli.main() == 1
+    captured = capsys.readouterr()
+    job = json.loads(Path(captured.out.strip()).read_text())
+    assert job["status"] == "failed"
+    assert job["request"]["windows"] == 3
+    assert job["accepted_windows"] == []
+    assert "explicit CLI" in captured.err
+    assert (data / "state.json").read_bytes() == checkpoint
