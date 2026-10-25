@@ -23,16 +23,19 @@ version = "0.1.0"
 source = { editable = "." }
 dependencies = [
     { name = "fastapi" },
-    { name = "numpy" },
     { name = "pillow" },
     { name = "pydantic" },
     { name = "uvicorn" },
 ]
 
 [package.optional-dependencies]
+legacy = [
+    { name = "numpy" },
+]
 observers = [
     { name = "anime-face-detector" },
     { name = "dghs-imgutils" },
+    { name = "numpy" },
     { name = "onnxruntime" },
     { name = "opencv-contrib-python-headless" },
     { name = "torch", version = "2.5.1", source = { registry = "https://download.pytorch.org/whl/cpu" }, marker = "(platform_machine == 'aarch64' and platform_python_implementation == 'CPython' and sys_platform == 'linux') or sys_platform == 'darwin'" },
@@ -45,6 +48,7 @@ observers = [
 dev = [
     { name = "httpx2" },
     { name = "mypy" },
+    { name = "numpy" },
     { name = "pytest" },
     { name = "ruff" },
 ]
@@ -54,7 +58,8 @@ requires-dist = [
     { name = "anime-face-detector", marker = "extra == 'observers'", url = "https://github.com/hysts/anime-face-detector/archive/98a9fb480fa04bdd96acbe4d98da191a898267f3.tar.gz" },
     { name = "dghs-imgutils", marker = "extra == 'observers'", url = "https://github.com/deepghs/imgutils/archive/46df848dc4d20ac93f4919a40e2636d5f7c19766.tar.gz" },
     { name = "fastapi", specifier = ">=0.115,<1" },
-    { name = "numpy", specifier = ">=1.26.4,<2" },
+    { name = "numpy", marker = "extra == 'legacy'", specifier = ">=1.26.4,<2" },
+    { name = "numpy", marker = "extra == 'observers'", specifier = ">=1.26.4,<2" },
     { name = "onnxruntime", marker = "extra == 'observers'", specifier = ">=1.20,<2" },
     { name = "opencv-contrib-python-headless", marker = "extra == 'observers'", specifier = "==4.11.0.86" },
     { name = "pillow", specifier = ">=11,<13" },
@@ -63,12 +68,13 @@ requires-dist = [
     { name = "torchvision", marker = "extra == 'observers'", specifier = "==0.20.1", index = "https://download.pytorch.org/whl/cpu" },
     { name = "uvicorn", specifier = ">=0.34,<1" },
 ]
-provides-extras = ["observers"]
+provides-extras = ["legacy", "observers"]
 
 [package.metadata.requires-dev]
 dev = [
     { name = "httpx2", specifier = ">=2.13,<3" },
     { name = "mypy", specifier = ">=1.15,<2" },
+    { name = "numpy", specifier = ">=1.26.4,<2" },
     { name = "pytest", specifier = ">=8,<10" },
     { name = "ruff", specifier = ">=0.11,<1" },
 ]

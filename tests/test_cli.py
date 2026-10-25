@@ -98,3 +98,40 @@ def test_blank_backend_path_is_not_resolved_to_current_directory(
     monkeypatch.setenv("SKYREELS_PYTHON", "")
     monkeypatch.setattr(sys, "argv", ["avatar-runtime", "doctor"])
     assert cli.main() == 1
+
+
+def test_explicit_legacy_generate_keeps_the_original_arguments(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    original = arguments(tmp_path) + ["--dry-run"]
+    monkeypatch.setattr(sys, "argv", original)
+    assert cli.main() == 0
+    alias = json.loads(capsys.readouterr().out)
+    monkeypatch.setattr(sys, "argv", [original[0], "legacy", *original[1:]])
+    assert cli.main() == 0
+    assert json.loads(capsys.readouterr().out) == alias
+
+
+def test_legacy_state_is_read_only_and_independent_of_model_config(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    import io
+
+    from PIL import Image
+
+    from anime_avatar_runtime.state import initialize
+
+    image = io.BytesIO()
+    Image.new("RGB", (8, 12), "white").save(image, format="PNG")
+    state = initialize(tmp_path, image.getvalue())
+    before = {p: p.read_bytes() for p in tmp_path.rglob("*") if p.is_file()}
+    monkeypatch.setenv("AVATAR_GENERATION_TIMEOUT_SECONDS", "invalid")
+    monkeypatch.setattr(
+        sys, "argv", ["avatar-runtime", "legacy", "state", "--data-dir", str(tmp_path)]
+    )
+    assert cli.main() == 0
+    assert json.loads(capsys.readouterr().out) == state.model_dump(mode="json")
+    assert {p: p.read_bytes() for p in tmp_path.rglob("*") if p.is_file()} == before
+    (tmp_path / "references" / f"{state.reference_sha256}.png").write_bytes(b"corrupt")
+    assert cli.main() == 1
+    assert "SHA-256" in capsys.readouterr().err

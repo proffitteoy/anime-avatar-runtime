@@ -2,6 +2,7 @@ import ast
 import hashlib
 import json
 import os
+import subprocess
 import sys
 import time
 from concurrent.futures import ThreadPoolExecutor
@@ -56,8 +57,20 @@ def test_generated_flags_exist_in_official_entrypoint(tmp_path: Path) -> None:
     content = upstream.read_bytes().replace(b"\r\n", b"\n")
     blob = b"blob " + str(len(content)).encode() + b"\0" + content
     assert hashlib.sha1(blob).hexdigest() == "990ef610af1798b09aaba53d96201bc716f9d731"
-    # Parse upstream source without importing torch, downloading weights or running model code.
-    tree = ast.parse(upstream.read_text(encoding="utf-8"))
+    # The deployed baseline includes our committed patch. Apply only its entrypoint
+    # hunk to an isolated copy, without changing vendor or executing model code.
+    patched = tmp_path / "generate_video_df.py"
+    patched.write_bytes(content)
+    patch = Path("patches/skyreels-v2-8gb-memory.patch").read_text(encoding="utf-8")
+    entrypoint_patch = patch.split("diff --git a/skyreels_v2_infer/", 1)[0]
+    applied = subprocess.run(
+        ["git", "apply", "--unsafe-paths", f"--directory={tmp_path.as_posix()}"],
+        input=entrypoint_patch.encode("utf-8"),
+        capture_output=True,
+        check=False,
+    )
+    assert applied.returncode == 0, applied.stderr
+    tree = ast.parse(patched.read_text(encoding="utf-8"))
     flags = {
         arg.value
         for call in ast.walk(tree)

@@ -37,7 +37,15 @@ def create_app(data_dir: Path | None = None, *, config: RuntimeConfig | None = N
         finally:
             await runtime.close()
 
-    app = FastAPI(title="Anime Avatar Runtime", version="0.1.0", lifespan=lifespan)
+    app = FastAPI(
+        title="Anime Avatar Runtime — historical experiment API",
+        description=(
+            "Legacy checkpoint, generation and observation interfaces; retirement tracked in #68."
+        ),
+        version="0.1.0",
+        lifespan=lifespan,
+        deprecated=True,
+    )
     app.state.runtime = runtime
 
     @app.exception_handler(RuntimeConflict)
