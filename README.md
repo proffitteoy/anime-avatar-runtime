@@ -8,12 +8,11 @@
 - 单角色初始化：校验参考图、保存规范化 PNG、写入带版本的 JSON checkpoint，重启后校验参考图哈希。
 - 统一配置与共享类型：生成请求/结果、任务、事件和独立观测信号；后续三条路线复用同一份契约。
 - 单进程 Runtime：异步提交单段生成、任务互斥、状态查询、暂停取消、关停清理、中断任务识别；API 与 CLI 共用真实生成执行函数。
-- 有限连续窗口：Runtime 串行续接上一有效视频，解码核对帧数后原子保存上下文；失败、取消或重启后可显式续接，保留边界审查片段。
 - CLI 可桥接固定版本的 SkyReels-V2 官方入口，支持单图生成、视频续接和首尾帧条件；保存输入哈希、有效配置、命令、耗时、日志和成功/失败/取消状态，支持超时。
 - pytest、Ruff、mypy、wheel/sdist 构建入口和 Windows/Linux CI 配置。
 - 独立 CPU 身份/几何观测：固定 CCIP 与动漫人脸 28 点、可信参考特征缓存、加权对齐、图片/视频采样、关键点叠图与独立曲线；手动观测和显式阈值异常接口。
 
-当前没有自主待机循环、自动 Recovery、LLM/语音或展示前端。初始化后的 AvatarState 为 paused；API 会明确报告 autonomous_loop=false。身份/几何已用真实模型完成离线 CPU 样例验证；首段 GPU 基线见 [#7 记录](./docs/a02-idle-baseline.md)，连续窗口 GPU 推理、观测闭环与长期稳定性尚未验证。
+当前没有自主待机循环、自动 Recovery、LLM/语音或展示前端。初始化后的 AvatarState 为 paused；API 会明确报告 autonomous_loop=false。身份/几何已用真实模型完成离线 CPU 样例验证；SkyReels GPU 推理、观测闭环与长期稳定性尚未验证。
 
 2026-10-13研究续作已完成33张新正脸表情的真实CPU观测，补全六维轮廓形状并修正小样本改进验收门槛。表情仍影响局部残差，风格化鼻点也可能导致缺测；新增图像尚无人工异常标签，独立5%误报验收和真实视频恢复效果未完成，详见 [正脸表达域续实验](./docs/reports/2026-10-12-local-geometry/README.md#14-2026-10-13正脸表达域续实验与审查修复)。
 
@@ -25,7 +24,7 @@
 
 | 能力 | 首版选择 | 接入状态 |
 | --- | --- | --- |
-| 图生视频与续接 | SkyReels-V2 DF 1.3B 540P | 首段 GPU 基线已有记录；有限窗口接入完成，连续 GPU 实验待验收 |
+| 图生视频与续接 | SkyReels-V2 DF 1.3B 540P | 官方 CLI 桥接已实现；目标 CUDA 环境待执行 |
 | 身份观测 | CCIP，ccip-caformer-24-randaug-pruned，经 dghs-imgutils / ONNX | 已接入固定版本、768 维特征与上游差异函数；CPU 图片/公开视频样例已执行 |
 | 几何观测 | anime-face-detector 0.1.0，28 点 landmarks | 已接入固定版本和置信度加权对齐、独立表情残差；适用范围与失败例已记录 |
 | 运动观测 | GMFlow | 正脸图对CPU双向光流诊断已执行；时序异常校准与Runtime接入待实现 |
@@ -85,27 +84,6 @@ Invoke-RestMethod -Method Post -Uri http://127.0.0.1:8000/runtime/pause
 ```
 
 生成返回 202 和任务 ID；查询直至 completed/failed/cancelled。resume 仅开放手动提交，pause 取消并等待当前任务释放。重复提交返回 409，后端路径未配置返回 503；实际环境预检失败写入任务错误。参考 checkpoint 不会因生成实验被覆盖，实时模式以 runtime/status 为准。
-
-## 连续生成窗口（#8）
-
-显式设置 `windows`，由 Runtime 执行 1–100 个窗口；不设置时保持原有单段实验行为。首窗口使用可信原图，后续窗口调用官方 `extend_video`，以累计视频最后 17 帧延续运动。默认 97 帧窗口、24 FPS，三窗口累计为 **97 / 177 / 257 帧**；输出已经包含前缀，无需再次拼接。
-
-```powershell
-Invoke-RestMethod -Method Post -Uri http://127.0.0.1:8000/runtime/resume
-$job = Invoke-RestMethod -Method Post -Uri http://127.0.0.1:8000/avatar/generate -ContentType application/json -Body '{"windows":3,"frames":97,"seed":42}'
-Invoke-RestMethod -Uri "http://127.0.0.1:8000/runtime/jobs/$($job.run_id)"
-```
-
-任务的 `accepted_windows` 是有效上下文，包括累计帧数、实际种子、视频哈希和边界视频路径。失败或取消不追加有效窗口；需要继续时先 `resume`，再提交 `{"windows":2,"previous_run_id":"上一任务UUID"}`，从该任务最后成功窗口出发。没有有效窗口的任务不能用于续接；重启不会自动生成。
-
-CLI 使用同一个 Runtime（与 API 共用数据目录时，先停止 API 服务）：
-
-```bash
-uv run --locked avatar-runtime windows --data-dir var/avatar-sequence --image /absolute/path/reference.png --windows 3 --timeout 3600
-uv run --locked avatar-runtime windows --data-dir var/avatar-sequence --previous-run-id <previous-job-uuid> --windows 2 --timeout 3600
-```
-
-只有新角色目录使用 `--image`；已初始化目录省略该参数。CLI 先输出 `job.json` 路径，失败返回非零，Ctrl+C 取消并清理当前工作。每个窗口保留生成日志、完整解码记录和边界前后各 17 帧的审查视频。时间轴、种子策略、停止条件和目标机验收步骤见 [连续窗口契约](./docs/runtime-foundation.md#连续窗口8)。本次已验证控制流程与真实小视频编解码；**尚未执行 SkyReels GPU 三窗口实验，也未验收姿态、表情、运动趋势或长期稳定性**。
 
 GET /observer/status 返回本进程最后一次手动观测；未观测或重启后指标为未知并有原因。POST /observer/observe 接收图片，POST /observer/anomalies 对独立距离和显式阈值作判定；准备方式、产物、失败状态和 CPU 实测见 [身份与几何观测](./docs/observers.md)。POST /recovery/trigger 仍返回 503。当前限单进程、单服务实例；独立 CLI 实验不经过 API 的互斥锁，不要同时争用同一 GPU。
 

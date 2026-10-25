@@ -9,7 +9,7 @@
 | [冷启动流程与执行记录](./冷启动.md) | 原始流程、逐项验收、已验证命令与剩余边界 |
 | [开源调研与首版选型](./open-source-selection.md) | 10 个上游项目、源码与模型 revision、接口、许可及取舍 |
 | [模型环境部署](./backend-setup.md) | 独立 SkyReels 环境、固定模型下载、生成/续接/首尾帧控制与实验验收 |
-| [Runtime 开发底座](./runtime-foundation.md) | 共享配置/契约、任务生命周期、#8 有限连续窗口、边界审查与重试、API、存储边界 |
+| [Runtime 开发底座](./runtime-foundation.md) | 共享配置/契约、任务生命周期、API、存储边界与各 Issue 的接入点 |
 | [身份与几何观测](./observers.md) | #13/#14 独立 CPU 环境、模型与许可、特征/对齐、HTTP/CLI、曲线叠图与真实实验 |
 | [#13/#14 研究报告](./reports/2026-10-12-observers/README.md) | 实测结果、关键点示意、缺测曲线、逐项验收与公开数值证据 |
 | [局部几何与统计校准](./local-geometry-calibration.md) | 单角色盲审、姿态参考、来源分组、冻结／校准／评估与未验收边界 |

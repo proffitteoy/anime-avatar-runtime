@@ -13,21 +13,19 @@ import time
 from datetime import UTC, datetime
 from pathlib import Path
 from threading import Event
-from typing import TYPE_CHECKING, Final, TextIO
+from typing import TYPE_CHECKING, TextIO
 from uuid import UUID
 
 from .config import RuntimeConfig
 from .state import atomic_write
 
 if TYPE_CHECKING:
-    from .contracts import GenerationRequest, GenerationResult, GenerationWindow
+    from .contracts import GenerationRequest, GenerationResult
 
 UPSTREAM_REVISION = "9351d13152207cc04de780e055346b08ade0b851"
 MODEL_ID = "Skywork/SkyReels-V2-DF-1.3B-540P"
 MODEL_REVISION = "1100111771ba2d921f10e76991f54db9f73edb3d"
 VENDOR_PATCH_NAME = "skyreels-v2-8gb-memory.patch"
-VIDEO_FPS: Final = 24
-WINDOW_OVERLAP: Final = 17
 
 
 def vendor_patch_sha256() -> str | None:
@@ -96,7 +94,7 @@ def build_command(
         "--base_num_frames",
         "97",
         "--overlap_history",
-        str(WINDOW_OVERLAP),
+        "17",
         "--ar_step",
         "0",
         "--addnoise_condition",
@@ -110,7 +108,7 @@ def build_command(
         "--seed",
         str(seed),
         "--fps",
-        str(VIDEO_FPS),
+        "24",
         "--offload",
         "--outdir",
         str(output.resolve()),
@@ -304,8 +302,6 @@ def run_generation(
 
     save_manifest()
     try:
-        if request.windows is not None or request.previous_run_id is not None:
-            raise ValueError("Bounded window requests must be driven by Runtime")
         if cancel_event is not None and cancel_event.is_set():
             raise GenerationCancelled("Generation cancelled")
         if config.skyreels_python is None:
@@ -383,150 +379,3 @@ def run_generation(
             elapsed_seconds=time.monotonic() - started,
         )
         save_manifest()
-
-
-# Runs in the existing model environment (MoviePy 1.0.3 / imageio), never at import.
-# Stream the cumulative video rather than retaining its frames in the controller.
-_WINDOW_MEDIA_SCRIPT = r"""
-import json
-import math
-import subprocess
-import sys
-import tempfile
-from pathlib import Path
-
-import imageio
-import imageio_ffmpeg
-import numpy as np
-from moviepy.editor import VideoFileClip
-
-video, review, expected, previous = sys.argv[1:]
-review = Path(review)
-expected, previous = int(expected), int(previous)
-with VideoFileClip(video, audio=False) as clip:
-    if not math.isclose(clip.fps, 24, rel_tol=0, abs_tol=0.001):
-        raise ValueError('Window video must have 24 FPS')
-    width, height = clip.size
-# Count actual FFmpeg output. MoviePy rounds duration and can repeat its last frame.
-with tempfile.TemporaryFile() as errors:
-    process = subprocess.Popen([
-        imageio_ffmpeg.get_ffmpeg_exe(), '-v', 'error', '-xerror', '-i', video,
-        '-map', '0:v:0', '-vsync', '0', '-f', 'rawvideo', '-pix_fmt', 'rgb24', 'pipe:1',
-    ], stdout=subprocess.PIPE, stderr=errors,
-       creationflags=subprocess.CREATE_NO_WINDOW if sys.platform == 'win32' else 0)
-    writer = None
-    try:
-        if previous:
-            writer = imageio.get_writer(str(review / 'boundary.mp4'), fps=24,
-                                        macro_block_size=1)
-        count = 0
-        while True:
-            raw = process.stdout.read(width * height * 3)
-            if not raw:
-                break
-            if len(raw) != width * height * 3:
-                raise ValueError('Incomplete decoded frame')
-            index = count
-            count += 1
-            if count > expected:
-                raise ValueError('Window contains extra frames')
-            if previous and previous - 17 <= index < previous + 17:
-                frame = np.frombuffer(raw, dtype=np.uint8).reshape(height, width, 3)
-                writer.append_data(frame)
-            if previous and index in (previous - 1, previous):
-                name = 'before.png' if index < previous else 'after.png'
-                imageio.imwrite(str(review / name), frame)
-        if process.wait():
-            errors.seek(0)
-            raise ValueError('FFmpeg decode failed: ' + errors.read().decode(errors='replace'))
-        if count != expected:
-            raise ValueError('Window is truncated or has missing frames')
-    finally:
-        if process.poll() is None:
-            process.kill()
-        process.stdout.close()
-        process.wait()
-        if writer is not None:
-            writer.close()
-    (review / 'media.json').write_text(json.dumps({
-        'frame_count': count, 'fps': 24, 'size': [width, height],
-        'video_seconds': count / 24,
-        'added_frames': count - previous, 'added_seconds': (count - previous) / 24,
-        'boundary_frame': previous if previous else None,
-        'boundary_seconds': previous / 24 if previous else None,
-        'boundary_clip_start_frame': previous - 17 if previous else None,
-        'boundary_clip_frames': 34 if previous else None,
-    }, indent=2), encoding='utf-8')
-"""
-
-
-def verify_window_source(config: RuntimeConfig, window: GenerationWindow) -> None:
-    """Do not resume missing, replaced or redirected committed video context."""
-    root = config.data_dir / "runs" / str(window.run_id) / "windows" / str(window.window_id)
-    if not window.video.resolve().is_relative_to(root.resolve()):
-        raise ValueError("Continuation video is outside its recorded window directory")
-    with window.video.open("rb") as source:
-        digest = hashlib.file_digest(source, "sha256").hexdigest()
-    if digest != window.video_sha256:
-        raise ValueError("Continuation video does not match its committed SHA-256")
-
-
-def inspect_window(
-    config: RuntimeConfig,
-    video: Path,
-    output: Path,
-    *,
-    expected_frames: int,
-    previous_frames: int,
-    cancel_event: Event,
-) -> str:
-    """Fully decode a window and retain seam evidence before Runtime commits it."""
-    if config.skyreels_python is None:
-        raise ValueError("Window inspection requires SKYREELS_PYTHON")
-    review = output / "review"
-    review.mkdir(exist_ok=False)
-    started = time.monotonic()
-    evidence: dict[str, object] = {
-        "status": "running",
-        "expected_frames": expected_frames,
-        "previous_frames": previous_frames,
-        "fps": VIDEO_FPS,
-    }
-    manifest = review / "validation.json"
-    atomic_write(manifest, json.dumps(evidence, indent=2).encode() + b"\n")
-    try:
-        with (review / "decode.log").open("w", encoding="utf-8") as log:
-            result = _run_process(
-                [
-                    str(config.skyreels_python.absolute()),
-                    "-c",
-                    _WINDOW_MEDIA_SCRIPT,
-                    str(video.resolve()),
-                    str(review.resolve()),
-                    str(expected_frames),
-                    str(previous_frames),
-                ],
-                cwd=output,
-                timeout=config.generation_timeout_seconds,
-                cancel_event=cancel_event,
-                log=log,
-            )
-        if result.returncode or not (review / "media.json").is_file():
-            raise RuntimeError(f"Window decode/timeline validation failed; inspect {review}")
-        if previous_frames and not (review / "boundary.mp4").stat().st_size:
-            raise RuntimeError("Window boundary review video is empty")
-        with video.open("rb") as source:
-            digest = hashlib.file_digest(source, "sha256").hexdigest()
-        if cancel_event.is_set():
-            raise GenerationCancelled("Window inspection cancelled")
-        evidence.update(status="validated", video_sha256=digest)
-        return digest
-    except BaseException as exc:
-        evidence.update(
-            status="cancelled" if isinstance(exc, GenerationCancelled) else "failed",
-            error=str(exc) or type(exc).__name__,
-        )
-        raise
-    finally:
-        evidence["elapsed_seconds"] = time.monotonic() - started
-        atomic_write(manifest, json.dumps(evidence, indent=2).encode() + b"\n")

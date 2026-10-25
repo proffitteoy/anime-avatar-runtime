@@ -72,7 +72,7 @@ uv run --locked avatar-runtime generate --image /absolute/path/reference.png --e
 
 每次使用新的 output 目录；失败实验也不会覆盖。默认固定 540P、97 帧基础窗口、17 帧重叠、24 FPS、30 步，具体有效参数记录于 argv。总预检/生成超时可通过环境变量或 CLI `--timeout` 调整；dry-run 只检查参数与输入路径，不启动模型、不写输出目录。
 
-也可 `uv run --locked avatar-runtime serve`，通过 [README](../README.md) 的 API 流程初始化、resume、提交并轮询任务。API 显式设置 windows 可执行有限连续窗口，previous_run_id 指定上一任务的有效视频上下文；CLI windows 使用同一 Runtime。时间轴、重试和边界证据见 [连续窗口](./runtime-foundation.md#连续窗口8)。自主观测/恢复循环仍未实现。
+也可 `uv run --locked avatar-runtime serve`，通过 [README](../README.md) 的 API 流程初始化、resume、提交并轮询单段任务。API 使用初始化的可信原图；当前不支持通过 HTTP 自动续接或恢复。
 
 ## 验收与故障定位
 
