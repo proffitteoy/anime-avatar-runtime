@@ -1,106 +1,56 @@
 # Anime Avatar Runtime
 
-从完整二次元角色图出发，研究持续生成、状态保持与异常恢复。原始三条路线保留原文；本仓库现已具备可安装、可启动和可测试的控制工程。
+从一张完整角色图出发，离线构建角色资产，再用轻量参数运动和渲染运行动态壁纸。当前路线见 [#45](https://github.com/proffitteoy/anime-avatar-runtime/issues/45) 和 [Project](https://github.com/users/proffitteoy/projects/2)。
 
-## 已落地与边界
+- P1：自动资产编译，#49–#54。
+- P2：长期角色运动，#55–#60。
+- P3：轻量动态壁纸，#61–#66。
 
-- Python 3.12 + uv、FastAPI、Pydantic、Uvicorn；依赖锁定在 uv.lock。
-- 单角色初始化：校验参考图、保存规范化 PNG、写入带版本的 JSON checkpoint，重启后校验参考图哈希。
-- 统一配置与共享类型：生成请求/结果、任务、事件和独立观测信号；后续三条路线复用同一份契约。
-- 单进程 Runtime：异步提交单段生成、任务互斥、状态查询、暂停取消、关停清理、中断任务识别；API 与 CLI 共用真实生成执行函数。
-- CLI 可桥接固定版本的 SkyReels-V2 官方入口，支持单图生成、视频续接和首尾帧条件；保存输入哈希、有效配置、命令、耗时、日志和成功/失败/取消状态，支持超时。
-- pytest、Ruff、mypy、wheel/sdist 构建入口和 Windows/Linux CI 配置。
-- 独立 CPU 身份/几何观测：固定 CCIP 与动漫人脸 28 点、可信参考特征缓存、加权对齐、图片/视频采样、关键点叠图与独立曲线；手动观测和显式阈值异常接口。
+目前源码仍包含历史生成/观测控制工程，资产编译、运动引擎和壁纸播放器尚未交付。旧数据、checkpoint 兼容、旧模型隔离和历史 API 回归统一由 [#68](https://github.com/proffitteoy/anime-avatar-runtime/issues/68) 收口；人工测试资产不代替自动编译的产品验收。
 
-当前没有自主待机循环、自动 Recovery、LLM/语音或展示前端。初始化后的 AvatarState 为 paused；API 会明确报告 autonomous_loop=false。身份/几何已用真实模型完成离线 CPU 样例验证；SkyReels GPU 推理、观测闭环与长期稳定性尚未验证。
+## 先处理旧数据
 
-2026-10-13研究续作已完成33张新正脸表情的真实CPU观测，补全六维轮廓形状并修正小样本改进验收门槛。表情仍影响局部残差，风格化鼻点也可能导致缺测；新增图像尚无人工异常标签，独立5%误报验收和真实视频恢复效果未完成，详见 [正脸表达域续实验](./docs/reports/2026-10-12-local-geometry/README.md#14-2026-10-13正脸表达域续实验与审查修复)。
+活动数据统一使用 `var/avatar`。旧实验、测试状态和缓存归档到 `.archive/`；仅保留显式活动 checkpoint 及其可信参考图，不自动导入其他测试角色。
 
-后续已完成四种形状度量的稳定性对照、99次真实检测等变探针与有界正常范围的受控分析。得到的是指定扰动类下的条件性优势与误差界，尚未验证异常检测精度；人工盲审按当前要求暂缓，见 [稳定性研究](./docs/reports/2026-10-12-local-geometry/README.md#15-局部形状稳定性条件性优势与测量等变实验)。
-
-后续开发从 [Runtime 底座与接入说明](./docs/runtime-foundation.md) 开始，其中列出了模块职责、共享契约、控制状态、各条路线的接入点和对应 Issue。[现有 Project](https://github.com/users/proffitteoy/projects/2) 保留完整路线图；底座落地不代表所有功能 Issue 已完成。
-
-## 开源选型
-
-| 能力 | 首版选择 | 接入状态 |
-| --- | --- | --- |
-| 图生视频与续接 | SkyReels-V2 DF 1.3B 540P | 官方 CLI 桥接已实现；目标 CUDA 环境待执行 |
-| 身份观测 | CCIP，ccip-caformer-24-randaug-pruned，经 dghs-imgutils / ONNX | 已接入固定版本、768 维特征与上游差异函数；CPU 图片/公开视频样例已执行 |
-| 几何观测 | anime-face-detector 0.1.0，28 点 landmarks | 已接入固定版本和置信度加权对齐、独立表情残差；适用范围与失败例已记录 |
-| 运动观测 | GMFlow | 正脸图对CPU双向光流诊断已执行；时序异常校准与Runtime接入待实现 |
-| 恢复对照 | 基础 Reset → DRBA → ToonCrafter / AniSora | 后续实现顺序，尚未进入闭环 |
-
-[开源调研与首版选型](./docs/open-source-selection.md) 包含 10 个官方项目的对比、代码提交、模型快照、许可区别、资源要求和取舍。生成后端使用独立 Python 3.10 / PyTorch 2.5.1 环境；不与控制工程或其他模型混装。
-
-## 安装与启动
-
-需要 Git 和 [uv](https://docs.astral.sh/uv/getting-started/installation/)。在仓库根目录执行：
+停止 API、生成和观测进程后执行：
 
 ```powershell
-uv sync --locked
-uv run --locked avatar-runtime doctor
-uv run --locked avatar-runtime serve
+uv sync --locked --no-dev
+uv run --locked --no-dev avatar-runtime migrate-data --source var --archive .archive/legacy-data --no-backup
+uv run --locked --no-dev avatar-runtime migrate-data --source var --archive .archive/legacy-data --no-backup --apply
+uv run --locked --no-dev avatar-runtime verify-data --archive .archive/legacy-data
 ```
 
-打开 [接口文档](http://127.0.0.1:8000/docs)。服务默认仅监听 127.0.0.1，使用一个进程；当前面向本地研究，不提供多用户服务或远程鉴权。
+不加 `--apply` 只做盘点。`--no-backup` 不创建 ZIP 副本，核对全部哈希后同盘原子归档；归档保留原件。省略该选项才创建独立备份。切换失败会尽量把原目录放回；进程中断可使用相同归档续跑，目标冲突不覆盖。已完成的数据树不能再次迁移。归档和私有数据都不提交。
 
-可用环境变量见 [.env.example](./.env.example)。uv 不会隐式读取 .env，需显式加载：
+恢复到新的检查目录：
 
 ```powershell
-Copy-Item .env.example .env
-uv run --locked --env-file .env avatar-runtime serve
+uv run --locked --no-dev avatar-runtime restore-data --archive .archive/legacy-data --output .cache/legacy-recovered
 ```
 
-本次工作区把 uv 缓存和托管 Python 放在忽略目录内。如需沿用：
+恢复从归档原件或已有独立备份读取，不覆盖当前目录或自动启用第二套 Runtime。活动 checkpoint 不存在时保持未初始化。[完整流程与旧工程处置清单](./docs/data-migration.md)。
+
+## 当前可执行能力
+
+- Python 3.12 + uv、FastAPI、Pydantic 2；锁定依赖与 Windows/Linux CI。
+- 可信参考图初始化、schema v1 状态校验与原子持久化。
+- 离线数据盘点、可选备份、哈希校验、原子归档、失败回退与恢复。
+- 历史研究工具：固定 SkyReels 生成桥接、单任务控制、独立 CPU 身份/几何观测及研究报告。
+
+历史工具使用显式 `legacy` 入口；原 `serve/generate/observe` 命令仍为兼容别名。API 的路径、状态码及数据含义保留，OpenAPI 标为 deprecated。
 
 ```powershell
-$env:UV_CACHE_DIR = Join-Path $PWD '.cache/uv'
-$env:UV_PYTHON_INSTALL_DIR = Join-Path $PWD '.tools/python'
-uv sync --locked
+# 只读校验 checkpoint 和参考图，不需要旧模型配置。
+uv run --locked --no-dev avatar-runtime legacy state --data-dir var/avatar
+# 仅显式运行旧实验 API 时安装其轻量数值依赖。
+uv sync --locked --no-dev --extra legacy
+uv run --locked --no-dev --extra legacy avatar-runtime legacy serve
 ```
 
-## 初始化角色
+迁移和 checkpoint 查询不导入旧生成/观测模块。Torch、SkyReels、CCIP/人脸模型仍只在显式独立实验环境执行，不进入基本安装。用法与证据见 [控制工程](./docs/runtime-foundation.md)、[后端部署](./docs/backend-setup.md)、[观测研究](./docs/observers.md)。生成结果不会自动成为可信资产；CPU 测试和历史 GPU 基线不代表新产品或长期运行已验收。
 
-启动 API 后，在另一终端提交一张真实参考图（替换文件路径）：
-
-```powershell
-Invoke-RestMethod -Method Post -Uri http://127.0.0.1:8000/avatar/init -ContentType image/png -InFile 'reference.png'
-Invoke-RestMethod -Uri http://127.0.0.1:8000/avatar/state
-Invoke-RestMethod -Uri http://127.0.0.1:8000/runtime/status
-```
-
-输入为原始图片字节，限制 10 MiB、1600 万像素和单帧图像。重复初始化返回 409，不覆盖角色。若要研究另一角色，使用不同的 AVATAR_DATA_DIR 并启动独立实例。checkpoint 与参考图默认保存在 var/avatar；初始化只建立参考状态，不声称已提取身份向量或生成视频。
-
-## 通过 API 提交单段生成
-
-配置好模型环境后，使用初始化的参考图提交任务：
-
-```powershell
-Invoke-RestMethod -Method Post -Uri http://127.0.0.1:8000/runtime/resume
-$job = Invoke-RestMethod -Method Post -Uri http://127.0.0.1:8000/avatar/generate -ContentType application/json -Body '{"frames":97,"seed":42}'
-Invoke-RestMethod -Uri "http://127.0.0.1:8000/runtime/jobs/$($job.run_id)"
-Invoke-RestMethod -Uri http://127.0.0.1:8000/runtime/events
-Invoke-RestMethod -Method Post -Uri http://127.0.0.1:8000/runtime/pause
-```
-
-生成返回 202 和任务 ID；查询直至 completed/failed/cancelled。resume 仅开放手动提交，pause 取消并等待当前任务释放。重复提交返回 409，后端路径未配置返回 503；实际环境预检失败写入任务错误。参考 checkpoint 不会因生成实验被覆盖，实时模式以 runtime/status 为准。
-
-GET /observer/status 返回本进程最后一次手动观测；未观测或重启后指标为未知并有原因。POST /observer/observe 接收图片，POST /observer/anomalies 对独立距离和显式阈值作判定；准备方式、产物、失败状态和 CPU 实测见 [身份与几何观测](./docs/observers.md)。POST /recovery/trigger 仍返回 503。当前限单进程、单服务实例；独立 CLI 实验不经过 API 的互斥锁，不要同时争用同一 GPU。
-
-## 模型准备与生成
-
-完整步骤见 [模型环境部署](./docs/backend-setup.md)。该文档固定源码提交与权重 revision，并处理上游缺失的 MoviePy 依赖。另一台本地 NVIDIA 机器上的模型安装与运行不阻塞当前控制工程。
-
-准备完成后，调用示例：
-
-```bash
-uv run --locked avatar-runtime generate --python vendor/SkyReels-V2/.venv/bin/python --image /absolute/path/reference.png --output var/runs/first
-uv run --locked avatar-runtime generate --python vendor/SkyReels-V2/.venv/bin/python --video /absolute/path/previous.mp4 --frames 257 --output var/runs/extension
-```
-
-加 --dry-run 只查看官方参数。真正运行时缺少模型、环境或输出将明确失败；不会使用占位视频伪装推理成功。生成实验尚未自动回写控制 API 的状态。
-
-## 开发与验证
+## 开发
 
 ```powershell
 uv run --locked pytest
@@ -110,21 +60,6 @@ uv run --locked mypy
 uv build
 ```
 
-格式化修改使用 uv run --locked ruff format src tests。当前使用本地 JSON 状态，无数据库迁移和种子数据命令；不提供尚不存在的生产部署命令。
+格式化使用 `uv run --locked ruff format src tests`。常规测试不加载模型；CUDA、真实媒体、观测模型和实机长跑分别验证。当前没有数据库或生产部署入口。
 
-源码在 src/anime_avatar_runtime：config.py 统一配置，contracts.py 定义共享类型，runtime.py 编排单任务与生命周期，api.py 处理 HTTP，state.py 负责参考状态持久化，skyreels.py 执行独立生成后端，observers.py 执行独立 CPU 观测和几何计算，cli.py 提供命令入口。tests/ 覆盖输入与状态损坏、并发互斥、失败、取消、重启、产物保护和观测算法。[check 工作流](./.github/workflows/check.yml) 在 push 和 pull_request 时执行 Windows/Linux 检查；对应提交的实际结果见 [GitHub Actions](https://github.com/proffitteoy/anime-avatar-runtime/actions/workflows/check.yml)。
-
-本次修订本地验收：69 项测试通过、1 项真实模型测试默认跳过，Ruff、mypy 和 wheel/sdist 构建通过；显式配置后，真实 CPU 最小推理测试另行通过，并完成真实观测子进程的暂停取消检查。身份候选与主体有效性分开记录，观测锁外执行、按状态修订验收；详见 [PR #38 优化与局部几何对照报告](./docs/reports/2026-10-12-observers/revision-p0.md)。初始记录见 [执行记录](./docs/冷启动.md)，模型与公开视频实测见 [观测说明](./docs/observers.md)。契约、控制和算法自动测试不运行 GPU 模型；真实 CPU 模型验证单独记录。官方参数对照测试使用已核对 blob SHA 的源码缓存；全新 checkout 没有上游源码时该项明确 skip。其余常规测试不需要模型或联网。
-
-## 文档
-
-- [项目协作规则](./AGENTS.md)
-- [Runtime 底座与后续开发入口](./docs/runtime-foundation.md)
-- [身份与几何观测、安装和实测](./docs/observers.md)
-- [#13/#14 研究报告与数值证据](./docs/reports/2026-10-12-observers/README.md)
-- [单角色局部几何、盲审与统计校准](./docs/local-geometry-calibration.md)
-- [冷启动流程与逐项执行记录](./docs/冷启动.md)
-- [文档索引](./docs/README.md)
-- [01：生成与长期状态保持](./01-avatar-generation-and-state-preservation.md)
-- [02：状态恢复与稳定控制](./02-state-recovery-and-stability.md)
-- [03：运行系统架构](./03-runtime-system-architecture.md)
+协作规则见 [AGENTS.md](./AGENTS.md)，历史执行证据和原始三份方案见 [文档索引](./docs/README.md)。三份原始方案保留原文，新的开发顺序以当前 Issue 为准。

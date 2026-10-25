@@ -14,7 +14,7 @@
 - [开源选型](./docs/open-source-selection.md) 记录模型、源码提交与许可。代码开源不等于所有权重具有相同许可，升级必须重新核对接口和依赖。
 - 当前已有参考图 checkpoint、统一配置/契约、单任务 Runtime、API/CLI 生成桥接、取消/超时与任务记录，以及独立 CPU 身份/几何观测与手动接口；尚无自主生成/观测/恢复闭环。不得将 CPU 测试或 dry-run 报告成 GPU 推理通过。
 - 控制程序可在 Windows 开发；模型推理部署基线见 [backend-setup](./docs/backend-setup.md)。不因未取得目标硬件细节而阻塞仓库初始化。
-- V0 使用 FastAPI 自带接口文档作为操作入口；尚无展示前端、数据库、迁移或生产部署，不为它们创建空模块。
+- 旧工程的 checkpoint 兼容、数据退场、模型隔离和 API 回归统一归 #68。历史工具使用 `legacy` 入口，原命令保留兼容；旧数据由显式离线迁移命令整理，`--no-backup` 跳过 ZIP 副本。尚无壁纸展示前端、数据库或生产部署，不为它们创建空模块。
 
 ## 文件职责
 
@@ -25,12 +25,14 @@
 | src/anime_avatar_runtime/runtime.py | 单角色单任务、手动生命周期、取消与结果接收、任务记录 |
 | src/anime_avatar_runtime/api.py | HTTP 输入、错误映射、Runtime 操作与 lifespan 关停 |
 | src/anime_avatar_runtime/state.py | AvatarState、图片校验、原子持久化与哈希校验 |
+| src/anime_avatar_runtime/migration.py | 离线旧数据盘点、可选备份、原子归档、回退及恢复；不构造未计算的新资产 |
 | src/anime_avatar_runtime/skyreels.py | 固定上游版本、参数、模型预检、可取消独立进程与实验日志 |
 | src/anime_avatar_runtime/observers.py | 固定 CPU 模型、Anchor 缓存、特征与几何计算、离线曲线叠图、独立进程桥接；见 docs/observers.md |
 | src/anime_avatar_runtime/cli.py | 命令入口、服务启动、有效配置、退出状态；复用生成执行函数 |
 | tests/ | 控制行为、失败路径、上游参数契约；模型不作为常规测试依赖 |
 | docs/ | 原始流程、开源选型、模型部署和初始化证据 |
 | var/、models/、vendor/ | 被忽略的私有运行数据、权重、外部代码，不提交 |
+| .archive/ | 被忽略的历史数据原件、独立备份和迁移清单，不提交 |
 | .cache/、.tools/、.venv/ | 被忽略的本地缓存、解释器和环境，不提交 |
 
 ## 领域约束
@@ -52,6 +54,7 @@
 - Python 使用类型注解、snake_case、Ruff 格式，mypy 检查 src。Pydantic 管状态校验，不重复实现另一套校验层。
 - 领域函数明确抛异常；API 区分 404/409/413/422，CLI 失败返回非零。损坏状态不得静默重置，失败推理不得写成成功。
 - 模型调用在独立环境中执行；API 导入不能加载模型或下载权重。当前存储仅保证单进程调用，不擅自开启多 worker。
+- 基本安装不含 NumPy；历史 API/数值观测需要 `--extra legacy`，开发依赖和 `--extra observers` 各自声明 NumPy。迁移及只读 checkpoint 查询不得导入旧契约、生成或观测模块。
 - 文档使用 UTF-8、相对链接；不提交密钥、真实 .env、私人角色图或大型生成物。
 
 ## 验收与同步

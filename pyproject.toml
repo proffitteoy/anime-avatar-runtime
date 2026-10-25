@@ -13,11 +13,12 @@ dependencies = [
   "pydantic>=2.10,<3",
   "uvicorn>=0.34,<1",
   "pillow>=11,<13",
-  "numpy>=1.26.4,<2",
 ]
 
 [project.optional-dependencies]
+legacy = ["numpy>=1.26.4,<2"]
 observers = [
+  "numpy>=1.26.4,<2",
   "dghs-imgutils @ https://github.com/deepghs/imgutils/archive/46df848dc4d20ac93f4919a40e2636d5f7c19766.tar.gz",
   "anime-face-detector @ https://github.com/hysts/anime-face-detector/archive/98a9fb480fa04bdd96acbe4d98da191a898267f3.tar.gz",
   "onnxruntime>=1.20,<2",
@@ -43,7 +44,7 @@ torchvision = { index = "pytorch-cpu" }
 avatar-runtime = "anime_avatar_runtime.cli:main"
 
 [dependency-groups]
-dev = ["pytest>=8,<10", "httpx2>=2.13,<3", "ruff>=0.11,<1", "mypy>=1.15,<2"]
+dev = ["pytest>=8,<10", "httpx2>=2.13,<3", "ruff>=0.11,<1", "mypy>=1.15,<2", "numpy>=1.26.4,<2"]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/anime_avatar_runtime"]
