@@ -1,5 +1,9 @@
 # Runtime 开发底座
 
+本文记录旧生成/观测控制工程。当前产品主线见 [#45](https://github.com/proffitteoy/anime-avatar-runtime/issues/45)，旧实验数据先按[数据整理说明](./data-migration.md)归档；不按下方旧 Issue 顺序启动新的自主视频闭环。
+
+旧工程处置统一归 #68；本文件后文是历史接口与验收记录。当前推荐命令为 `avatar-runtime legacy serve/generate/observe`，原命令仍兼容。基本安装不含 NumPy；旧 API 使用 `uv sync --locked --no-dev --extra legacy`，模型仍在独立环境执行。只读检查旧参考使用 `avatar-runtime legacy state --data-dir <目录>`，不读取模型环境配置、不加载旧 Runtime。未来资产和运动状态由各自新格式独立存储，不能复用或回写旧 state.json。
+
 本次底座对应 [Project #2](https://github.com/users/proffitteoy/projects/2) 的 [#24 共享契约](https://github.com/proffitteoy/anime-avatar-runtime/issues/24)，并落地 #25/#28/#29 中可独立于 GPU 实验推进的任务控制、API 与实验记录。三份编号方案仍是目标设计；本文描述当前代码，不代表这些 Issue 的全部验收已经完成。
 
 ## 模块与调用链
