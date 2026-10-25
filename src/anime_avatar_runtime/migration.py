@@ -301,26 +301,32 @@ def restore_data(archive: Path, output: Path) -> DataArchive:
             raise FileNotFoundError("Original archived data directory is missing")
     staged = output.with_name(f"{output.name}.restore-{uuid4().hex}")
     staged.mkdir(parents=True)
-    if manifest.backup_required:
-        with zipfile.ZipFile(archive / "backup.zip") as backup:
+    try:
+        if manifest.backup_required:
+            with zipfile.ZipFile(archive / "backup.zip") as backup:
+                for name in manifest.directories:
+                    (staged / name).mkdir(parents=True, exist_ok=True)
+                for name in manifest.files:
+                    target = staged / name
+                    target.parent.mkdir(parents=True, exist_ok=True)
+                    with backup.open(name) as incoming, target.open("xb") as outgoing:
+                        shutil.copyfileobj(incoming, outgoing)
+        else:
             for name in manifest.directories:
                 (staged / name).mkdir(parents=True, exist_ok=True)
             for name in manifest.files:
                 target = staged / name
                 target.parent.mkdir(parents=True, exist_ok=True)
-                with backup.open(name) as incoming, target.open("xb") as outgoing:
-                    shutil.copyfileobj(incoming, outgoing)
-    else:
-        for name in manifest.directories:
-            (staged / name).mkdir(parents=True, exist_ok=True)
-        for name in manifest.files:
-            target = staged / name
-            target.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copyfile(archive / "data" / name, target)
-    if _inventory(staged) != (manifest.files, manifest.directories, manifest.total_bytes):
-        raise ValueError("Restored data failed verification; destination was not activated")
-    # rename refuses a nonempty destination; recheck also protects an empty concurrent directory.
-    if output.exists():
-        raise FileExistsError("Restore destination appeared during extraction")
-    staged.rename(output)
+                shutil.copyfile(archive / "data" / name, target)
+        if _inventory(staged) != (manifest.files, manifest.directories, manifest.total_bytes):
+            raise ValueError("Restored data failed verification; destination was not activated")
+        # Also protect an empty destination created concurrently.
+        if output.exists():
+            raise FileExistsError("Restore destination appeared during extraction")
+        staged.rename(output)
+    except BaseException:
+        # Only this invocation's newly created sibling directory is disposable.
+        # Do not hide a cleanup failure: it may leave private bytes behind.
+        shutil.rmtree(staged)
+        raise
     return manifest

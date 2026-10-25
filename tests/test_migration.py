@@ -1,3 +1,4 @@
+import errno
 import io
 import json
 import os
@@ -413,3 +414,51 @@ def test_cli_no_backup_applies_without_loading_model_configuration(
     assert cli.main() == 0
     assert json.loads(capsys.readouterr().out)["backup_required"] is False
     assert not (archive / "backup.zip").exists()
+
+
+@pytest.mark.parametrize("backup", [True, False])
+@pytest.mark.parametrize("failure", ["disk_full", "permission"])
+def test_restore_copy_failure_removes_partial_private_data(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, backup: bool, failure: str
+) -> None:
+    source, archive = old_data(tmp_path)
+    original = migration._inventory(source)
+    migration.migrate_data(source, archive, backup=backup, apply=True)
+    output = tmp_path / "restored"
+    calls = 0
+    error = (
+        OSError(errno.ENOSPC, "disk full during restore")
+        if failure == "disk_full"
+        else PermissionError("permission denied during restore")
+    )
+    if backup:
+        copy_stream = migration.shutil.copyfileobj
+
+        def fail_stream(incoming, outgoing):
+            nonlocal calls
+            calls += 1
+            if calls == 2:
+                outgoing.write(b"partial private runtime data")
+                raise error
+            copy_stream(incoming, outgoing)
+
+        monkeypatch.setattr(migration.shutil, "copyfileobj", fail_stream)
+    else:
+        copy_file = migration.shutil.copyfile
+
+        def fail_file(incoming, outgoing):
+            nonlocal calls
+            calls += 1
+            if calls == 2:
+                Path(outgoing).write_bytes(b"partial private runtime data")
+                raise error
+            return copy_file(incoming, outgoing)
+
+        monkeypatch.setattr(migration.shutil, "copyfile", fail_file)
+    with pytest.raises(type(error), match="during restore"):
+        migration.restore_data(archive, output)
+    assert calls == 2
+    assert not output.exists()
+    assert list(tmp_path.glob("restored.restore-*")) == []
+    assert migration._inventory(archive / "data") == original
+    assert load_state(source / "avatar") == load_state(archive / "data" / "avatar")
