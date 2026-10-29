@@ -2,9 +2,11 @@
 
 从根目录 [README](../README.md) 启动工程，协作约束见 [AGENTS.md](../AGENTS.md)。
 
+项目已于 **2026-10-29** 停止维护并进入归档；下列文档用于历史复现、证据查阅和数据恢复。封仓范围与未完成能力见 [停止维护与归档](../README.md#停止维护与归档)。
+
 ## 本项目执行文档
 
-当前产品路线见 [#45](https://github.com/proffitteoy/anime-avatar-runtime/issues/45)。先执行旧数据整理；下列生成、观测和三份原始方案保留为历史工程/研究依据，不再表示当前产品推进顺序。
+历史产品路线见 [#45](https://github.com/proffitteoy/anime-avatar-runtime/issues/45)，#45–#66 随封仓按不再计划关闭。旧工程处置 #68 已完成；数据整理仅在需要时执行，不因封仓重复迁移。生成、观测和三份原始方案保留为历史工程/研究依据。
 
 | 文档 | 内容 |
 | --- | --- |
@@ -21,9 +23,9 @@
 
 | 文档 | 职责 | 当前落地 |
 | --- | --- | --- |
-| [01：生成与长期状态保持](../01-avatar-generation-and-state-preservation.md) | 单图初始化、待机、跨窗口延续 | 参考图状态与官方生成入口桥接；长期保持待实验 |
+| [01：生成与长期状态保持](../01-avatar-generation-and-state-preservation.md) | 单图初始化、待机、跨窗口延续 | 参考图状态与官方生成入口桥接；长期保持未验收 |
 | [02：状态恢复与稳定控制](../02-state-recovery-and-stability.md) | Observer、漂移判断、恢复与评估 | 身份/几何离线观测和手动接口已接入；运动、观测与恢复闭环尚未实现 |
-| [03：运行系统架构](../03-runtime-system-architecture.md) | 共享状态、调度、存储与交互 | 统一契约与配置、单任务 Runtime、API/CLI 共用后端、取消/超时和任务记录；自主闭环待推进 |
+| [03：运行系统架构](../03-runtime-system-architecture.md) | 共享状态、调度、存储与交互 | 统一契约与配置、单任务 Runtime、API/CLI 共用后端、取消/超时和任务记录；自主闭环未实现 |
 
 三份方案保持原文，设计目标不等同已验证功能。当前可执行状态以 README 和源码为准。
 
